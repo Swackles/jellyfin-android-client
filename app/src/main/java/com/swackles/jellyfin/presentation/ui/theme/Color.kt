@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.ui.theme
+package com.swackles.jellyfin.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
