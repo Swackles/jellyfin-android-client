@@ -23,6 +23,16 @@ class Media(
 
         return uri
     }
+
+    companion object {
+        fun preview(): Media {
+            return Media(
+                UUID.randomUUID(),
+                0.0,
+                ""
+            )
+        }
+    }
 }
 
 fun BaseItemDto.toMedia(baseUrl: String): Media {

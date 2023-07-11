@@ -55,31 +55,11 @@ private fun PreviewMediaSection() {
     val section = MediaSection(
         title = "Media section preview",
         medias = listOf(
-            Media(
-                UUID.randomUUID(),
-                50.0,
-                "https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_FMjpg_UX1200_.jpg"
-            ),
-            Media(
-                UUID.randomUUID(),
-                20.0,
-                "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_FMjpg_UY1982_.jpg",
-            ),
-            Media(
-                UUID.randomUUID(),
-                80.0,
-                "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_FMjpg_UY2048_.jpg"
-            ),
-            Media(
-                UUID.randomUUID(),
-                0.0,
-                "https://m.media-amazon.com/images/M/MV5BMWMwMGQzZTItY2JlNC00OWZiLWIyMDctNDk2ZDQ2YjRjMWQ0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_FMjpg_UY2552_.jpg"
-            ),
-            Media(
-                UUID.randomUUID(),
-                0.0,
-                "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_FMjpg_UX974_.jpg"
-            )
+            Media.preview(),
+            Media.preview(),
+            Media.preview(),
+            Media.preview(),
+            Media.preview(),
         )
     )
 

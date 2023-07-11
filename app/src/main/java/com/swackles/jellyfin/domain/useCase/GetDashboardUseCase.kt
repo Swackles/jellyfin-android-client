@@ -10,6 +10,7 @@ import javax.inject.Inject
 
 class GetDashboardUseCase @Inject constructor(private val repository: MediaRepository) : BaseUseCase<List<MediaSection>> {
     override operator fun invoke(): Flow<Holder<List<MediaSection>>> = flow {
+        println("GetDashboardUseCase invoke")
         try {
             emit(Holder.Loading())
             val mediaSection = listOf(

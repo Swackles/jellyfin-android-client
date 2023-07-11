@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.swackles.jellyfin.presentation.dashboard.NavGraphs
 import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
 import dagger.hilt.android.AndroidEntryPoint
 

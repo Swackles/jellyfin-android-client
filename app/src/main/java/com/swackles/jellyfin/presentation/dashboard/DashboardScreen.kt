@@ -13,14 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.common.components.mediaSection.MediaSection
+import com.swackles.jellyfin.presentation.destinations.DetailScreenDestination
 
 @RootNavGraph(start = true)
 @Destination
 @Composable
 fun DashboardScreen(
-    viewModal: DashboardViewModal = hiltViewModel()
+    viewModal: DashboardViewModal = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
     val state = viewModal.state.value
     Surface(
@@ -42,7 +45,7 @@ fun DashboardScreen(
                 MediaSection(
                     section = section,
                     onClick = {
-
+                        navigator.navigate(DetailScreenDestination(id = it))
                     }
                 )
             }

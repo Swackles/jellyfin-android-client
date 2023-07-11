@@ -28,7 +28,7 @@ object AppModule {
                 name = "Jellyfin WIP app",
                 version = "0.1-ALPHA"
             )
-        }.createApi(DevConfiguration.url)
+        }.createApi("")
     }
 
     @Provides
@@ -42,9 +42,4 @@ object AppModule {
     fun provideMediaRepository(api: JellyfinRepository): MediaRepository {
         return MediaRepositoryImpl(api)
     }
-}
-
-private object DevConfiguration {
-    // TODO: Remove this before commit
-    const val url = "http://82.131.84.172:8096"
 }
