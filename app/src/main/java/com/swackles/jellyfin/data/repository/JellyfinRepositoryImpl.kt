@@ -1,12 +1,17 @@
 package com.swackles.jellyfin.data.repository
 
+import android.content.Context
+import org.jellyfin.sdk.Jellyfin
 import org.jellyfin.sdk.api.client.ApiClient
+import org.jellyfin.sdk.api.client.exception.InvalidStatusException
 import org.jellyfin.sdk.api.client.extensions.authenticateUserByName
 import org.jellyfin.sdk.api.client.extensions.itemsApi
 import org.jellyfin.sdk.api.client.extensions.libraryApi
 import org.jellyfin.sdk.api.client.extensions.tvShowsApi
 import org.jellyfin.sdk.api.client.extensions.userApi
 import org.jellyfin.sdk.api.client.extensions.userLibraryApi
+import org.jellyfin.sdk.createJellyfin
+import org.jellyfin.sdk.model.ClientInfo
 import org.jellyfin.sdk.model.UUID
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind.MOVIE
@@ -16,18 +21,28 @@ import org.jellyfin.sdk.model.api.SortOrder.DESCENDING
 import javax.inject.Inject
 
 class JellyfinRepositoryImpl @Inject constructor(
-    private val jellyfinClient: ApiClient
+    private val jellyfinClient: ApiClient,
+    private val context: Context
 ) : JellyfinRepository {
-    override suspend fun login(username: String, password: String): Void? {
-        val authenticationResult by this.jellyfinClient.userApi.authenticateUserByName(
-            username,
-            password,
-        )
+    override suspend fun login(hostname: String, username: String, password: String): JellyfinResponses {
+        val client = createJellyfin(this.context).createApi(hostname)
+        try {
+            val authenticationResult by client.userApi.authenticateUserByName(username, password)
 
-        this.jellyfinClient.userId = authenticationResult.user!!.id
-        this.jellyfinClient.accessToken = authenticationResult.accessToken
+            client.userId = authenticationResult.user!!.id
+            client.accessToken = authenticationResult.accessToken
 
-        return null
+        } catch (err: InvalidStatusException) {
+            return when (err.status) {
+                401 -> JellyfinResponses.UNAUTHORIZED_RESPONSE
+                else -> {
+                    throw err
+                }
+            }
+        }
+
+        INSTANCE = client
+        return JellyfinResponses.SUCCESSFULL
     }
 
     override suspend fun getItem(itemId: UUID): BaseItemDto {
@@ -91,5 +106,24 @@ class JellyfinRepositoryImpl @Inject constructor(
 
     private fun getUserId(): UUID {
         return jellyfinClient.userId!!
+    }
+
+    companion object {
+        @Volatile
+        private var INSTANCE: ApiClient? = null
+
+        fun getInstance(context: Context): ApiClient {
+            return INSTANCE ?: createJellyfin(context).createApi("").also { INSTANCE = it }
+        }
+
+        private fun createJellyfin(appContext: Context): Jellyfin {
+            return createJellyfin {
+                context = appContext
+                clientInfo = ClientInfo(
+                    name = "Jellyfin WIP app",
+                    version = "0.1-ALPHA"
+                )
+            }
+        }
     }
 }

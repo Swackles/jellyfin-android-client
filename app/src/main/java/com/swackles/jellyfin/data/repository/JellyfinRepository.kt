@@ -3,8 +3,13 @@ package com.swackles.jellyfin.data.repository
 import org.jellyfin.sdk.model.UUID
 import org.jellyfin.sdk.model.api.BaseItemDto
 
+enum class JellyfinResponses {
+    SUCCESSFULL,
+    UNAUTHORIZED_RESPONSE
+}
+
 interface JellyfinRepository {
-    suspend fun login(username: String, password: String): Void?
+    suspend fun login(hostname: String, username: String, password: String): JellyfinResponses
 
     suspend fun getItem(itemId: UUID): BaseItemDto
 
