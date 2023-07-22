@@ -13,7 +13,7 @@ abstract class BaseScreenViewModal<T>(
     private val getUseCase: BaseUseCase<T>
 ) : ViewModel() {
     private val _state = mutableStateOf(StateHolder<T>())
-    val state: State<StateHolder<T>> = _state
+    open val state: State<StateHolder<T>> = _state
 
     init {
         loadData()
