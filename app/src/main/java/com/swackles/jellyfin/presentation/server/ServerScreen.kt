@@ -81,26 +81,26 @@ private fun ServerScreenInput(
         ) {
             OutlinedTextField(
                 value = state.server.host,
-                label = { P("Host") },
+                label = { P(text = "Host") },
                 readOnly = state.isLoading,
-                placeholder = { P("https://localhost:8096") },
+                placeholder = { P(text = "https://localhost:8096") },
                 onValueChange = { onChange(state.server.copy(host = it)) },
                 isError = state.errors.containsKey(ErrorKey.HOST),
-                supportingText = { P(state.errors[ErrorKey.HOST] ?: "") })
+                supportingText = { P(text = state.errors[ErrorKey.HOST] ?: "") })
             OutlinedTextField(
                 value = state.server.username,
-                label = { P("Username") },
+                label = { P(text = "Username") },
                 readOnly = state.isLoading,
                 onValueChange = { onChange(state.server.copy(username = it)) },
                 isError = state.errors.containsKey(ErrorKey.USERNAME),
-                supportingText = { P(state.errors[ErrorKey.USERNAME] ?: "") })
+                supportingText = { P(text = state.errors[ErrorKey.USERNAME] ?: "") })
             PasswordOutlinedTextField(
                 value = state.server.password,
-                label = { P("Password") },
+                label = { P(text = "Password") },
                 readOnly = state.isLoading,
                 onValueChange = { onChange(state.server.copy(password = it)) },
                 isError = state.errors.containsKey(ErrorKey.PASSWORD),
-                supportingText = { P(state.errors[ErrorKey.PASSWORD] ?: "") })
+                supportingText = { P(text = state.errors[ErrorKey.PASSWORD] ?: "") })
         }
         Button(
             modifier = Modifier.constrainAs(submitButton) {
@@ -111,7 +111,7 @@ private fun ServerScreenInput(
             enabled = state.isValidInput && !state.isLoading,
             onClick = onSave
         ) {
-            P("connect")
+            P(text = "connect")
         }
     }
 }

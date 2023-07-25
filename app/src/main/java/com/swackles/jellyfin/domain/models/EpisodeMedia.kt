@@ -2,68 +2,74 @@ package com.swackles.jellyfin.domain.models
 
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import org.jellyfin.sdk.model.UUID
+import org.jellyfin.sdk.model.DateTime
 import org.jellyfin.sdk.model.api.BaseItemDto
-import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.ImageType
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
-class EpisodeMedia (
-    val id: UUID,
-    val episode: Int,
-    val season: Int,
-    val title: String,
-    val overview: String,
-    private val aspectRatio: Double,
-    private val playedPercentage: Double = 0.0,
-    private val runTimeTicks: Long,
-    private val imageUrl: String
+open class EpisodeMedia (
+    private val baseItem: BaseItemDto,
+    private val baseUrl: String
 ) {
-    val isInProgress get() = progress > 0f
-    val progress get(): Float = (playedPercentage / 100).toFloat()
+    val id = baseItem.id
+    val episode = baseItem.indexNumber
+    val season = baseItem.parentIndexNumber
+    val title = if(hasAired()) "$episode. ${baseItem.name}" else baseItem.name ?: "Episode $episode"
+    val overview = baseItem.overview ?: ""
 
+    fun hasAired() = (baseItem.premiereDate ?: DateTime.now()) < DateTime.now()
+    fun isMissing() = baseItem.runTimeTicks == null
+    fun progress() = (playedPercentage() / 100)
+    fun isInProgress() = !isCompleted() && progress() > 0f
     fun getSize(density: Density, size: Dp): Size {
         return Size(
             density = density,
-            width = with(density) { (size).toPx().toInt() * aspectRatio }.dp,
+            width = size * 1.8f,
             height = size
         )
     }
 
-    fun getImageUrl(size: Size): String {
+    open fun getImageUrl(size: Size): String {
         val pxWidth = with(size.density) { size.width.toPx().toInt() }
         val pxHeight = with(size.density) { size.height.toPx().toInt() }
+        val id = getMissingOrExistingVariable(baseItem.seriesId, baseItem.id)
+        val type = getMissingOrExistingVariable(ImageType.BACKDROP, ImageType.PRIMARY)
 
-        val uri = "$imageUrl?fillWidth=$pxWidth&fillHeight=$pxHeight&quality=10"
-        println(uri)
-
-        return uri
+        return "$baseUrl/items/$id/images/$type/0?fillWidth=$pxWidth&fillHeight=$pxHeight&quality=10"
     }
 
+    fun getSubText(): String = getMissingOrExistingVariable(getAiredString(), getDurationString())
+
     fun getDurationString(): String {
-        var minutes = (runTimeTicks / 600000000.0).roundToInt()
+        if (isMissing()) return ""
+
+        var minutes = (baseItem.runTimeTicks!!.toLong() / 600000000.0).roundToInt()
         val hours = kotlin.math.floor(minutes / 60.0).toInt()
         minutes -= hours * 60
 
-        return "${hours}h ${minutes}m"
+        var durationString = ""
+
+        if (hours > 0) durationString += "$hours hours"
+        if (minutes > 0) durationString += "$minutes min"
+
+        return durationString
     }
 
-    companion object {
-        fun preview(): EpisodeMedia {
-            return EpisodeMedia(
-                UUID.randomUUID(),
-                1,
-                1,
-                "Title",
-                "Lorem Ipsum",
-                1.7,
-                0.0,
-                10000,
-                ""
-            )
-        }
+    fun getAiredString(): String {
+        val formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM y")
+
+        val prefix = if (hasAired()) "Aired on" else "Airs on"
+        val date = formatter.format(baseItem.premiereDate ?: DateTime.now())
+
+        return "$prefix $date"
     }
+
+    private fun <T>getMissingOrExistingVariable(missingVar: T, existingVar: T): T =
+        if (isMissing()) missingVar else existingVar
+
+    private fun playedPercentage() = if (isCompleted()) 100.0f else baseItem.userData?.playedPercentage?.toFloat() ?: .0f
+    private fun isCompleted() = baseItem.userData?.played ?: false
 }
 
 data class Size(
@@ -71,23 +77,3 @@ data class Size(
     val width: Dp,
     val height: Dp
 )
-
-fun BaseItemDto.toEpisode(baseUrl: String): EpisodeMedia {
-    if (type != BaseItemKind.EPISODE) throw RuntimeException("\"$type\" is not episode type")
-    val playedPercentage = if (userData?.played == true) 100.0
-        else userData?.playedPercentage ?: 0.0
-
-    println("Overview: ${overview}")
-
-    return EpisodeMedia(
-        id = id,
-        episode = indexNumber!!,
-        season = parentIndexNumber!!,
-        title = name!!,
-        overview = overview!!,
-        playedPercentage = playedPercentage,
-        aspectRatio = primaryImageAspectRatio!!,
-        runTimeTicks = runTimeTicks!!,
-        imageUrl = "$baseUrl/items/$id/images/${ImageType.PRIMARY.name}/0"
-    )
-}

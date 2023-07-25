@@ -1,14 +1,58 @@
 package com.swackles.jellyfin.presentation.detail
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.swackles.jellyfin.domain.models.DetailMediaBase
+import com.swackles.jellyfin.domain.models.DetailMediaMoviePreview
+import com.swackles.jellyfin.domain.models.DetailMediaSeriesPreview
+import com.swackles.jellyfin.presentation.common.colors.primaryAssistChipBorder
+import com.swackles.jellyfin.presentation.common.colors.primaryAssistChipColors
+import com.swackles.jellyfin.presentation.common.colors.primaryButtonColors
+import com.swackles.jellyfin.presentation.common.colors.primaryButtonContentPadding
+import com.swackles.jellyfin.presentation.common.components.H2
+import com.swackles.jellyfin.presentation.common.components.P
+import com.swackles.jellyfin.presentation.destinations.DetailScreenDestination
+import com.swackles.jellyfin.presentation.detail.components.BannerImage
+import com.swackles.jellyfin.presentation.detail.components.LogoImage
+import com.swackles.jellyfin.presentation.detail.tabs.DetailScreenTabs
+import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
 import org.jellyfin.sdk.model.UUID
 
 @Destination
@@ -18,7 +62,8 @@ fun DetailScreen(
     navigator: DestinationsNavigator,
     viewModal: DetailScreenViewModal = hiltViewModel()
 ) {
-    val state = viewModal.state.value
+    val scrollState = rememberScrollState()
+    val state = viewModal.getState()
 
     LaunchedEffect(Unit){
         viewModal.loadData(id)
@@ -28,6 +73,320 @@ fun DetailScreen(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        if (state.hasData) DetailScreenLoaded(media = state.data!!, navigator)
+        if (state.error.isNotBlank()) P(text = state.error, isError = true)
+        else if (state.isLoading) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+        else if (state.data != null) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(scrollState, !state.showOverlay),
+            ) {
+                BannerImage(media = state.data, scrollState = scrollState)
+                Column(
+                    modifier = Modifier
+                        .graphicsLayer {
+                            compositingStrategy = CompositingStrategy.Offscreen
+                            translationY = -700f
+                        }
+                        .fillMaxWidth()
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        HeaderBox(state.data)
+                        DetailScreenTabs(state.data,
+                            navigateToMediaView = { navigator.navigate(DetailScreenDestination(it)) },
+                            activeSeason = state.activeSeason,
+                            toggleOverlay = viewModal::toggleOverlay
+                        )
+                    }
+                }
+            }
+            if (state.showOverlay) Overlay(state.data.getSeasons(), viewModal::selectSeason, viewModal::toggleOverlay)
+        }
     }
 }
+
+@Composable
+private fun HeaderBox(media: DetailMediaBase) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = DetailScreenLoadedProps.containerPadding)
+    ) {
+        LogoImage(media = media)
+        Spacer(modifier = Modifier.size(5.dp))
+        InfoRow(media.getInfo())
+        Spacer(modifier = Modifier.size(15.dp))
+        PlayButtonAndProgressBar(media)
+        Spacer(modifier = Modifier.size(15.dp))
+        if (media.overview.isNotBlank()) P(text = media.overview, modifier = Modifier.padding(horizontal = 5.dp))
+    }
+}
+
+@Composable
+private fun PlayButtonAndProgressBar(media: DetailMediaBase) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        if (media.isInProgress) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                media.getProgressBarLabels().map {
+                    P(text = it.text, align = it.align, modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f))
+                }
+            }
+            LinearProgressIndicator(progress = media.playedPercentage, modifier = Modifier.fillMaxWidth())
+            Spacer(modifier = Modifier.size(5.dp))
+        }
+        Button(
+            shape = RoundedCornerShape(DetailScreenLoadedProps.buttonBorderRadius),
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.primaryButtonColors(),
+            contentPadding = ButtonDefaults.primaryButtonContentPadding(),
+            onClick = { /*TODO*/ }) {
+            Icon(imageVector = Icons.Outlined.PlayArrow, contentDescription = "play arrow")
+            P(text = if (media.isInProgress) "Continue Watching" else "Play")
+        }
+    }
+}
+
+@Composable
+private fun InfoRow(labels: List<String>) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        labels.map {
+            AssistChip(
+                colors = AssistChipDefaults.primaryAssistChipColors(),
+                border = AssistChipDefaults.primaryAssistChipBorder(),
+                onClick = { },
+                label = { P(text = it) },
+                modifier = Modifier.padding(horizontal = 5.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun Overlay(seasons: List<Int>, selectSeason: (season: Int) -> Unit, toggleOverlay: () -> Unit) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .fillMaxWidth()
+        .background(Color.Black.copy(.8f))) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                seasons.map {
+                    TextButton(
+                        modifier = Modifier.padding(vertical = 20.dp),
+                        onClick = { selectSeason(it) },
+                        colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
+                    ) {
+                        H2("Season $it")
+                    }
+                }
+            }
+            TextButton(
+                onClick = toggleOverlay,
+                colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
+            ) {
+                Icon(
+                    modifier = Modifier.size(50.dp),
+                    imageVector = Icons.Outlined.Close,
+                    contentDescription = "cancel"
+                )
+            }
+        }
+    }
+}
+
+private object DetailScreenLoadedProps {
+    val containerPadding = 20.dp
+    val buttonBorderRadius = 5.dp
+}
+
+//<editor-fold desc="Preview loading">
+@Composable
+private fun PreviewWithLoading(isDarkTheme: Boolean) {
+    val viewModal = PreviewDetailScreenViewModal(
+        DetailScreenState(isLoading = true)
+    )
+
+    JellyfinTheme(isDarkTheme) {
+        DetailScreen(UUID.randomUUID(), EmptyDestinationsNavigator, viewModal)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithLoading_Dark() {
+    PreviewWithLoading(true)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithLoading_White() {
+    PreviewWithLoading(false)
+}
+//</editor-fold>
+
+//<editor-fold desc="Preview Error">
+@Composable
+private fun PreviewWithError(isDarkTheme: Boolean) {
+    val viewModal = PreviewDetailScreenViewModal(
+        DetailScreenState(error = "Error")
+    )
+
+    JellyfinTheme(isDarkTheme) {
+        DetailScreen(UUID.randomUUID(), EmptyDestinationsNavigator, viewModal)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithError_Dark() {
+    PreviewWithError(true)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithError_White() {
+    PreviewWithError(false)
+}
+//</editor-fold>
+
+//<editor-fold desc="Preview Movie">
+@Composable
+private fun PreviewWithMovieData(isDarkTheme: Boolean) {
+    val viewModal = PreviewDetailScreenViewModal(
+        DetailScreenState(data = DetailMediaMoviePreview())
+    )
+
+    JellyfinTheme(isDarkTheme) {
+        DetailScreen(UUID.randomUUID(), EmptyDestinationsNavigator, viewModal)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithMovieData_Dark() {
+    PreviewWithMovieData(true)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithMovieData_White() {
+    PreviewWithMovieData(false)
+}
+@Composable
+private fun PreviewWithMovieDataInProgress(isDarkTheme: Boolean) {
+    val viewModal = PreviewDetailScreenViewModal(
+        DetailScreenState(data = DetailMediaMoviePreview(playedPercentage = .24))
+    )
+
+    JellyfinTheme(isDarkTheme) {
+        DetailScreen(UUID.randomUUID(), EmptyDestinationsNavigator, viewModal)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithMovieDataInProgress_Dark() {
+    PreviewWithMovieDataInProgress(true)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithMovieDataInProgress_White() {
+    PreviewWithMovieDataInProgress(false)
+}
+//</editor-fold>
+
+//<editor-fold desc="Preview Series">
+@Composable
+private fun PreviewWithSeriesData(isDarkTheme: Boolean) {
+    val viewModal = PreviewDetailScreenViewModal(
+        DetailScreenState(data = DetailMediaSeriesPreview())
+    )
+
+    JellyfinTheme(isDarkTheme) {
+        DetailScreen(UUID.randomUUID(), EmptyDestinationsNavigator, viewModal)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithSeriesData_Dark() {
+    PreviewWithSeriesData(true)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithSeriesData_White() {
+    PreviewWithSeriesData(false)
+}
+
+@Composable
+private fun PreviewWithSeriesDataInProgress(isDarkTheme: Boolean) {
+    val viewModal = PreviewDetailScreenViewModal(
+        DetailScreenState(data = DetailMediaSeriesPreview())
+    )
+
+    JellyfinTheme(isDarkTheme) {
+        DetailScreen(UUID.randomUUID(), EmptyDestinationsNavigator, viewModal)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithSeriesDataInProgress_Dark() {
+    PreviewWithSeriesDataInProgress(true)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithSeriesDataInProgress_White() {
+    PreviewWithSeriesDataInProgress(false)
+}
+
+@Composable
+private fun PreviewWithSeriesDataWithOverlay(isDarkTheme: Boolean) {
+    val viewModal = PreviewDetailScreenViewModal(
+        DetailScreenState(data = DetailMediaSeriesPreview(), showOverlay = true)
+    )
+
+    JellyfinTheme(isDarkTheme) {
+        DetailScreen(UUID.randomUUID(), EmptyDestinationsNavigator, viewModal)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithSeriesDataWithOverlay_Dark() {
+    PreviewWithSeriesDataWithOverlay(true)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWithSeriesDataWithOverlay_White() {
+    PreviewWithSeriesDataWithOverlay(false)
+}
+//</editor-fold>
+

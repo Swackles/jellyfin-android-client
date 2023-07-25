@@ -1,30 +1,47 @@
 package com.swackles.jellyfin.domain.repository
 
+import com.swackles.jellyfin.common.Holder
 import com.swackles.jellyfin.data.repository.JellyfinRepository
-import com.swackles.jellyfin.domain.models.DetailMedia
+import com.swackles.jellyfin.data.repository.JellyfinResponses
+import com.swackles.jellyfin.domain.models.DetailMediaBase
 import com.swackles.jellyfin.domain.models.EpisodeMedia
 import com.swackles.jellyfin.domain.models.MediaSection
-import com.swackles.jellyfin.domain.models.toDetailMedia
-import com.swackles.jellyfin.domain.models.toEpisode
+import com.swackles.jellyfin.domain.models.DetailMediaMovie
+import com.swackles.jellyfin.domain.models.DetailMediaSeries
 import com.swackles.jellyfin.domain.models.toMedia
+import org.jellyfin.sdk.api.client.exception.InvalidStatusException
 import org.jellyfin.sdk.model.UUID
 import org.jellyfin.sdk.model.api.BaseItemDto
+import org.jellyfin.sdk.model.api.BaseItemKind.MOVIE
 import org.jellyfin.sdk.model.api.BaseItemKind.SERIES
 import javax.inject.Inject
 
 class MediaRepositoryImpl @Inject constructor(
     private val api: JellyfinRepository
 ) : MediaRepository {
-    override suspend fun getMedia(id: UUID): DetailMedia {
-        val media = api.getItem(id)
-        val similar = api.getSimilar(id)
-        val episodes = getEpisodesForMedia(media)
+    override suspend fun getMedia(id: UUID): Holder<DetailMediaBase> {
+        try {
+            val media = api.getItem(id)
 
-        return media.toDetailMedia(
-            baseUrl = api.getBaseUrl(),
-            similar = similar.map { it.toMedia(api.getBaseUrl())},
-            episodes = episodes,
-        )
+            if (media.type === SERIES) {
+                return Holder.Success(DetailMediaSeries(
+                    media,
+                    api.getSimilar(id).map { it.toMedia(api.getBaseUrl()) },
+                    getEpisodesForMedia(media),
+                    api.getBaseUrl())
+                )
+            } else if (media.type === MOVIE) {
+                return Holder.Success(DetailMediaMovie(
+                    media,
+                    api.getSimilar(id).map { it.toMedia(api.getBaseUrl()) },
+                    api.getBaseUrl())
+                )
+            }
+
+            throw RuntimeException("Media type of \"${media.type}\" is unmapped")
+        } catch (ex: InvalidStatusException) {
+            return handleError(ex)
+        }
     }
 
     override suspend fun getContinueWatching(): MediaSection {
@@ -49,9 +66,21 @@ class MediaRepositoryImpl @Inject constructor(
     }
 
     private suspend fun getEpisodesForMedia(media: BaseItemDto): List<EpisodeMedia> {
-        if (media.type !== SERIES) return emptyList()
-
         return api.getEpisodes(media.id)
-            .map { api.getItem(it.id).toEpisode(api.getBaseUrl()) }
+            .map { EpisodeMedia(api.getItem(it.id), api.getBaseUrl()) }
+    }
+
+    private fun <T>handleError(ex: InvalidStatusException): Holder<T> {
+        return when (ex.status) {
+            401 -> Holder.Error(JellyfinResponses.UNAUTHORIZED_RESPONSE.name)
+            400 -> {
+                println("Error ${ex.status} with msg ${ex.message}")
+
+                return Holder.Error(JellyfinResponses.BAD_REQUEST.name)
+            }
+            else -> {
+                throw ex
+            }
+        }
     }
 }

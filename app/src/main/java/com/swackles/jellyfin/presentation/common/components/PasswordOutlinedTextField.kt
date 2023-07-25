@@ -103,7 +103,7 @@ private fun PreviewPasswordOutlinedTextField() {
     PasswordOutlinedTextField(
         value = "",
         onValueChange = {},
-        label = { P("Password") })
+        label = { P(text = "Password") })
 }
 
 @Preview(showBackground = true)
@@ -112,7 +112,7 @@ private fun PreviewPasswordOutlinedTextFieldWithValue() {
     PasswordOutlinedTextField(
         value = "password",
         onValueChange = {},
-        label = { P("Password") })
+        label = { P(text = "Password") })
 }
 
 @Preview(showBackground = true)
@@ -121,7 +121,7 @@ private fun PreviewPasswordOutlinedTextFieldIsErrored() {
     PasswordOutlinedTextField(
         value = "",
         onValueChange = {},
-        label = { P("Password") },
+        label = { P(text = "Password") },
         isError = true,
-        supportingText = { P("Errored") })
+        supportingText = { P(text = "Errored") })
 }

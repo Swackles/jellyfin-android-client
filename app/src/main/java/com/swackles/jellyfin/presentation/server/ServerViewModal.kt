@@ -54,6 +54,7 @@ open class ServerViewModal @Inject constructor(
                         navigator.navigate(DashboardScreenDestination)
                     }
                     JellyfinResponses.UNAUTHORIZED_RESPONSE -> setError(ErrorKey.USERNAME, "Username or password is incorrect", isInitializing = false)
+                    else -> setError(ErrorKey.HOST, "Unknown error occurred")
                 }
             }
         }.launchIn(viewModelScope)
@@ -76,6 +77,7 @@ open class ServerViewModal @Inject constructor(
                 navigator.navigate(DashboardScreenDestination)
             }
             JellyfinResponses.UNAUTHORIZED_RESPONSE -> setError(ErrorKey.USERNAME, "Username or password is incorrect")
+            else -> setError(ErrorKey.HOST, "Unknown error occurred")
         }
 
         setLoading(false)

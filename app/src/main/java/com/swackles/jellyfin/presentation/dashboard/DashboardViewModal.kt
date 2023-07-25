@@ -14,7 +14,7 @@ open class DashboardViewModal @Inject constructor(
     getDashboardUseCase: GetDashboardUseCase
 ) : BaseScreenViewModal<List<MediaSection>>(getDashboardUseCase)
 
-private class StatePreview<T>(override val value: T) : State<T>
+class StatePreview<T>(override val value: T) : State<T>
 
 class PreviewDashboardViewModal constructor(
     _state: StateHolder<List<MediaSection>>

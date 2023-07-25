@@ -1,7 +1,9 @@
 package com.swackles.jellyfin.presentation.detail.tabs
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.runtime.Composable
@@ -10,7 +12,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.swackles.jellyfin.domain.models.DetailMedia
+import androidx.compose.ui.unit.dp
+import com.swackles.jellyfin.domain.models.DetailMediaBase
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.detail.tabs.Tabs.DETAILS
 import com.swackles.jellyfin.presentation.detail.tabs.Tabs.EPISODES
@@ -25,8 +28,10 @@ private enum class Tabs {
 
 @Composable
 fun DetailScreenTabs(
-    media: DetailMedia,
-    navigateToMediaView: (mediaId: UUID) -> Unit
+    media: DetailMediaBase,
+    navigateToMediaView: (mediaId: UUID) -> Unit,
+    toggleOverlay: () -> Unit,
+    activeSeason: Int
 ) {
     var state by remember { mutableStateOf( if(media.isSeries) EPISODES else SIMILAR ) }
     val tabs = if (media.isMovie) DetailScreenDataTabsProps.movieTabs
@@ -36,19 +41,21 @@ fun DetailScreenTabs(
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        TabRow(selectedTabIndex = tabs.indexOf(state)) {
+        TabRow(selectedTabIndex = tabs.indexOf(state), modifier = Modifier.padding(top = 10.dp)) {
             tabs.forEachIndexed { _, title ->
                 Tab(
-                    text = { P(title.name) },
+                    text = { P(text = title.name) },
                     selected = state == title,
                     onClick = { state = title }
                 )
             }
         }
-        when(state) {
-            EPISODES -> EpisodesTab(media)
-            SIMILAR -> SimilarTab(media.similar, navigateToMediaView = navigateToMediaView)
-            DETAILS -> DetailTab(media)
+        Box(modifier = Modifier.padding(20.dp)) {
+            when(state) {
+                EPISODES -> EpisodesTab(media.getEpisodes(), activeSeason, toggleOverlay)
+                SIMILAR -> SimilarTab(media.similar, navigateToMediaView = navigateToMediaView)
+                DETAILS -> DetailTab(media)
+            }
         }
     }
 }

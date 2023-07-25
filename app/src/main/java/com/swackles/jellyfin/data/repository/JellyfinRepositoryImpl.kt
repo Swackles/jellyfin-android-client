@@ -17,6 +17,7 @@ import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind.MOVIE
 import org.jellyfin.sdk.model.api.BaseItemKind.SERIES
 import org.jellyfin.sdk.model.api.ItemFilter
+import org.jellyfin.sdk.model.api.LocationType
 import org.jellyfin.sdk.model.api.SortOrder.DESCENDING
 import javax.inject.Inject
 
@@ -88,16 +89,18 @@ class JellyfinRepositoryImpl @Inject constructor(
     override suspend fun getSimilar(itemId: UUID): List<BaseItemDto> {
         return jellyfinClient.libraryApi.getSimilarItems(
             userId = getUserId(),
-            itemId = itemId
+            itemId = itemId,
+            limit = RECCOMENDED_COUNT
         ).content.items ?: emptyList()
     }
 
     override suspend fun getEpisodes(seriesId: UUID): List<BaseItemDto> {
-        return jellyfinClient.tvShowsApi.getEpisodes(
+        val episodes = jellyfinClient.tvShowsApi.getEpisodes(
             userId = getUserId(),
             seriesId = seriesId
         ).content.items ?: emptyList()
 
+        return episodes.filter { filterDuplicateEpisodes(episodes, it) }
     }
 
     override fun getBaseUrl(): String {
@@ -108,7 +111,18 @@ class JellyfinRepositoryImpl @Inject constructor(
         return jellyfinClient.userId!!
     }
 
+    // Due to bug with TVDB not removing missing media items after they created, need to filter out those missing items
+    private fun filterDuplicateEpisodes(episodes: List<BaseItemDto>, episode: BaseItemDto): Boolean {
+        val fileSystemEpisode = episodes.find {
+            it.locationType == LocationType.FILE_SYSTEM && it.indexNumber == episode.indexNumber && it.parentIndexNumber == episode.parentIndexNumber
+        }
+
+        return episode.locationType == LocationType.FILE_SYSTEM || fileSystemEpisode == null
+    }
+
     companion object {
+        private val RECCOMENDED_COUNT = 9
+
         @Volatile
         private var INSTANCE: ApiClient? = null
 

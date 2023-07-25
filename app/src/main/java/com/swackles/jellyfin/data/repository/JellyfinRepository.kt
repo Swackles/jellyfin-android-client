@@ -5,7 +5,8 @@ import org.jellyfin.sdk.model.api.BaseItemDto
 
 enum class JellyfinResponses {
     SUCCESSFULL,
-    UNAUTHORIZED_RESPONSE
+    UNAUTHORIZED_RESPONSE,
+    BAD_REQUEST,
 }
 
 interface JellyfinRepository {
