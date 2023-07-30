@@ -30,6 +30,7 @@ open class DetailMediaSeries(
     }
 
     override fun getSeasons() = episodes.mapNotNull { it.season }.distinct()
+    override fun getEpisodes() = episodes.groupBy { it.season ?: 0 }
 
     override fun getInfo() = listOfNotNull(
         baseItem.premiereDate?.year.toString(),

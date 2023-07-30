@@ -2,11 +2,12 @@ package com.swackles.jellyfin.data.models
 
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import com.swackles.jellyfin.data.extensions.durationString
+import com.swackles.jellyfin.data.extensions.playedPercentage
 import org.jellyfin.sdk.model.DateTime
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.ImageType
 import java.time.format.DateTimeFormatter
-import kotlin.math.roundToInt
 
 open class EpisodeMedia (
     private val baseItem: BaseItemDto,
@@ -42,20 +43,7 @@ open class EpisodeMedia (
 
     fun getSubText(): String = getMissingOrExistingVariable(getAiredString(), getDurationString())
 
-    fun getDurationString(): String {
-        if (isMissing()) return ""
-
-        var minutes = (baseItem.runTimeTicks!!.toLong() / 600000000.0).roundToInt()
-        val hours = kotlin.math.floor(minutes / 60.0).toInt()
-        minutes -= hours * 60
-
-        var durationString = ""
-
-        if (hours > 0) durationString += "$hours hours"
-        if (minutes > 0) durationString += "$minutes min"
-
-        return durationString
-    }
+    fun getDurationString() = baseItem.durationString()
 
     fun getAiredString(): String {
         val formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM y")
@@ -69,7 +57,7 @@ open class EpisodeMedia (
     private fun <T>getMissingOrExistingVariable(missingVar: T, existingVar: T): T =
         if (isMissing()) missingVar else existingVar
 
-    private fun playedPercentage() = if (isCompleted()) 100.0f else baseItem.userData?.playedPercentage?.toFloat() ?: .0f
+    private fun playedPercentage() = baseItem.playedPercentage()
     private fun isCompleted() = baseItem.userData?.played ?: false
 }
 

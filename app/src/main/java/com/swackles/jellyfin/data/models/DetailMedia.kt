@@ -2,9 +2,6 @@ package com.swackles.jellyfin.data.models
 
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import com.swackles.jellyfin.data.models.EpisodeMedia
-import com.swackles.jellyfin.data.models.Media
-import com.swackles.jellyfin.data.models.PlayShortcutInfo
 import java.util.UUID
 
 interface DetailMedia {
@@ -17,7 +14,6 @@ interface DetailMedia {
     val directors: List<String>
     val writers: List<String>
     val producers: List<String>
-    val playedPercentage: Float
     val isMovie: Boolean
     val isSeries: Boolean
 
