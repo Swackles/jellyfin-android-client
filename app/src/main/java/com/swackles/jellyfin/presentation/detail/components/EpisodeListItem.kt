@@ -26,11 +26,12 @@ import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.common.progressStatus
 import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
 import org.jellyfin.sdk.model.DateTime
+import org.jellyfin.sdk.model.UUID
 
 @Composable
-fun EpisodeListItem(media: EpisodeMedia) {
+fun EpisodeListItem(media: EpisodeMedia, playVideo: (id: UUID, startPosition: Long) -> Unit) {
     Surface(
-        onClick = { println("Play media") } ,
+        onClick = { playVideo(media.id, media.playbackPositionTicks) } ,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(
@@ -88,7 +89,7 @@ private fun PreviewEpisodeListItem(isDarkTheme: Boolean) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            EpisodeListItem(EpisodeMediaPreview(0f, 1, 1, R.drawable.episode_thumbnail_image_1))
+            EpisodeListItem(EpisodeMediaPreview(0f, 1, 1, R.drawable.episode_thumbnail_image_1)) { _, _ -> }
         }
     }
 }
@@ -111,7 +112,7 @@ private fun PreviewEpisodeListItemWithProgress(isDarkTheme: Boolean) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            EpisodeListItem(EpisodeMediaPreview(.44f, 1, 1, R.drawable.episode_thumbnail_image_1))
+            EpisodeListItem(EpisodeMediaPreview(.44f, 1, 1, R.drawable.episode_thumbnail_image_1)) { _, _ -> }
         }
     }
 }
@@ -134,7 +135,7 @@ private fun PreviewEpisodeListItemMissingAired(isDarkTheme: Boolean) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            EpisodeListItem(EpisodeMediaMissingPreview(1, 1, DateTime.now().minusMonths(4)))
+            EpisodeListItem(EpisodeMediaMissingPreview(1, 1, DateTime.now().minusMonths(4))) { _, _ -> }
         }
     }
 }
@@ -157,7 +158,7 @@ private fun PreviewEpisodeListItemMissingComingSoon(isDarkTheme: Boolean) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            EpisodeListItem(EpisodeMediaMissingPreview(1, 1, DateTime.now().plusMonths(4)))
+            EpisodeListItem(EpisodeMediaMissingPreview(1, 1, DateTime.now().plusMonths(4))) { _, _ -> }
         }
     }
 }

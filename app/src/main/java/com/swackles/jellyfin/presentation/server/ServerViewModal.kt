@@ -6,9 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.swackles.jellyfin.data.enums.JellyfinResponses
 import com.swackles.jellyfin.data.repository.JellyfinRepository
 import com.swackles.jellyfin.data.repository.JellyfinRepositoryPreview
-import com.swackles.jellyfin.data.repository.JellyfinResponses
 import com.swackles.jellyfin.domain.models.Server
 import com.swackles.jellyfin.domain.repository.ServerRepository
 import com.swackles.jellyfin.domain.repository.ServerRepositoryPreview
@@ -50,7 +50,7 @@ open class ServerViewModal @Inject constructor(
             println("host: ${it?.host}; username ${it?.username}")
             if (it != null) {
                 when(jellyfinRepository.login(it.host, it.username, it.password)) {
-                    JellyfinResponses.SUCCESSFULL -> {
+                    JellyfinResponses.SUCCESSFUL -> {
                         navigator.navigate(DashboardScreenDestination)
                     }
                     JellyfinResponses.UNAUTHORIZED_RESPONSE -> setError(ErrorKey.USERNAME, "Username or password is incorrect", isInitializing = false)
@@ -72,7 +72,7 @@ open class ServerViewModal @Inject constructor(
         val server = _serverUiState.server
 
         when(jellyfinRepository.login(server.host, server.username, server.password)) {
-            JellyfinResponses.SUCCESSFULL -> {
+            JellyfinResponses.SUCCESSFUL -> {
                 serverRepository.addServer(server)
                 navigator.navigate(DashboardScreenDestination)
             }

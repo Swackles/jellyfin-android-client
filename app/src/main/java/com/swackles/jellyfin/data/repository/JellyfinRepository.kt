@@ -1,13 +1,9 @@
 package com.swackles.jellyfin.data.repository
 
+import com.swackles.jellyfin.data.enums.JellyfinResponses
 import org.jellyfin.sdk.model.UUID
 import org.jellyfin.sdk.model.api.BaseItemDto
-
-enum class JellyfinResponses {
-    SUCCESSFULL,
-    UNAUTHORIZED_RESPONSE,
-    BAD_REQUEST,
-}
+import org.jellyfin.sdk.model.api.PlaybackInfoResponse
 
 interface JellyfinRepository {
     suspend fun login(hostname: String, username: String, password: String): JellyfinResponses
@@ -23,6 +19,10 @@ interface JellyfinRepository {
     suspend fun getSimilar(itemId: UUID): List<BaseItemDto>
 
     suspend fun getEpisodes(seriesId: UUID): List<BaseItemDto>
+
+    suspend fun getMetadata(itemId: UUID): PlaybackInfoResponse
+
+    fun getHeaders(): HashMap<String, String>
 
     fun getBaseUrl(): String
 }

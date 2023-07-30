@@ -17,6 +17,7 @@ fun JellyfinApp() {
         bottomBar = { BottomBar(navController = navController) }
     ) {
         DestinationsNavHost(
+            navController = navController,
             navGraph = NavGraphs.root,
             modifier = Modifier.padding(it).fillMaxSize(),
         )

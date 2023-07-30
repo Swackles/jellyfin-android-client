@@ -26,7 +26,6 @@ abstract class DetailMediaBase(
     override val playedPercentage = baseItem.userData?.playedPercentage?.div(100)?.toFloat() ?: .0f
     override val isMovie = baseItem.type == BaseItemKind.MOVIE
     override val isSeries = baseItem.type == BaseItemKind.SERIES
-    override val isInProgress = (baseItem.userData?.playedPercentage ?: .0) > 0
 
     private val primaryImageAspectRatio = baseItem.primaryImageAspectRatio?.toFloat() ?: .75f
 
@@ -43,7 +42,7 @@ abstract class DetailMediaBase(
             genres.first()
         )
 
-    override fun getDurationString(): String {
+    fun getDurationString(): String {
         if (baseItem.runTimeTicks == null) return ""
 
         var minutes = (baseItem.runTimeTicks!!.toLong() / 600000000.0).roundToInt()

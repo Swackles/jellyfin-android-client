@@ -1,8 +1,8 @@
 package com.swackles.jellyfin.domain.repository
 
 import com.swackles.jellyfin.common.Holder
+import com.swackles.jellyfin.data.enums.JellyfinResponses
 import com.swackles.jellyfin.data.repository.JellyfinRepository
-import com.swackles.jellyfin.data.repository.JellyfinResponses
 import com.swackles.jellyfin.domain.models.DetailMediaBase
 import com.swackles.jellyfin.domain.models.EpisodeMedia
 import com.swackles.jellyfin.domain.models.MediaSection

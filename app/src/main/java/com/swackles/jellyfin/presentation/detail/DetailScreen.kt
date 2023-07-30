@@ -42,6 +42,7 @@ import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.swackles.jellyfin.domain.models.DetailMediaBase
 import com.swackles.jellyfin.domain.models.DetailMediaMoviePreview
 import com.swackles.jellyfin.domain.models.DetailMediaSeriesPreview
+import com.swackles.jellyfin.domain.models.PlayShortcutInfo
 import com.swackles.jellyfin.presentation.common.colors.primaryAssistChipBorder
 import com.swackles.jellyfin.presentation.common.colors.primaryAssistChipColors
 import com.swackles.jellyfin.presentation.common.colors.primaryButtonColors
@@ -49,6 +50,7 @@ import com.swackles.jellyfin.presentation.common.colors.primaryButtonContentPadd
 import com.swackles.jellyfin.presentation.common.components.H2
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.destinations.DetailScreenDestination
+import com.swackles.jellyfin.presentation.destinations.PlayerScreenDestination
 import com.swackles.jellyfin.presentation.detail.components.BannerImage
 import com.swackles.jellyfin.presentation.detail.components.LogoImage
 import com.swackles.jellyfin.presentation.detail.tabs.DetailScreenTabs
@@ -100,11 +102,16 @@ fun DetailScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        HeaderBox(state.data)
+                        HeaderBox(state.data) { id, startPosition ->
+                            navigator.navigate(
+                                PlayerScreenDestination(id, startPosition)
+                            )
+                        }
                         DetailScreenTabs(state.data,
                             navigateToMediaView = { navigator.navigate(DetailScreenDestination(it)) },
                             activeSeason = state.activeSeason,
-                            toggleOverlay = viewModal::toggleOverlay
+                            toggleOverlay = viewModal::toggleOverlay,
+                            playVideo = { id, startPosition -> navigator.navigate(PlayerScreenDestination(id, startPosition)) }
                         )
                     }
                 }
@@ -115,7 +122,7 @@ fun DetailScreen(
 }
 
 @Composable
-private fun HeaderBox(media: DetailMediaBase) {
+private fun HeaderBox(media: DetailMediaBase, playVideo: (id: UUID, startPosition: Long) -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -126,24 +133,24 @@ private fun HeaderBox(media: DetailMediaBase) {
         Spacer(modifier = Modifier.size(5.dp))
         InfoRow(media.getInfo())
         Spacer(modifier = Modifier.size(15.dp))
-        PlayButtonAndProgressBar(media)
+        PlayButtonAndProgressBar(media.getPlayShortcutInfo(), playVideo)
         Spacer(modifier = Modifier.size(15.dp))
         if (media.overview.isNotBlank()) P(text = media.overview, modifier = Modifier.padding(horizontal = 5.dp))
     }
 }
 
 @Composable
-private fun PlayButtonAndProgressBar(media: DetailMediaBase) {
+private fun PlayButtonAndProgressBar(info: PlayShortcutInfo, playVideo: (id: UUID, startPosition: Long) -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        if (media.isInProgress) {
+        if (info.isInProgress) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                media.getProgressBarLabels().map {
+                info.labels.map {
                     P(text = it.text, align = it.align, modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f))
                 }
             }
-            LinearProgressIndicator(progress = media.playedPercentage, modifier = Modifier.fillMaxWidth())
+            LinearProgressIndicator(progress = info.progress, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.size(5.dp))
         }
         Button(
@@ -151,9 +158,9 @@ private fun PlayButtonAndProgressBar(media: DetailMediaBase) {
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.primaryButtonColors(),
             contentPadding = ButtonDefaults.primaryButtonContentPadding(),
-            onClick = { /*TODO*/ }) {
+            onClick = { playVideo(info.mediaId, info.startPosition) }) {
             Icon(imageVector = Icons.Outlined.PlayArrow, contentDescription = "play arrow")
-            P(text = if (media.isInProgress) "Continue Watching" else "Play")
+            P(text = if (info.isInProgress) "Continue Watching" else "Play")
         }
     }
 }

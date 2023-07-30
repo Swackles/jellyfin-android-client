@@ -14,25 +14,25 @@ open class DetailMediaSeries(
     episodes,
     baseUrl
 ) {
-    override val isInProgress = true
+    override fun getPlayShortcutInfo(): PlayShortcutInfo {
+        val episode = episodes.firstOrNull { it.isInProgress() } ?: episodes.first()
+
+        return PlayShortcutInfo(
+            progress = episode.progress(),
+            labels = listOf(
+                DetailMediaBarLabels("S${episode.season} E${episode.episode} \"${episode.title}\"", TextAlign.Left),
+                DetailMediaBarLabels(episode.getDurationString(), TextAlign.Right),
+            ),
+            mediaId = episode.id,
+            startPosition = episode.playbackPositionTicks,
+            isInProgress = true
+        )
+    }
 
     override fun getSeasons() = episodes.mapNotNull { it.season }.distinct()
-
-    override fun getDurationString() = getInProgressEpisode().getDurationString()
 
     override fun getInfo() = listOfNotNull(
         baseItem.premiereDate?.year.toString(),
         genres.first()
     )
-
-    override fun getProgressBarLabels(): List<DetailMediaBarLabels> {
-        val episode = getInProgressEpisode()
-
-        return listOf(
-            DetailMediaBarLabels("S${episode.season} E${episode.episode} \"${episode.title}\"", TextAlign.Left),
-            DetailMediaBarLabels(getDurationString(), TextAlign.Right),
-        )
-    }
-
-    private fun getInProgressEpisode() = episodes.firstOrNull { it.isInProgress() } ?: episodes.first()
 }

@@ -15,6 +15,7 @@ import com.swackles.jellyfin.presentation.NavGraphs
 import com.swackles.jellyfin.presentation.appCurrentDestinationAsState
 import com.swackles.jellyfin.presentation.destinations.DashboardScreenDestination
 import com.swackles.jellyfin.presentation.destinations.Destination
+import com.swackles.jellyfin.presentation.destinations.PlayerScreenDestination
 import com.swackles.jellyfin.presentation.startAppDestination
 
 private enum class BottomBarDestinations(
@@ -25,10 +26,13 @@ private enum class BottomBarDestinations(
     Greeting(DashboardScreenDestination, Icons.Default.Home, "Home")
 }
 
+
 @Composable
 fun BottomBar(navController: NavController) {
     val currentDestination: Destination = navController.appCurrentDestinationAsState().value
         ?: NavGraphs.root.startAppDestination
+
+    if (BottomBarConstants.ignoredPaths.contains(currentDestination)) return
 
     NavigationBar {
         BottomBarDestinations.values().forEach { destination ->
@@ -40,4 +44,8 @@ fun BottomBar(navController: NavController) {
             )
         }
     }
+}
+
+private object BottomBarConstants {
+    val ignoredPaths = listOf(PlayerScreenDestination)
 }

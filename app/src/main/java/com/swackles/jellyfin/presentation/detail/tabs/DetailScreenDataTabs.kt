@@ -31,6 +31,7 @@ fun DetailScreenTabs(
     media: DetailMediaBase,
     navigateToMediaView: (mediaId: UUID) -> Unit,
     toggleOverlay: () -> Unit,
+    playVideo: (id: UUID, startPosition: Long) -> Unit,
     activeSeason: Int
 ) {
     var state by remember { mutableStateOf( if(media.isSeries) EPISODES else SIMILAR ) }
@@ -52,7 +53,7 @@ fun DetailScreenTabs(
         }
         Box(modifier = Modifier.padding(20.dp)) {
             when(state) {
-                EPISODES -> EpisodesTab(media.getEpisodes(), activeSeason, toggleOverlay)
+                EPISODES -> EpisodesTab(media.getEpisodes(), activeSeason, toggleOverlay, playVideo)
                 SIMILAR -> SimilarTab(media.similar, navigateToMediaView = navigateToMediaView)
                 DETAILS -> DetailTab(media)
             }

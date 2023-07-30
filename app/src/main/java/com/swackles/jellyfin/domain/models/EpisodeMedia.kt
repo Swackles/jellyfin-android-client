@@ -17,6 +17,7 @@ open class EpisodeMedia (
     val season = baseItem.parentIndexNumber
     val title = if(hasAired()) "$episode. ${baseItem.name}" else baseItem.name ?: "Episode $episode"
     val overview = baseItem.overview ?: ""
+    val playbackPositionTicks = baseItem.userData?.playbackPositionTicks ?: 0
 
     fun hasAired() = (baseItem.premiereDate ?: DateTime.now()) < DateTime.now()
     fun isMissing() = baseItem.runTimeTicks == null

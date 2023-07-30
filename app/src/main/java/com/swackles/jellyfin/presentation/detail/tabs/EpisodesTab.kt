@@ -23,9 +23,16 @@ import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.detail.components.EpisodeListItem
 import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
 import org.jellyfin.sdk.model.DateTime
+import org.jellyfin.sdk.model.UUID
 
 @Composable
-fun EpisodesTab(episodes: Map<Int, List<EpisodeMedia>>, activeSeason: Int, toggleOverlay: () -> Unit) {
+fun EpisodesTab(
+    episodes: Map<Int,
+    List<EpisodeMedia>>,
+    activeSeason: Int,
+    toggleOverlay: () -> Unit,
+    playVideo: (id: UUID, startPosition: Long) -> Unit
+) {
     val hasMultipleSeasons = episodes.keys.size > 1
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -38,7 +45,7 @@ fun EpisodesTab(episodes: Map<Int, List<EpisodeMedia>>, activeSeason: Int, toggl
             trailingIcon = { if (hasMultipleSeasons) Icon(Icons.Outlined.ExpandMore, contentDescription = "Season select caret", tint = MaterialTheme.colorScheme.onSurface) }
         )
         episodes[activeSeason]!!.map {
-            EpisodeListItem(media = it)
+            EpisodeListItem(media = it, playVideo)
         }
     }
 }
@@ -60,8 +67,8 @@ private fun PreviewEpisodeTab(isDarkTheme: Boolean) {
                         EpisodeMediaPreview(0f, 5, 1, R.drawable.episode_thumbnail_image_5),
                         EpisodeMediaMissingPreview(3, 1, DateTime.now().plusMonths(4)),
                     ))
-                ), 1
-            ) {}
+                ), 1, {}
+            ) { _, _ -> }
         }
     }
 }
@@ -99,8 +106,8 @@ private fun PreviewEpisodeTabHasMultipleSeasons(isDarkTheme: Boolean) {
                         EpisodeMediaPreview(1f, 1, 2, R.drawable.episode_thumbnail_image_2),
                         EpisodeMediaPreview(.44f, 3, 2, R.drawable.episode_thumbnail_image_3)
                     ))
-                ), 1
-            ) {}
+                ), 1, {}
+            ) { _, _ -> }
         }
     }
 }

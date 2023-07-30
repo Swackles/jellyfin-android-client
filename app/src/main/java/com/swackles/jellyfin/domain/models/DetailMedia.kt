@@ -17,8 +17,8 @@ interface DetailMedia {
     val playedPercentage: Float
     val isMovie: Boolean
     val isSeries: Boolean
-    val isInProgress: Boolean
 
+    fun getPlayShortcutInfo(): PlayShortcutInfo
     fun getSeasons(): List<Int>
     fun getEpisodes(): Map<Int, List<EpisodeMedia>>
     fun getPosterImageHeight(width: Dp): Dp
@@ -26,6 +26,4 @@ interface DetailMedia {
     fun getBackdropUrl(density: Density, width: Dp? = null, height: Dp? = null): String
     fun getLogoUrl(density: Density, width: Dp? = null, height: Dp? = null): String
     fun getInfo(): List<String>
-    fun getDurationString(): String
-    fun getProgressBarLabels(): List<DetailMediaBarLabels>
 }

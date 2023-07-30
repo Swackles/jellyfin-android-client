@@ -1,12 +1,14 @@
 package com.swackles.jellyfin.data.repository
 
 import android.content.Context
+import com.swackles.jellyfin.data.enums.JellyfinResponses
 import org.jellyfin.sdk.Jellyfin
 import org.jellyfin.sdk.api.client.ApiClient
 import org.jellyfin.sdk.api.client.exception.InvalidStatusException
 import org.jellyfin.sdk.api.client.extensions.authenticateUserByName
 import org.jellyfin.sdk.api.client.extensions.itemsApi
 import org.jellyfin.sdk.api.client.extensions.libraryApi
+import org.jellyfin.sdk.api.client.extensions.mediaInfoApi
 import org.jellyfin.sdk.api.client.extensions.tvShowsApi
 import org.jellyfin.sdk.api.client.extensions.userApi
 import org.jellyfin.sdk.api.client.extensions.userLibraryApi
@@ -18,8 +20,10 @@ import org.jellyfin.sdk.model.api.BaseItemKind.MOVIE
 import org.jellyfin.sdk.model.api.BaseItemKind.SERIES
 import org.jellyfin.sdk.model.api.ItemFilter
 import org.jellyfin.sdk.model.api.LocationType
+import org.jellyfin.sdk.model.api.PlaybackInfoResponse
 import org.jellyfin.sdk.model.api.SortOrder.DESCENDING
 import javax.inject.Inject
+
 
 class JellyfinRepositoryImpl @Inject constructor(
     private val jellyfinClient: ApiClient,
@@ -43,7 +47,7 @@ class JellyfinRepositoryImpl @Inject constructor(
         }
 
         INSTANCE = client
-        return JellyfinResponses.SUCCESSFULL
+        return JellyfinResponses.SUCCESSFUL
     }
 
     override suspend fun getItem(itemId: UUID): BaseItemDto {
@@ -103,9 +107,26 @@ class JellyfinRepositoryImpl @Inject constructor(
         return episodes.filter { filterDuplicateEpisodes(episodes, it) }
     }
 
+    override suspend fun getMetadata(itemId: UUID): PlaybackInfoResponse =
+        jellyfinClient.mediaInfoApi.getPlaybackInfo(itemId, getUserId()).content
+
     override fun getBaseUrl(): String {
+        jellyfinClient.clientInfo.name
         return jellyfinClient.baseUrl!!
     }
+
+    override fun getHeaders(): HashMap<String, String> {
+        val values = listOf(
+            "Token=\"${jellyfinClient.accessToken}\"",
+            "Client=\"${jellyfinClient.clientInfo.name}\"",
+            "Version=\"${jellyfinClient.clientInfo.version}\"",
+            "DeviceId=\"${jellyfinClient.deviceInfo.id}\"",
+            "Device=\"${jellyfinClient.deviceInfo.name}\""
+        )
+
+        return hashMapOf(Pair("Authorization", "MediaBrowser ${values.joinToString(", ")}"))
+    }
+
 
     private fun getUserId(): UUID {
         return jellyfinClient.userId!!
