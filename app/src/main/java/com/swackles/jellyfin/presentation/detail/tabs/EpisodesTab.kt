@@ -14,9 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.swackles.jellyfin.R
-import com.swackles.jellyfin.domain.models.EpisodeMediaMissingPreview
-import com.swackles.jellyfin.domain.models.EpisodeMedia
-import com.swackles.jellyfin.domain.models.EpisodeMediaPreview
+import com.swackles.jellyfin.data.models.EpisodeMediaMissingPreview
+import com.swackles.jellyfin.data.models.EpisodeMedia
+import com.swackles.jellyfin.data.models.EpisodeMediaPreview
 import com.swackles.jellyfin.presentation.common.colors.variantAssistChipBorder
 import com.swackles.jellyfin.presentation.common.colors.variantAssistChipColors
 import com.swackles.jellyfin.presentation.common.components.P

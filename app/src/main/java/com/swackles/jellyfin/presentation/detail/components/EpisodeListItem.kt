@@ -18,9 +18,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.swackles.jellyfin.R
-import com.swackles.jellyfin.domain.models.EpisodeMediaMissingPreview
-import com.swackles.jellyfin.domain.models.EpisodeMedia
-import com.swackles.jellyfin.domain.models.EpisodeMediaPreview
+import com.swackles.jellyfin.data.models.EpisodeMediaMissingPreview
+import com.swackles.jellyfin.data.models.EpisodeMedia
+import com.swackles.jellyfin.data.models.EpisodeMediaPreview
 import com.swackles.jellyfin.presentation.common.components.Image
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.common.progressStatus

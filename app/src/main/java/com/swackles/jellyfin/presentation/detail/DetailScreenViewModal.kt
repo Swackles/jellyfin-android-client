@@ -6,9 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.swackles.jellyfin.common.Holder
-import com.swackles.jellyfin.domain.models.DetailMediaBase
-import com.swackles.jellyfin.domain.repository.MediaRepositoryPreview
-import com.swackles.jellyfin.domain.useCase.GetDetailUseCase
+import com.swackles.jellyfin.data.models.DetailMediaBase
+import com.swackles.jellyfin.data.repository.MediaRepositoryPreview
+import com.swackles.jellyfin.data.useCase.GetDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

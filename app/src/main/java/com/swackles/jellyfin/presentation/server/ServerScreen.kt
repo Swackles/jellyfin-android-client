@@ -22,7 +22,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.swackles.jellyfin.domain.models.Server
+import com.swackles.jellyfin.data.models.Server
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.common.components.PasswordOutlinedTextField
 import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme

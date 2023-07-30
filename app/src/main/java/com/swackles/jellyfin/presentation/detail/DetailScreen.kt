@@ -39,10 +39,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.swackles.jellyfin.domain.models.DetailMediaBase
-import com.swackles.jellyfin.domain.models.DetailMediaMoviePreview
-import com.swackles.jellyfin.domain.models.DetailMediaSeriesPreview
-import com.swackles.jellyfin.domain.models.PlayShortcutInfo
+import com.swackles.jellyfin.data.models.DetailMediaBase
+import com.swackles.jellyfin.data.models.DetailMediaMoviePreview
+import com.swackles.jellyfin.data.models.DetailMediaSeriesPreview
+import com.swackles.jellyfin.data.models.PlayShortcutInfo
 import com.swackles.jellyfin.presentation.common.colors.primaryAssistChipBorder
 import com.swackles.jellyfin.presentation.common.colors.primaryAssistChipColors
 import com.swackles.jellyfin.presentation.common.colors.primaryButtonColors

@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
-import com.swackles.jellyfin.domain.models.Media
+import com.swackles.jellyfin.data.models.Media
 import com.swackles.jellyfin.presentation.common.components.mediaSection.MediaCard
 import java.util.UUID
 

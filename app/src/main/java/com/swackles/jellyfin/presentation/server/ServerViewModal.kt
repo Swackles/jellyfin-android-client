@@ -9,9 +9,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.data.enums.JellyfinResponses
 import com.swackles.jellyfin.data.repository.JellyfinRepository
 import com.swackles.jellyfin.data.repository.JellyfinRepositoryPreview
-import com.swackles.jellyfin.domain.models.Server
-import com.swackles.jellyfin.domain.repository.ServerRepository
-import com.swackles.jellyfin.domain.repository.ServerRepositoryPreview
+import com.swackles.jellyfin.data.models.Server
+import com.swackles.jellyfin.data.repository.ServerRepository
+import com.swackles.jellyfin.data.repository.ServerRepositoryPreview
 import com.swackles.jellyfin.presentation.destinations.DashboardScreenDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn

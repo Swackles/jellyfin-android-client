@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.swackles.jellyfin.domain.models.Media
+import com.swackles.jellyfin.data.models.Media
 import com.swackles.jellyfin.presentation.common.progressStatus
 import java.util.UUID
 

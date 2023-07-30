@@ -7,7 +7,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.swackles.jellyfin.domain.models.DetailMediaBase
+import com.swackles.jellyfin.data.models.DetailMediaBase
 import com.swackles.jellyfin.presentation.common.components.Image
 
 @Composable
