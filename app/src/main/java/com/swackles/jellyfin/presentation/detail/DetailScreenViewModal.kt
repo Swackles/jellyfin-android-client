@@ -39,9 +39,13 @@ open class DetailScreenViewModal @Inject constructor(
             when(result) {
                 is Holder.Success -> {
                     println("DetailScreenViewModal - LOADED DATA - SUCCESS")
+
+                    val activeSeason = if (result.data!!.isSeries) result.data.getSeasons().first { it > 0 }
+                        else 0
+
                     _state = DetailScreenState(
                         data = result.data,
-                        activeSeason = result.data!!.getSeasons().first { it > 0 }
+                        activeSeason = activeSeason
                     )
                 }
                 is Holder.Error -> {
