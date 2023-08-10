@@ -11,10 +11,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun H2(text: String) {
+fun H2(text: String, color: Color? = null) {
     BaseText(
         text = text,
-        style = MaterialTheme.typography.titleMedium
+        style = MaterialTheme.typography.titleMedium,
+        color = color
     )
 }
 @Composable
@@ -34,6 +35,22 @@ fun P(modifier: Modifier = Modifier, text: String, isError: Boolean = false, ali
         isError = isError,
         align = align,
         modifier = modifier)
+}
+
+@Composable
+fun Label(modifier: Modifier = Modifier,
+          text: String,
+          isError: Boolean = false,
+          align: TextAlign? = null,
+          color: Color? = null) {
+    BaseText(
+        text = text,
+        style = MaterialTheme.typography.labelSmall,
+        isError = isError,
+        align = align,
+        modifier = modifier,
+        color = color ?: Color.White
+    )
 }
 
 @Composable

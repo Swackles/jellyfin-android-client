@@ -104,7 +104,10 @@ fun DetailScreen(
                     ) {
                         HeaderBox(state.data) { id, startPosition ->
                             navigator.navigate(
-                                PlayerScreenDestination(id, startPosition)
+                                PlayerScreenDestination(
+                                    id = id,
+                                    startPosition = startPosition,
+                                    isTvShow = viewModal.getState().data?.isSeries ?: false)
                             )
                         }
                         DetailScreenTabs(state.data,

@@ -26,10 +26,11 @@ object PlayerModule {
         val datasource = DefaultHttpDataSource.Factory()
             .setDefaultRequestProperties(jellyfinRepository.getHeaders())
 
-        println("===== provideVideoPlayer =====")
-        println(jellyfinRepository.getHeaders())
-
         return ExoPlayer.Builder(app)
+            .apply {
+                setSeekBackIncrementMs(PLAYER_SEEK_INCREMENT)
+                setSeekForwardIncrementMs(PLAYER_SEEK_INCREMENT)
+            }
             .setMediaSourceFactory(DefaultMediaSourceFactory(datasource))
             .build()
     }
@@ -39,3 +40,5 @@ object PlayerModule {
     fun provideMetaDataReader(api: JellyfinRepository): VideoMetadataReader =
         VideoMetadataReaderImpl(api)
 }
+
+private const val PLAYER_SEEK_INCREMENT = 10 * 1000L // 10 seconds
