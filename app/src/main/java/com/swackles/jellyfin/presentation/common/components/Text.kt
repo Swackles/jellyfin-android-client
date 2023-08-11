@@ -28,13 +28,14 @@ fun H5(text: String) {
 }
 
 @Composable
-fun P(modifier: Modifier = Modifier, text: String, isError: Boolean = false, align: TextAlign? = null) {
+fun P(modifier: Modifier = Modifier, text: String, isError: Boolean = false, align: TextAlign? = null, color: Color? = null) {
     BaseText(
         text = text,
         style = MaterialTheme.typography.bodyMedium,
         isError = isError,
         align = align,
-        modifier = modifier)
+        modifier = modifier,
+        color = color)
 }
 
 @Composable
