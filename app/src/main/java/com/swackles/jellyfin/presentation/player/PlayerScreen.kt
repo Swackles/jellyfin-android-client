@@ -27,6 +27,7 @@ import com.swackles.jellyfin.presentation.common.Overlay
 import com.swackles.jellyfin.presentation.common.components.H2
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.player.controls.PlayerControls
+import com.swackles.jellyfin.presentation.player.overlays.LanguageAndSubtitlesOverlay
 import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
 import java.util.UUID
 

@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import org.jellyfin.sdk.model.api.MediaSourceInfo
+import org.jellyfin.sdk.model.api.MediaStream
+import org.jellyfin.sdk.model.api.MediaStreamType
 import org.jellyfin.sdk.model.api.PlaybackInfoResponse
 import java.util.UUID
 
@@ -22,6 +24,21 @@ class VideoMetadata(
     }
 
     fun getMediaItem(): MediaItem = getMediaItem(getMediaSource())
+
+    fun getAudios(): List<MediaStreams> =
+        getMediaStreamOfType(MediaStreamType.AUDIO).map { MediaStreams(
+            title = "${it.language} [${it.channelLayout}]",
+            index = it.index
+        ) }
+
+    fun getSubtitles(): List<MediaStreams> =
+        getMediaStreamOfType(MediaStreamType.AUDIO).map { MediaStreams(
+            title = "${it.language}",
+            index = it.index
+        ) }
+
+    private fun getMediaStreamOfType(type: MediaStreamType): List<MediaStream> =
+        metadata.mediaSources.first().mediaStreams?.filter { it.type == type } ?: emptyList()
 
 
     private fun getMediaItem(source: MediaSourceInfo): MediaItem {

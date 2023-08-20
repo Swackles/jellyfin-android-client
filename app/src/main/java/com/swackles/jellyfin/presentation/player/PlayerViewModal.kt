@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
+import com.swackles.jellyfin.data.models.MediaStreams
 import com.swackles.jellyfin.data.repository.VideoMetadataReader
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,14 +17,17 @@ import java.util.UUID
 import javax.inject.Inject
 
 data class PlayerUiState(
-    val isVisible: Boolean = true,
+    val isControlsVisible: Boolean = true,
+    val isAudioAndSubtitleSelectVisible: Boolean = false,
     val isLoading: Boolean = true,
     val isTvShow: Boolean = false,
     val isPlaying: Boolean = false,
     val isLastEpisode: Boolean = false,
     val totalDuration: Long = 100,
     val currentTime: Long = 0,
-    val bufferedPercentage: Int = 0
+    val bufferedPercentage: Int = 0,
+    val subtitles: List<MediaStreams> = emptyList(),
+    val audios: List<MediaStreams> = emptyList()
 )
 
 @HiltViewModel
@@ -79,7 +83,11 @@ class PlayerViewModal @Inject constructor(
 
         player.setMediaItem(metadata.getMediaItem())
         player.seekTo(startPosition / 10000)
-        _state = _state.copy(isLoading = false)
+        _state = _state.copy(
+            isLoading = false,
+            subtitles = metadata.getSubtitles(),
+            audios = metadata.getAudios()
+        )
     }
 
     override fun onCleared() {
@@ -90,7 +98,11 @@ class PlayerViewModal @Inject constructor(
     }
 
     fun toggleControls() {
-        _state = _state.copy(isVisible = !_state.isVisible)
+        _state = _state.copy(isControlsVisible = !_state.isControlsVisible)
+    }
+
+    fun toggleAudioAndSubtitle() {
+        _state = _state.copy(isControlsVisible = !_state.isControlsVisible, isAudioAndSubtitleSelectVisible = !_state.isAudioAndSubtitleSelectVisible)
     }
 
     fun togglePlay() {

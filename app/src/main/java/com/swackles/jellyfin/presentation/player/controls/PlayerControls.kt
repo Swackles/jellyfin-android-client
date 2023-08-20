@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.swackles.jellyfin.presentation.player.PlayerUiState
+import com.swackles.jellyfin.presentation.player.overlays.LanguageAndSubtitlesOverlay
 import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -30,7 +31,7 @@ fun PlayerControls(
 ) {
     AnimatedVisibility(
         modifier = modifier,
-        visible = state.isVisible,
+        visible = state.isControlsVisible,
         enter = fadeIn(),
         exit = fadeOut()
     ) {
@@ -92,6 +93,14 @@ fun PlayerControls(
             )
         }
     }
+
+    LanguageAndSubtitlesOverlay(
+        showOverlay = state.isAudioAndSubtitleSelectVisible,
+        activeAudio = 0,
+        audios = state.audios,
+        activeSubtitle = 0,
+        subtitles = state.subtitles
+    )
 }
 
 @Composable
@@ -102,7 +111,7 @@ private fun PreviewLoadingTvShowPlayerControls() {
         totalDuration = 1000,
         currentTime = 255,
         bufferedPercentage = 50,
-        isVisible = true,
+        isControlsVisible = true,
         isLoading = true,
         isTvShow = true,
         isLastEpisode = false
@@ -128,7 +137,7 @@ private fun PreviewLoadingMoviePlayerControls() {
         totalDuration = 1000,
         currentTime = 255,
         bufferedPercentage = 50,
-        isVisible = true,
+        isControlsVisible = true,
         isLoading = true,
         isTvShow = false,
         isLastEpisode = false
@@ -154,7 +163,7 @@ private fun PreviewPlayingTvShowPlayerControls() {
         totalDuration = 1000,
         currentTime = 255,
         bufferedPercentage = 50,
-        isVisible = true,
+        isControlsVisible = true,
         isLoading = false,
         isTvShow = true,
         isLastEpisode = false
@@ -180,7 +189,7 @@ private fun PreviewPlayingMoviePlayerControls() {
         totalDuration = 1000,
         currentTime = 255,
         bufferedPercentage = 50,
-        isVisible = true,
+        isControlsVisible = true,
         isLoading = false,
         isTvShow = false,
         isLastEpisode = false
@@ -206,7 +215,7 @@ private fun PreviewPausedTvShowPlayerControls() {
         totalDuration = 1000,
         currentTime = 255,
         bufferedPercentage = 50,
-        isVisible = true,
+        isControlsVisible = true,
         isLoading = false,
         isTvShow = true,
         isLastEpisode = false
@@ -232,7 +241,7 @@ private fun PreviewPausedMoviePlayerControls() {
         totalDuration = 1000,
         currentTime = 255,
         bufferedPercentage = 50,
-        isVisible = true,
+        isControlsVisible = true,
         isLoading = false,
         isTvShow = false,
         isLastEpisode = false
@@ -258,7 +267,7 @@ private fun PreviewLastEpisodeTvShowPlayerControls() {
         totalDuration = 1000,
         currentTime = 255,
         bufferedPercentage = 50,
-        isVisible = true,
+        isControlsVisible = true,
         isLoading = false,
         isTvShow = true,
         isLastEpisode = true
@@ -284,7 +293,7 @@ private fun PreviewLastEpisodeMoviePlayerControls() {
         totalDuration = 1000,
         currentTime = 255,
         bufferedPercentage = 50,
-        isVisible = true,
+        isControlsVisible = true,
         isLoading = false,
         isTvShow = false,
         isLastEpisode = true
