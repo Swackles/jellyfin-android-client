@@ -6,5 +6,5 @@ open class StateHolder<T>(
     open val error: String = ""
 ) {
     val hasData get() = data != null
-    val hasError get() = error != ""
+    val hasError get() = error.isNotBlank()
 }

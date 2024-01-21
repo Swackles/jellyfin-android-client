@@ -34,23 +34,23 @@ fun DashboardScreen(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        if (state.error.isNotBlank()) {
-            P(text = state.error, isError = true)
-        }
         if (state.isLoading) {
+            LazyColumn {
+                itemsIndexed(state.data ?: emptyList()) { _, section ->
+                    MediaSection(
+                        section = section,
+                        onClick = {
+                            navigator.navigate(DetailScreenDestination(id = it))
+                        }
+                    )
+                }
+            }
+        } else if (state.hasError) {
+            P(text = state.error, isError = true)
+        } else {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center)
-                )
-            }
-        }
-        LazyColumn {
-            itemsIndexed(state.data ?: emptyList()) { _, section ->
-                MediaSection(
-                    section = section,
-                    onClick = {
-                        navigator.navigate(DetailScreenDestination(id = it))
-                    }
                 )
             }
         }

@@ -1,7 +1,7 @@
 package com.swackles.jellyfin.common
 
-sealed class Holder<T>(val data: T? = null, val message: String? = null) {
-    class Success<T>(data: T) : Holder<T>(data)
-    class Error<T>(message: String) : Holder<T>(null, message)
-    class Loading<T> : Holder<T>()
+sealed class Holder<T>(isLoading: Boolean = true, val data: T? = null, val message: String? = null) {
+    class Success<T>(data: T) : Holder<T>(false, data)
+    class Error<T>(message: String) : Holder<T>(false, message = message)
+    class Loading<T> : Holder<T>(true)
 }
