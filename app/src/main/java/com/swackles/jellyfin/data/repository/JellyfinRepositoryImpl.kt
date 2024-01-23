@@ -2,10 +2,12 @@ package com.swackles.jellyfin.data.repository
 
 import android.content.Context
 import com.swackles.jellyfin.data.enums.JellyfinResponses
+import com.swackles.jellyfin.data.models.GetMediaFilters
 import org.jellyfin.sdk.Jellyfin
 import org.jellyfin.sdk.api.client.ApiClient
 import org.jellyfin.sdk.api.client.exception.InvalidStatusException
 import org.jellyfin.sdk.api.client.extensions.authenticateUserByName
+import org.jellyfin.sdk.api.client.extensions.filterApi
 import org.jellyfin.sdk.api.client.extensions.itemsApi
 import org.jellyfin.sdk.api.client.extensions.libraryApi
 import org.jellyfin.sdk.api.client.extensions.mediaInfoApi
@@ -16,11 +18,13 @@ import org.jellyfin.sdk.createJellyfin
 import org.jellyfin.sdk.model.ClientInfo
 import org.jellyfin.sdk.model.UUID
 import org.jellyfin.sdk.model.api.BaseItemDto
+import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.BaseItemKind.MOVIE
 import org.jellyfin.sdk.model.api.BaseItemKind.SERIES
 import org.jellyfin.sdk.model.api.ItemFilter
 import org.jellyfin.sdk.model.api.LocationType
 import org.jellyfin.sdk.model.api.PlaybackInfoResponse
+import org.jellyfin.sdk.model.api.QueryFiltersLegacy
 import org.jellyfin.sdk.model.api.SortOrder.DESCENDING
 import javax.inject.Inject
 
@@ -55,6 +59,19 @@ class JellyfinRepositoryImpl @Inject constructor(
             userId = getUserId(),
             itemId = itemId
         ).content
+    }
+
+    override suspend fun getItems(filters: GetMediaFilters): List<BaseItemDto> {
+        return jellyfinClient.itemsApi.getItems(
+            userId = getUserId(),
+            searchTerm = filters.query,
+            genres = filters.genres,
+            years = filters.years,
+            officialRatings = filters.officialRatings,
+            includeItemTypes = filters.mediaTypes.map { it.baseItem },
+            recursive = true
+        ).content.items ?: emptyList(
+        )
     }
 
     override suspend fun getContinueWatching(): List<BaseItemDto> {
@@ -126,6 +143,12 @@ class JellyfinRepositoryImpl @Inject constructor(
 
         return hashMapOf(Pair("Authorization", "MediaBrowser ${values.joinToString(", ")}"))
     }
+
+    override suspend fun getFilters(items: Collection<BaseItemKind>): QueryFiltersLegacy =
+        jellyfinClient.filterApi.getQueryFiltersLegacy(
+            userId = getUserId(),
+            includeItemTypes = items
+        ).content
 
 
     private fun getUserId(): UUID {

@@ -2,6 +2,7 @@ package com.swackles.jellyfin.presentation.common
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -16,6 +17,7 @@ import com.swackles.jellyfin.presentation.appCurrentDestinationAsState
 import com.swackles.jellyfin.presentation.destinations.DashboardScreenDestination
 import com.swackles.jellyfin.presentation.destinations.Destination
 import com.swackles.jellyfin.presentation.destinations.PlayerScreenDestination
+import com.swackles.jellyfin.presentation.destinations.SearchScreenDestination
 import com.swackles.jellyfin.presentation.startAppDestination
 
 private enum class BottomBarDestinations(
@@ -23,7 +25,8 @@ private enum class BottomBarDestinations(
     val icon: ImageVector,
     val label: String
 ) {
-    Greeting(DashboardScreenDestination, Icons.Default.Home, "Home")
+    Greeting(DashboardScreenDestination, Icons.Default.Home, "Home"),
+    Search(SearchScreenDestination, Icons.Default.Search, "Search")
 }
 
 

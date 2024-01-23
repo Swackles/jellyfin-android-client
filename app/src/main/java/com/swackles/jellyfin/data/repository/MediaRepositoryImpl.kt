@@ -2,12 +2,17 @@ package com.swackles.jellyfin.data.repository
 
 import com.swackles.jellyfin.common.Holder
 import com.swackles.jellyfin.data.enums.JellyfinResponses
+import com.swackles.jellyfin.data.enums.MediaItemType
 import com.swackles.jellyfin.data.models.DetailMediaBase
 import com.swackles.jellyfin.data.models.EpisodeMedia
 import com.swackles.jellyfin.data.models.MediaSection
 import com.swackles.jellyfin.data.models.DetailMediaMovie
 import com.swackles.jellyfin.data.models.DetailMediaSeries
+import com.swackles.jellyfin.data.models.GetMediaFilters
+import com.swackles.jellyfin.data.models.Media
+import com.swackles.jellyfin.data.models.MediaFilters
 import com.swackles.jellyfin.data.models.toMedia
+import com.swackles.jellyfin.data.models.toMediaFilter
 import org.jellyfin.sdk.api.client.exception.InvalidStatusException
 import org.jellyfin.sdk.model.UUID
 import org.jellyfin.sdk.model.api.BaseItemDto
@@ -45,6 +50,10 @@ class MediaRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getMediaItems(filters: GetMediaFilters): List<Media> {
+        return api.getItems(filters).map { it.toMedia(api.getBaseUrl()) }
+    }
+
     override suspend fun getContinueWatching(): MediaSection {
         return MediaSection(
             "Continue watching",
@@ -65,6 +74,16 @@ class MediaRepositoryImpl @Inject constructor(
             api.getFavorites().map { item -> item.toMedia(api.getBaseUrl()) }
         )
     }
+
+    override suspend fun getFilters(items: Collection<MediaItemType>): MediaFilters =
+        api.getFilters(
+            items.map {
+                when (it) {
+                    MediaItemType.SERIES -> SERIES
+                    MediaItemType.MOVIE -> MOVIE
+                }
+            }
+        ).toMediaFilter()
 
     private suspend fun getEpisodesForMedia(media: BaseItemDto): List<EpisodeMedia> {
         return api.getEpisodes(media.id)

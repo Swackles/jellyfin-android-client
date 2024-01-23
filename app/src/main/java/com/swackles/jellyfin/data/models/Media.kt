@@ -6,6 +6,7 @@ import org.jellyfin.sdk.model.UUID
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.ImageType.PRIMARY
+import org.jellyfin.sdk.model.api.QueryFiltersLegacy
 
 class Media(
     val id: UUID,
@@ -44,5 +45,13 @@ fun BaseItemDto.toMedia(baseUrl: String): Media {
         id = id,
         playedPercentage = userData?.playedPercentage ?: 0.0,
         posterUrl = "$baseUrl/items/$mediaId/images/${PRIMARY.name}/0"
+    )
+}
+
+fun QueryFiltersLegacy.toMediaFilter(): MediaFilters {
+    return MediaFilters(
+        genres = this.genres ?: emptyList(),
+        officialRatings = this.officialRatings ?: emptyList(),
+        years = this.years ?: emptyList()
     )
 }
