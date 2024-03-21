@@ -1,15 +1,15 @@
-package com.swackles.jellyfin.data.database
+package com.swackles.jellyfin.data.room
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.swackles.jellyfin.data.converters.LocalDateTimeConverter
-import com.swackles.jellyfin.data.models.Server
-import com.swackles.jellyfin.data.dao.ServerDao
-import com.swackles.jellyfin.data.dao.UserDao
-import com.swackles.jellyfin.data.models.User
+import com.swackles.jellyfin.data.room.converters.LocalDateTimeConverter
+import com.swackles.jellyfin.data.room.models.Server
+import com.swackles.jellyfin.data.room.models.User
+import com.swackles.jellyfin.data.room.server.ServerDao
+import com.swackles.jellyfin.data.room.user.UserDao
 
 @Database(entities = [Server::class, User::class], version = 1, exportSchema = false)
 @TypeConverters(LocalDateTimeConverter::class)

@@ -1,10 +1,9 @@
-package com.swackles.jellyfin.data.repository
+package com.swackles.jellyfin.data.room.server
 
 import androidx.lifecycle.MutableLiveData
-import com.swackles.jellyfin.data.dao.ServerDao
-import com.swackles.jellyfin.data.models.Server
+import com.swackles.jellyfin.data.room.models.Server
 
-class ServerRepositoryImpl(private val serverDao: ServerDao) :
+internal class ServerRepositoryImpl(private val serverDao: ServerDao) :
     ServerRepository {
     override val allServers = MutableLiveData<List<Server>>()
 

@@ -13,4 +13,6 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "jellyfin"
+
 include ':app'
+include ':data:room'

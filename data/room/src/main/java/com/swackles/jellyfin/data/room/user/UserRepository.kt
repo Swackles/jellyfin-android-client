@@ -1,7 +1,7 @@
-package com.swackles.jellyfin.data.repository
+package com.swackles.jellyfin.data.room.user
 
-import com.swackles.jellyfin.data.models.User
-import com.swackles.jellyfin.data.models.UserAndServer
+import com.swackles.jellyfin.data.room.models.User
+import com.swackles.jellyfin.data.room.models.UserAndServer
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {

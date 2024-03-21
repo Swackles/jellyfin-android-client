@@ -1,10 +1,10 @@
-package com.swackles.jellyfin.data.dao
+package com.swackles.jellyfin.data.room.server
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.swackles.jellyfin.data.models.Server
+import com.swackles.jellyfin.data.room.models.Server
 
 @Dao
 interface ServerDao {

@@ -1,11 +1,11 @@
-package com.swackles.jellyfin.data.dao
+package com.swackles.jellyfin.data.room.user
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.swackles.jellyfin.data.models.User
-import com.swackles.jellyfin.data.models.UserAndServer
+import com.swackles.jellyfin.data.room.models.User
+import com.swackles.jellyfin.data.room.models.UserAndServer
 import kotlinx.coroutines.flow.Flow
 
 @Dao

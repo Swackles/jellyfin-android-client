@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.data.converters
+package com.swackles.jellyfin.data.room.converters
 
 import androidx.room.TypeConverter
 import java.time.Instant
@@ -7,7 +7,7 @@ import java.time.ZoneId
 import java.util.TimeZone
 
 
-object LocalDateTimeConverter {
+internal object LocalDateTimeConverter {
     @TypeConverter
     fun fromTimestamp(value: Long?): LocalDateTime? {
         if (value == null) return value

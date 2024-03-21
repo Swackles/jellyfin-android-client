@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.data.models.AuthenticatorResponse
 import com.swackles.jellyfin.data.repository.JellyfinRepositoryPreview
-import com.swackles.jellyfin.data.repository.ServerRepositoryPreview
-import com.swackles.jellyfin.data.repository.UserRepositoryPreview
+import com.swackles.jellyfin.data.room.server.ServerRepositoryPreview
+import com.swackles.jellyfin.data.room.user.UserRepositoryPreview
 import com.swackles.jellyfin.data.useCase.AuthenticatorUseCase
 import com.swackles.jellyfin.presentation.destinations.DashboardScreenDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -118,7 +118,10 @@ open class ServerViewModal @Inject constructor(
 
 class PreviewServerViewModal constructor(
     private val _serverUiState: ServerUiState = ServerUiState()
-) : ServerViewModal(AuthenticatorUseCase(JellyfinRepositoryPreview(), ServerRepositoryPreview(), UserRepositoryPreview())) {
+) : ServerViewModal(AuthenticatorUseCase(JellyfinRepositoryPreview(),
+    ServerRepositoryPreview(),
+    UserRepositoryPreview()
+)) {
     override fun getState(): ServerUiState {
         return _serverUiState
     }

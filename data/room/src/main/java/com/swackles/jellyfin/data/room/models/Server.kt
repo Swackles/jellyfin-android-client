@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.data.models
+package com.swackles.jellyfin.data.room.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
