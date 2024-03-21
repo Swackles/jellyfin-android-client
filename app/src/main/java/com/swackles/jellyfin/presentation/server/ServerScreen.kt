@@ -24,7 +24,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.common.components.PasswordOutlinedTextField
-import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import kotlinx.coroutines.launch
 
 @RootNavGraph(start = true)

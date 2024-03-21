@@ -23,8 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.swackles.jellyfin.data.jellyfin.models.MediaFilters
-import com.swackles.jellyfin.presentation.common.FilterChip
-import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.common.components.FilterChip
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
 @Composable
 fun FiltersDialog(

@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.presentation.common
+package com.swackles.jellyfin.presentation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -12,13 +12,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
-import com.swackles.jellyfin.presentation.NavGraphs
-import com.swackles.jellyfin.presentation.appCurrentDestinationAsState
 import com.swackles.jellyfin.presentation.destinations.DashboardScreenDestination
 import com.swackles.jellyfin.presentation.destinations.Destination
 import com.swackles.jellyfin.presentation.destinations.PlayerScreenDestination
 import com.swackles.jellyfin.presentation.destinations.SearchScreenDestination
-import com.swackles.jellyfin.presentation.startAppDestination
 
 private enum class BottomBarDestinations(
     val direction: DirectionDestinationSpec,

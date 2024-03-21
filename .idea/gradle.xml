@@ -17,6 +17,9 @@
             <option value="$PROJECT_DIR$/data/room" />
             <option value="$PROJECT_DIR$/domain" />
             <option value="$PROJECT_DIR$/domain/auth" />
+            <option value="$PROJECT_DIR$/domain/common" />
+            <option value="$PROJECT_DIR$/presentation" />
+            <option value="$PROJECT_DIR$/presentation/common" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.presentation.ui.theme
+package com.swackles.jellyfin.presentation.common.theme
 
 import android.app.Activity
 import android.os.Build

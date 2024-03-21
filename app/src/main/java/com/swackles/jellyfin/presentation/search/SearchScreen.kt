@@ -27,7 +27,7 @@ import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.common.components.mediaSection.MediaCard
 import com.swackles.jellyfin.presentation.destinations.DetailScreenDestination
 import com.swackles.jellyfin.presentation.search.common.SearchScreenFilters
-import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Destination

@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.swackles.jellyfin.presentation.common.components.P
-import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
 @Composable
 fun AssistChipDefaults.primaryAssistChipColors() = assistChipColors(

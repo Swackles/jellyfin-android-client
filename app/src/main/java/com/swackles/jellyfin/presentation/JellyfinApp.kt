@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.swackles.jellyfin.presentation.common.BottomBar
 
 @Composable
 fun JellyfinApp() {

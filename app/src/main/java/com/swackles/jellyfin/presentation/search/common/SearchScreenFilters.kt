@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.swackles.jellyfin.data.jellyfin.enums.MediaItemType
 import com.swackles.jellyfin.data.jellyfin.models.GetMediaFilters
 import com.swackles.jellyfin.data.jellyfin.models.MediaFilters
-import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
 @Composable
 fun SearchScreenFilters(

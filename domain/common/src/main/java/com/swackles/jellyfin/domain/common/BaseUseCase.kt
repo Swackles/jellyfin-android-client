@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.data.useCase
+package com.swackles.jellyfin.domain.common
 
 import com.swackles.jellyfin.data.jellyfin.models.Holder
 import kotlinx.coroutines.flow.Flow

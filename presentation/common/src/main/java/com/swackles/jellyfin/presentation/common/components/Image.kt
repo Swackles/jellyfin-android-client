@@ -11,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
-import com.swackles.jellyfin.R
+import com.swackles.jellyfin.presentation.common.R
 
 
 @Composable

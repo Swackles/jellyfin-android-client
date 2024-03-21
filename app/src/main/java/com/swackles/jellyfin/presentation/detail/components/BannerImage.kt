@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.swackles.jellyfin.data.jellyfin.models.DetailMediaBase
 import com.swackles.jellyfin.data.jellyfin.models.DetailMediaMoviePreview
 import com.swackles.jellyfin.presentation.common.components.Image
-import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
 @Composable
 internal fun BannerImage(media: DetailMediaBase, scrollState: ScrollState) {

@@ -21,7 +21,7 @@ import com.swackles.jellyfin.presentation.common.colors.variantAssistChipBorder
 import com.swackles.jellyfin.presentation.common.colors.variantAssistChipColors
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.detail.components.EpisodeListItem
-import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import org.jellyfin.sdk.model.DateTime
 import org.jellyfin.sdk.model.UUID
 

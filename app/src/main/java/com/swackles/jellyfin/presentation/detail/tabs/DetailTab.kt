@@ -15,7 +15,7 @@ import com.swackles.jellyfin.data.jellyfin.models.DetailMediaBase
 import com.swackles.jellyfin.data.jellyfin.models.DetailMediaMoviePreview
 import com.swackles.jellyfin.presentation.common.components.H5
 import com.swackles.jellyfin.presentation.common.components.P
-import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
 @Composable
 fun DetailTab(media: DetailMediaBase) {

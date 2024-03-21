@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.swackles.jellyfin.data.jellyfin.models.Holder
-import com.swackles.jellyfin.data.useCase.BaseUseCase
+import com.swackles.jellyfin.domain.common.BaseUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 

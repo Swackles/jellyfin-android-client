@@ -24,7 +24,7 @@ import com.swackles.jellyfin.data.jellyfin.models.EpisodeMediaPreview
 import com.swackles.jellyfin.presentation.common.components.Image
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.common.progressStatus
-import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import org.jellyfin.sdk.model.DateTime
 import org.jellyfin.sdk.model.UUID
 

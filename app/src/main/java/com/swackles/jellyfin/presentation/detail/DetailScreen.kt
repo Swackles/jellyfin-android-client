@@ -54,7 +54,7 @@ import com.swackles.jellyfin.presentation.destinations.PlayerScreenDestination
 import com.swackles.jellyfin.presentation.detail.components.BannerImage
 import com.swackles.jellyfin.presentation.detail.components.LogoImage
 import com.swackles.jellyfin.presentation.detail.tabs.DetailScreenTabs
-import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import org.jellyfin.sdk.model.UUID
 
 @Destination

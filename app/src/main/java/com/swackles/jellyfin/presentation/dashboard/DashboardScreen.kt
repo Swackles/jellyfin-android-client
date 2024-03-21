@@ -20,8 +20,8 @@ import com.swackles.jellyfin.data.jellyfin.models.MediaSection
 import com.swackles.jellyfin.presentation.common.StateHolder
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.common.components.mediaSection.MediaSection
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import com.swackles.jellyfin.presentation.destinations.DetailScreenDestination
-import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
 
 @Destination
 @Composable
