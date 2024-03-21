@@ -29,7 +29,7 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:$hilt_compiler_version"
 
     // Coil
-    implementation "io.coil-kt:coil-compose:${coil_version}"
+    implementation "io.coil-kt:coil-compose:$coil_version"
 
     // Jellyfin
     implementation "org.jellyfin.sdk:jellyfin-core:$jellyfin_sdk_version"
