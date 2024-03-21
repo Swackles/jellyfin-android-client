@@ -3,6 +3,8 @@ package com.swackles.jellyfin.data.repository
 import android.content.Context
 import com.swackles.jellyfin.data.enums.JellyfinResponses
 import com.swackles.jellyfin.data.models.GetMediaFilters
+import com.swackles.jellyfin.data.models.JellyfinAuthResponse
+import com.swackles.jellyfin.data.models.toJellyfinUser
 import org.jellyfin.sdk.Jellyfin
 import org.jellyfin.sdk.api.client.ApiClient
 import org.jellyfin.sdk.api.client.exception.InvalidStatusException
@@ -33,7 +35,7 @@ class JellyfinRepositoryImpl @Inject constructor(
     private val jellyfinClient: ApiClient,
     private val context: Context
 ) : JellyfinRepository {
-    override suspend fun login(hostname: String, username: String, password: String): JellyfinResponses {
+    override suspend fun login(hostname: String, username: String, password: String): JellyfinAuthResponse {
         val client = createJellyfin(this.context).createApi(hostname)
         try {
             val authenticationResult by client.userApi.authenticateUserByName(username, password)
@@ -41,17 +43,20 @@ class JellyfinRepositoryImpl @Inject constructor(
             client.userId = authenticationResult.user!!.id
             client.accessToken = authenticationResult.accessToken
 
+
+            INSTANCE = client
+            return JellyfinAuthResponse(
+                response = JellyfinResponses.SUCCESSFUL,
+                user = authenticationResult.toJellyfinUser(client.baseUrl!!)
+            )
         } catch (err: InvalidStatusException) {
             return when (err.status) {
-                401 -> JellyfinResponses.UNAUTHORIZED_RESPONSE
+                401 -> JellyfinAuthResponse(response = JellyfinResponses.UNAUTHORIZED_RESPONSE, user = null)
                 else -> {
                     throw err
                 }
             }
         }
-
-        INSTANCE = client
-        return JellyfinResponses.SUCCESSFUL
     }
 
     override suspend fun getItem(itemId: UUID): BaseItemDto {

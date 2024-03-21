@@ -6,16 +6,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.swackles.jellyfin.data.enums.JellyfinResponses
-import com.swackles.jellyfin.data.repository.JellyfinRepository
+import com.swackles.jellyfin.data.models.AuthenticatorResponse
 import com.swackles.jellyfin.data.repository.JellyfinRepositoryPreview
-import com.swackles.jellyfin.data.models.Server
-import com.swackles.jellyfin.data.repository.ServerRepository
 import com.swackles.jellyfin.data.repository.ServerRepositoryPreview
+import com.swackles.jellyfin.data.repository.UserRepositoryPreview
+import com.swackles.jellyfin.data.useCase.AuthenticatorUseCase
 import com.swackles.jellyfin.presentation.destinations.DashboardScreenDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 enum class ErrorKey {
@@ -24,8 +22,14 @@ enum class ErrorKey {
     PASSWORD
 }
 
+data class Inputs(
+    val host: String = "",
+    val username: String = "",
+    val password: String = ""
+)
+
 data class ServerUiState(
-    val server: Server = Server(),
+    val inputs: Inputs = Inputs(),
     val isValidInput: Boolean = false,
     val isLoading: Boolean = false,
     val isInitializing: Boolean = true,
@@ -35,8 +39,7 @@ data class ServerUiState(
 
 @HiltViewModel
 open class ServerViewModal @Inject constructor(
-    private val serverRepository: ServerRepository,
-    private val jellyfinRepository: JellyfinRepository
+    private val authenticatorUseCase: AuthenticatorUseCase
     ) : ViewModel() {
     private var _serverUiState by mutableStateOf(ServerUiState())
 
@@ -45,64 +48,77 @@ open class ServerViewModal @Inject constructor(
     }
 
     fun init(navigator: DestinationsNavigator) {
-        println("init serverViewModal")
-        serverRepository.getLastActiveServer().onEach {
-            println("host: ${it?.host}; username ${it?.username}")
-            if (it != null) {
-                when(jellyfinRepository.login(it.host, it.username, it.password)) {
-                    JellyfinResponses.SUCCESSFUL -> {
-                        navigator.navigate(DashboardScreenDestination)
-                    }
-                    JellyfinResponses.UNAUTHORIZED_RESPONSE -> setError(ErrorKey.USERNAME, "Username or password is incorrect", isInitializing = false)
-                    else -> setError(ErrorKey.HOST, "Unknown error occurred")
-                }
-            }
-        }.launchIn(viewModelScope)
+        viewModelScope.launch {
+            handleLoginResponse(authenticatorUseCase.loginLastUsedUser(), navigator)
+            authenticatorUseCase.loginLastUsedUser()
+            finishInitializing()
+        }
     }
 
-    fun updateState(server: Server) {
+    fun updateState(inputs: Inputs) {
         _serverUiState = _serverUiState.copy(
-            server = server,
-            isValidInput = isValid(server)
+            inputs = inputs,
+            isValidInput = isValid(inputs)
         )
     }
 
     suspend fun saveServer(navigator: DestinationsNavigator) {
         setLoading(true)
-        val server = _serverUiState.server
+        val inputs = _serverUiState.inputs
 
-        when(jellyfinRepository.login(server.host, server.username, server.password)) {
-            JellyfinResponses.SUCCESSFUL -> {
-                serverRepository.addServer(server)
-                navigator.navigate(DashboardScreenDestination)
-            }
-            JellyfinResponses.UNAUTHORIZED_RESPONSE -> setError(ErrorKey.USERNAME, "Username or password is incorrect")
-            else -> setError(ErrorKey.HOST, "Unknown error occurred")
-        }
+        handleLoginResponse(authenticatorUseCase.login(inputs.host, inputs.username, inputs.password), navigator)
 
         setLoading(false)
     }
 
-    private fun setError(key: ErrorKey, msg: String, isInitializing: Boolean? = null) {
+    private fun handleLoginResponse(response: AuthenticatorResponse, navigator: DestinationsNavigator) {
+        when(response) {
+            AuthenticatorResponse.NO_USER -> { /* Do nothing */ }
+            AuthenticatorResponse.SUCCESS -> {
+                navigator.navigate(DashboardScreenDestination)
+            }
+            AuthenticatorResponse.INVALID_CREDENTIALS -> setError(listOf(ErrorKey.USERNAME, ErrorKey.PASSWORD), "Username or password is incorrect")
+            AuthenticatorResponse.INVALID_URL -> setError(ErrorKey.HOST, "Url is invalid")
+            else -> setError(ErrorKey.HOST, "Unknown error occurred")
+        }
+    }
+
+    private fun setError(key: ErrorKey, msg: String) {
         val errors = _serverUiState.errors
             .minus(key)
             .plus(Pair(key, msg))
 
-        _serverUiState = _serverUiState.copy(errors = errors, isInitializing = isInitializing ?: _serverUiState.isInitializing)
+        _serverUiState = _serverUiState.copy(errors = errors)
+    }
+
+    private fun setError(keys: List<ErrorKey>, msg: String) {
+        val errors = _serverUiState.errors
+
+        keys.forEach {
+            errors
+                .minus(it)
+                .plus(Pair(it, msg))
+        }
+
+        _serverUiState = _serverUiState.copy(errors = errors)
+    }
+
+    private fun finishInitializing() {
+        _serverUiState = _serverUiState.copy(isInitializing = false)
     }
 
     private fun setLoading(isLoading: Boolean) {
         _serverUiState = _serverUiState.copy(isLoading = isLoading)
     }
 
-    private fun isValid(server: Server): Boolean {
-        return server.host.isNotBlank() && server.username.isNotBlank()
+    private fun isValid(inputs: Inputs): Boolean {
+        return inputs.host.isNotBlank() && inputs.username.isNotBlank()
     }
 }
 
 class PreviewServerViewModal constructor(
     private val _serverUiState: ServerUiState = ServerUiState()
-) : ServerViewModal(ServerRepositoryPreview(), JellyfinRepositoryPreview()) {
+) : ServerViewModal(AuthenticatorUseCase(JellyfinRepositoryPreview(), ServerRepositoryPreview(), UserRepositoryPreview())) {
     override fun getState(): ServerUiState {
         return _serverUiState
     }

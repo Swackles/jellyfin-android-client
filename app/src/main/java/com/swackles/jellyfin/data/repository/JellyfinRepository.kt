@@ -1,7 +1,7 @@
 package com.swackles.jellyfin.data.repository
 
-import com.swackles.jellyfin.data.enums.JellyfinResponses
 import com.swackles.jellyfin.data.models.GetMediaFilters
+import com.swackles.jellyfin.data.models.JellyfinAuthResponse
 import org.jellyfin.sdk.model.UUID
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
@@ -9,7 +9,7 @@ import org.jellyfin.sdk.model.api.PlaybackInfoResponse
 import org.jellyfin.sdk.model.api.QueryFiltersLegacy
 
 interface JellyfinRepository {
-    suspend fun login(hostname: String, username: String, password: String): JellyfinResponses
+    suspend fun login(hostname: String, username: String, password: String): JellyfinAuthResponse
 
     suspend fun getItem(itemId: UUID): BaseItemDto
 

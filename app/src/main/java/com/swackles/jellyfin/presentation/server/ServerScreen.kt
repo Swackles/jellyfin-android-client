@@ -22,7 +22,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.swackles.jellyfin.data.models.Server
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.common.components.PasswordOutlinedTextField
 import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
@@ -61,7 +60,7 @@ fun ServerScreen(
 @Composable
 private fun ServerScreenInput(
     state: ServerUiState,
-    onChange: (server: Server) -> Unit,
+    onChange: (inputs: Inputs) -> Unit,
     onSave: () -> Unit
 ) {
     ConstraintLayout(
@@ -80,25 +79,25 @@ private fun ServerScreenInput(
             verticalArrangement = Arrangement.Center
         ) {
             OutlinedTextField(
-                value = state.server.host,
+                value = state.inputs.host,
                 label = { P(text = "Host") },
                 readOnly = state.isLoading,
                 placeholder = { P(text = "https://localhost:8096") },
-                onValueChange = { onChange(state.server.copy(host = it)) },
+                onValueChange = { onChange(state.inputs.copy(host = it)) },
                 isError = state.errors.containsKey(ErrorKey.HOST),
                 supportingText = { P(text = state.errors[ErrorKey.HOST] ?: "") })
             OutlinedTextField(
-                value = state.server.username,
+                value = state.inputs.username,
                 label = { P(text = "Username") },
                 readOnly = state.isLoading,
-                onValueChange = { onChange(state.server.copy(username = it)) },
+                onValueChange = { onChange(state.inputs.copy(username = it)) },
                 isError = state.errors.containsKey(ErrorKey.USERNAME),
                 supportingText = { P(text = state.errors[ErrorKey.USERNAME] ?: "") })
             PasswordOutlinedTextField(
-                value = state.server.password,
+                value = state.inputs.password,
                 label = { P(text = "Password") },
                 readOnly = state.isLoading,
-                onValueChange = { onChange(state.server.copy(password = it)) },
+                onValueChange = { onChange(state.inputs.copy(password = it)) },
                 isError = state.errors.containsKey(ErrorKey.PASSWORD),
                 supportingText = { P(text = state.errors[ErrorKey.PASSWORD] ?: "") })
         }
@@ -143,7 +142,7 @@ private fun PreviewWithInitialization_White() {
 private fun PreviewServerScreenInput(isDarkTheme: Boolean) {
     val viewModal = PreviewServerViewModal(
         ServerUiState(
-            server = Server(),
+            inputs = Inputs(),
             isValidInput = false,
             isInitializing = false
         )
@@ -170,7 +169,7 @@ private fun PreviewServerScreenInput_White() {
 private fun PreviewServerScreenWithValidInput(isDarkTheme: Boolean) {
     val viewModal = PreviewServerViewModal(
         ServerUiState(
-            server = Server(
+            inputs = Inputs(
                 host = "http://localhost:8096",
                 username = "Swackles"
             ),
@@ -199,7 +198,7 @@ private fun PreviewServerScreenWithValidInput_White() {
 private fun PreviewServerScreenLoading(isDarkTheme: Boolean) {
     val viewModal = PreviewServerViewModal(
         ServerUiState(
-            server = Server(
+            inputs = Inputs(
                 host = "http://localhost:8096",
                 username = "Swackles",
                 password = "Password"
@@ -230,7 +229,7 @@ private fun PreviewServerScreenLoading_White() {
 private fun PreviewServerScreenErrors(isDarkTheme: Boolean) {
     val viewModal = PreviewServerViewModal(
         ServerUiState(
-            server = Server(
+            inputs = Inputs(
                 host = "http://localhost:8096",
                 username = "Swackles",
                 password = "Password"

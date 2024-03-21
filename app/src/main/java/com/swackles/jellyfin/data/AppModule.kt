@@ -8,6 +8,8 @@ import com.swackles.jellyfin.data.repository.MediaRepository
 import com.swackles.jellyfin.data.repository.MediaRepositoryImpl
 import com.swackles.jellyfin.data.repository.ServerRepository
 import com.swackles.jellyfin.data.repository.ServerRepositoryImpl
+import com.swackles.jellyfin.data.repository.UserRepository
+import com.swackles.jellyfin.data.repository.UserRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,5 +42,11 @@ object AppModule {
     @Singleton
     fun provideServerRepository(@ApplicationContext context: Context): ServerRepository {
         return ServerRepositoryImpl(ServerRoomDatabase.getInstance(context).serverDao())
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(@ApplicationContext context: Context): UserRepository {
+        return UserRepositoryImpl(ServerRoomDatabase.getInstance(context).userDao())
     }
 }

@@ -8,12 +8,15 @@ import androidx.room.TypeConverters
 import com.swackles.jellyfin.data.converters.LocalDateTimeConverter
 import com.swackles.jellyfin.data.models.Server
 import com.swackles.jellyfin.data.dao.ServerDao
+import com.swackles.jellyfin.data.dao.UserDao
+import com.swackles.jellyfin.data.models.User
 
-@Database(entities = [(Server::class)], version = 1, exportSchema = false)
+@Database(entities = [Server::class, User::class], version = 1, exportSchema = false)
 @TypeConverters(LocalDateTimeConverter::class)
 abstract class ServerRoomDatabase : RoomDatabase() {
 
     abstract fun serverDao(): ServerDao
+    abstract fun userDao(): UserDao
 
     companion object {
         /*The value of a volatile variable will never be cached, and all writes and reads will be done to and from the main memory.
