@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.swackles.jellyfin.data.models.DetailMediaBase
+import com.swackles.jellyfin.data.jellyfin.models.DetailMediaBase
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.detail.tabs.Tabs.DETAILS
 import com.swackles.jellyfin.presentation.detail.tabs.Tabs.EPISODES

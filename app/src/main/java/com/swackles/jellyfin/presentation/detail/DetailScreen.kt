@@ -1,8 +1,6 @@
 package com.swackles.jellyfin.presentation.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,17 +33,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.swackles.jellyfin.data.models.DetailMediaBase
-import com.swackles.jellyfin.data.models.DetailMediaMoviePreview
-import com.swackles.jellyfin.data.models.DetailMediaSeriesPreview
-import com.swackles.jellyfin.data.models.PlayShortcutInfo
+import com.swackles.jellyfin.data.jellyfin.models.DetailMediaBase
+import com.swackles.jellyfin.data.jellyfin.models.DetailMediaMoviePreview
+import com.swackles.jellyfin.data.jellyfin.models.DetailMediaSeriesPreview
+import com.swackles.jellyfin.data.jellyfin.models.PlayShortcutInfo
 import com.swackles.jellyfin.presentation.common.colors.primaryAssistChipBorder
 import com.swackles.jellyfin.presentation.common.colors.primaryAssistChipColors
 import com.swackles.jellyfin.presentation.common.colors.primaryButtonColors
@@ -58,7 +55,6 @@ import com.swackles.jellyfin.presentation.detail.components.BannerImage
 import com.swackles.jellyfin.presentation.detail.components.LogoImage
 import com.swackles.jellyfin.presentation.detail.tabs.DetailScreenTabs
 import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
-import kotlinx.coroutines.coroutineScope
 import org.jellyfin.sdk.model.UUID
 
 @Destination
@@ -196,16 +192,6 @@ private fun Overlay(seasons: List<Int>, selectSeason: (season: Int) -> Unit, tog
     Box(modifier = Modifier
         .fillMaxSize()
         .fillMaxWidth()
-        .pointerInput(Unit) {
-            forEachGesture {
-                coroutineScope {
-                    awaitPointerEventScope {
-                        awaitFirstDown(requireUnconsumed = false).also { it.consume() }
-                    }
-                }
-
-            }
-        }
         .background(Color.Black.copy(.8f))) {
         Column(
             modifier = Modifier.fillMaxSize(),

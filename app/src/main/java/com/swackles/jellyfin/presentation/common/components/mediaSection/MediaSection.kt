@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.swackles.jellyfin.presentation.common.components.H2
-import com.swackles.jellyfin.data.models.Media
-import com.swackles.jellyfin.data.models.MediaSection
+import com.swackles.jellyfin.data.jellyfin.models.Media
+import com.swackles.jellyfin.data.jellyfin.models.MediaSection
 import java.util.UUID
 
 @Composable

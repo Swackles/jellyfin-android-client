@@ -4,7 +4,6 @@ plugins {
     id 'com.google.devtools.ksp' version '1.8.21-1.0.11'
     id 'com.google.dagger.hilt.android'
     id 'kotlin-kapt'
-    id 'kotlin-parcelize'
 }
 
 android {
@@ -96,5 +95,6 @@ dependencies {
     implementation "androidx.media3:media3-ui:$exoplayer_version"
     implementation "androidx.media3:media3-exoplayer-hls:$exoplayer_version"
 
+    implementation(project(":data:jellyfin"))
     implementation(project(":data:room"))
 }

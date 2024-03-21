@@ -5,9 +5,9 @@ import androidx.media3.common.Player
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import com.swackles.jellyfin.data.repository.JellyfinRepository
-import com.swackles.jellyfin.data.repository.VideoMetadataReader
-import com.swackles.jellyfin.data.repository.VideoMetadataReaderImpl
+import com.swackles.jellyfin.data.jellyfin.repository.JellyfinRepository
+import com.swackles.jellyfin.data.jellyfin.repository.VideoMetadataReader
+import com.swackles.jellyfin.data.jellyfin.repository.VideoMetadataReaderImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

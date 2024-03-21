@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.data.models.AuthenticatorResponse
-import com.swackles.jellyfin.data.repository.JellyfinRepositoryPreview
+import com.swackles.jellyfin.data.jellyfin.repository.JellyfinRepositoryPreview
 import com.swackles.jellyfin.data.room.server.ServerRepositoryPreview
 import com.swackles.jellyfin.data.room.user.UserRepositoryPreview
 import com.swackles.jellyfin.data.useCase.AuthenticatorUseCase

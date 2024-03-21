@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.swackles.jellyfin.common.Holder
-import com.swackles.jellyfin.data.models.DetailMediaBase
-import com.swackles.jellyfin.data.repository.MediaRepositoryPreview
+import com.swackles.jellyfin.data.jellyfin.models.Holder
+import com.swackles.jellyfin.data.jellyfin.models.DetailMediaBase
+import com.swackles.jellyfin.data.jellyfin.repository.MediaRepositoryPreview
 import com.swackles.jellyfin.data.useCase.GetDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -40,7 +40,7 @@ open class DetailScreenViewModal @Inject constructor(
                 is Holder.Success -> {
                     println("DetailScreenViewModal - LOADED DATA - SUCCESS")
 
-                    val activeSeason = if (result.data!!.isSeries) result.data.getSeasons().first { it > 0 }
+                    val activeSeason = if (result.data!!.isSeries) result.data!!.getSeasons().first { it > 0 }
                         else 0
 
                     _state = DetailScreenState(

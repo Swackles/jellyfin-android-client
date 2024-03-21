@@ -1,8 +1,8 @@
 package com.swackles.jellyfin.presentation.dashboard
 
 import androidx.compose.runtime.State
-import com.swackles.jellyfin.data.models.MediaSection
-import com.swackles.jellyfin.data.repository.MediaRepositoryPreview
+import com.swackles.jellyfin.data.jellyfin.models.MediaSection
+import com.swackles.jellyfin.data.jellyfin.repository.MediaRepositoryPreview
 import com.swackles.jellyfin.data.useCase.GetDashboardUseCase
 import com.swackles.jellyfin.presentation.common.BaseScreenViewModal
 import com.swackles.jellyfin.presentation.common.StateHolder

@@ -15,4 +15,5 @@ dependencyResolutionManagement {
 rootProject.name = "jellyfin"
 
 include ':app'
+include ':data:jellyfin'
 include ':data:room'

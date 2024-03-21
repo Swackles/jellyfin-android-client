@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+}
+
+android {
+    namespace 'com.swackles.jellyfin.data.jellyfin'
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 26
+        targetSdk 33
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+    // Dagger - Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    kapt "androidx.hilt:hilt-compiler:$hilt_compiler_version"
+
+    // Jellyfin
+    implementation "org.jellyfin.sdk:jellyfin-core:$jellyfin_sdk_version"
+
+    // Exoplayer
+    implementation "androidx.media3:media3-exoplayer:$exoplayer_version"
+    implementation "androidx.media3:media3-exoplayer-dash:$exoplayer_version"
+    implementation "androidx.media3:media3-ui:$exoplayer_version"
+    implementation "androidx.media3:media3-exoplayer-hls:$exoplayer_version"
+}

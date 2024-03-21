@@ -15,8 +15,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.swackles.jellyfin.data.models.Media
-import com.swackles.jellyfin.data.models.MediaSection
+import com.swackles.jellyfin.data.jellyfin.models.Media
+import com.swackles.jellyfin.data.jellyfin.models.MediaSection
 import com.swackles.jellyfin.presentation.common.StateHolder
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.common.components.mediaSection.MediaSection

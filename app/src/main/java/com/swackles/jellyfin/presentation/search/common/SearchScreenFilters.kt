@@ -33,9 +33,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.swackles.jellyfin.data.enums.MediaItemType
-import com.swackles.jellyfin.data.models.GetMediaFilters
-import com.swackles.jellyfin.data.models.MediaFilters
+import com.swackles.jellyfin.data.jellyfin.enums.MediaItemType
+import com.swackles.jellyfin.data.jellyfin.models.GetMediaFilters
+import com.swackles.jellyfin.data.jellyfin.models.MediaFilters
 import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
 
 @Composable

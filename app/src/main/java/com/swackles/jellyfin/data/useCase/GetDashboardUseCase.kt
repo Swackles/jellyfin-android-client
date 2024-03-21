@@ -1,8 +1,8 @@
 package com.swackles.jellyfin.data.useCase
 
-import com.swackles.jellyfin.common.Holder
-import com.swackles.jellyfin.data.models.MediaSection
-import com.swackles.jellyfin.data.repository.MediaRepository
+import com.swackles.jellyfin.data.jellyfin.models.Holder
+import com.swackles.jellyfin.data.jellyfin.models.MediaSection
+import com.swackles.jellyfin.data.jellyfin.repository.MediaRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.lang.RuntimeException

@@ -1,6 +1,6 @@
 package com.swackles.jellyfin.data.useCase
 
-import com.swackles.jellyfin.common.Holder
+import com.swackles.jellyfin.data.jellyfin.models.Holder
 import kotlinx.coroutines.flow.Flow
 
 interface BaseUseCase<T> {

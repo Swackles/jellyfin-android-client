@@ -4,11 +4,11 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.swackles.jellyfin.common.Holder
-import com.swackles.jellyfin.data.models.GetMediaFilters
-import com.swackles.jellyfin.data.models.Media
-import com.swackles.jellyfin.data.models.MediaFilters
-import com.swackles.jellyfin.data.repository.MediaRepositoryPreview
+import com.swackles.jellyfin.data.jellyfin.models.Holder
+import com.swackles.jellyfin.data.jellyfin.models.GetMediaFilters
+import com.swackles.jellyfin.data.jellyfin.models.Media
+import com.swackles.jellyfin.data.jellyfin.models.MediaFilters
+import com.swackles.jellyfin.data.jellyfin.repository.MediaRepositoryPreview
 import com.swackles.jellyfin.data.useCase.GetFiltersUseCase
 import com.swackles.jellyfin.data.useCase.GetMediaItemsUseCase
 import com.swackles.jellyfin.presentation.common.StateHolder

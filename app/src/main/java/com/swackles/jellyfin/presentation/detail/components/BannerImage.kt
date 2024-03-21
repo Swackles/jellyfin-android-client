@@ -25,8 +25,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.swackles.jellyfin.data.models.DetailMediaBase
-import com.swackles.jellyfin.data.models.DetailMediaMoviePreview
+import com.swackles.jellyfin.data.jellyfin.models.DetailMediaBase
+import com.swackles.jellyfin.data.jellyfin.models.DetailMediaMoviePreview
 import com.swackles.jellyfin.presentation.common.components.Image
 import com.swackles.jellyfin.presentation.ui.theme.JellyfinTheme
 

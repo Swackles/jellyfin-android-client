@@ -1,10 +1,12 @@
 package com.swackles.jellyfin.data.useCase
 
-import com.swackles.jellyfin.data.enums.JellyfinResponses
+import com.swackles.jellyfin.data.jellyfin.enums.JellyfinResponses
+import com.swackles.jellyfin.data.jellyfin.repository.JellyfinRepository
 import com.swackles.jellyfin.data.models.AuthenticatorResponse
-import com.swackles.jellyfin.data.repository.JellyfinRepository
 import com.swackles.jellyfin.data.room.server.ServerRepository
 import com.swackles.jellyfin.data.room.user.UserRepository
+import com.swackles.jellyfin.data.room.models.Server
+import com.swackles.jellyfin.data.room.models.UserAndServer
 import io.ktor.http.URLParserException
 import org.jellyfin.sdk.api.client.exception.SecureConnectionException
 import java.time.LocalDateTime
@@ -22,7 +24,7 @@ class AuthenticatorUseCase @Inject constructor(
         return login(serverUser)
     }
 
-    suspend fun login(user: com.swackles.jellyfin.data.room.models.UserAndServer): AuthenticatorResponse {
+    suspend fun login(user: UserAndServer): AuthenticatorResponse {
         val res = repository.login(
             user.server.host,
             user.username,
@@ -53,10 +55,10 @@ class AuthenticatorUseCase @Inject constructor(
     suspend fun login(host: String, username: String, password: String): AuthenticatorResponse {
         return try {
             login(
-                com.swackles.jellyfin.data.room.models.UserAndServer(
+                UserAndServer(
                     username = username,
                     password = password,
-                    server = com.swackles.jellyfin.data.room.models.Server(host = host)
+                    server = Server(host = host)
                 )
             )
         } catch (ex: URLParserException) {
