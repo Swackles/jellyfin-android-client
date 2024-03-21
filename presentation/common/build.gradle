@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace 'com.swackles.jellyfin.presentation.common'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 26
-        targetSdk 33
+        targetSdk 34
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -19,7 +19,7 @@ android {
         jvmTarget = '17'
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.7'
+        kotlinCompilerExtensionVersion '1.5.11'
     }
     buildFeatures {
         compose true

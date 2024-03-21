@@ -19,7 +19,7 @@ fun AssistChipDefaults.primaryAssistChipColors() = assistChipColors(
 )
 
 @Composable
-fun AssistChipDefaults.primaryAssistChipBorder() = assistChipBorder(borderColor = Color.Transparent)
+fun AssistChipDefaults.primaryAssistChipBorder() = assistChipBorder(true, borderColor = Color.Transparent)
 
 @Composable
 fun AssistChipDefaults.variantAssistChipColors() = assistChipColors(
@@ -30,6 +30,7 @@ fun AssistChipDefaults.variantAssistChipColors() = assistChipColors(
 
 @Composable
 fun AssistChipDefaults.variantAssistChipBorder() = assistChipBorder(
+    true,
     borderColor = Color.Transparent,
     disabledBorderColor = Color.Transparent
 )

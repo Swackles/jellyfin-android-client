@@ -1,18 +1,18 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'com.google.devtools.ksp' version '1.8.21-1.0.11'
+    id 'com.google.devtools.ksp'
     id 'com.google.dagger.hilt.android'
     id 'kotlin-kapt'
 }
 
 android {
     namespace 'com.swackles.jellyfin.data.room'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 26
-        targetSdk 33
+        targetSdk 34
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17

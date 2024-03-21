@@ -153,7 +153,7 @@ private fun PlayButtonAndProgressBar(info: PlayShortcutInfo, playVideo: (id: UUI
                         .weight(1f))
                 }
             }
-            LinearProgressIndicator(progress = info.progress, modifier = Modifier.fillMaxWidth())
+            LinearProgressIndicator(progress = { info.progress }, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.size(5.dp))
         }
         Button(
