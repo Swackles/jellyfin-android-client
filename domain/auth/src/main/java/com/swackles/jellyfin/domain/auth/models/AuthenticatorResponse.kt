@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.data.models
+package com.swackles.jellyfin.domain.auth.models
 
 enum class AuthenticatorResponse {
     SUCCESS,

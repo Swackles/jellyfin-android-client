@@ -83,12 +83,6 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:${compose_ui_version}"
     implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
 
-    // Coil
-    implementation "io.coil-kt:coil-compose:${coil_version}"
-
-    // Jellyfin
-    implementation "org.jellyfin.sdk:jellyfin-core:$jellyfin_sdk_version"
-
     // Exoplayer
     implementation "androidx.media3:media3-exoplayer:$exoplayer_version"
     implementation "androidx.media3:media3-exoplayer-dash:$exoplayer_version"
@@ -97,4 +91,5 @@ dependencies {
 
     implementation(project(":data:jellyfin"))
     implementation(project(":data:room"))
+    implementation(project(":domain:auth"))
 }

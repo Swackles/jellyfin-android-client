@@ -6,11 +6,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.swackles.jellyfin.data.models.AuthenticatorResponse
 import com.swackles.jellyfin.data.jellyfin.repository.JellyfinRepositoryPreview
 import com.swackles.jellyfin.data.room.server.ServerRepositoryPreview
 import com.swackles.jellyfin.data.room.user.UserRepositoryPreview
-import com.swackles.jellyfin.data.useCase.AuthenticatorUseCase
+import com.swackles.jellyfin.domain.auth.AuthenticatorUseCase
+import com.swackles.jellyfin.domain.auth.models.AuthenticatorResponse
 import com.swackles.jellyfin.presentation.destinations.DashboardScreenDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

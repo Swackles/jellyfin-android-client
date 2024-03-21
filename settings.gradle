@@ -17,3 +17,4 @@ rootProject.name = "jellyfin"
 include ':app'
 include ':data:jellyfin'
 include ':data:room'
+include ':domain:auth'

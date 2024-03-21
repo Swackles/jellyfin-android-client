@@ -1,0 +1,39 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'com.swackles.jellyfin.domain.auth'
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 26
+        targetSdk 33
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+    // Dagger - Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    kapt "androidx.hilt:hilt-compiler:$hilt_compiler_version"
+
+    // Coil
+    implementation "io.coil-kt:coil-compose:${coil_version}"
+
+    // Jellyfin
+    implementation "org.jellyfin.sdk:jellyfin-core:$jellyfin_sdk_version"
+
+    implementation(project(":data:jellyfin"))
+    implementation(project(":data:room"))
+}

@@ -1,12 +1,12 @@
-package com.swackles.jellyfin.data.useCase
+package com.swackles.jellyfin.domain.auth
 
 import com.swackles.jellyfin.data.jellyfin.enums.JellyfinResponses
 import com.swackles.jellyfin.data.jellyfin.repository.JellyfinRepository
-import com.swackles.jellyfin.data.models.AuthenticatorResponse
-import com.swackles.jellyfin.data.room.server.ServerRepository
-import com.swackles.jellyfin.data.room.user.UserRepository
 import com.swackles.jellyfin.data.room.models.Server
 import com.swackles.jellyfin.data.room.models.UserAndServer
+import com.swackles.jellyfin.data.room.server.ServerRepository
+import com.swackles.jellyfin.data.room.user.UserRepository
+import com.swackles.jellyfin.domain.auth.models.AuthenticatorResponse
 import io.ktor.http.URLParserException
 import org.jellyfin.sdk.api.client.exception.SecureConnectionException
 import java.time.LocalDateTime
