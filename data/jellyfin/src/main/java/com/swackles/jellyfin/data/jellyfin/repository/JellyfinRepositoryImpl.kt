@@ -18,6 +18,7 @@ import org.jellyfin.sdk.api.client.extensions.userApi
 import org.jellyfin.sdk.api.client.extensions.userLibraryApi
 import org.jellyfin.sdk.createJellyfin
 import org.jellyfin.sdk.model.ClientInfo
+import org.jellyfin.sdk.model.DeviceInfo
 import org.jellyfin.sdk.model.UUID
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
@@ -28,6 +29,7 @@ import org.jellyfin.sdk.model.api.LocationType
 import org.jellyfin.sdk.model.api.PlaybackInfoResponse
 import org.jellyfin.sdk.model.api.QueryFiltersLegacy
 import org.jellyfin.sdk.model.api.SortOrder.DESCENDING
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 
@@ -35,22 +37,47 @@ internal class JellyfinRepositoryImpl @Inject constructor(
     private val jellyfinClient: ApiClient,
     private val context: Context
 ) : JellyfinRepository {
-    override suspend fun login(hostname: String, username: String, password: String): JellyfinAuthResponse {
-        val client = createJellyfin(this.context).createApi(hostname)
-        try {
-            val authenticationResult by client.userApi.authenticateUserByName(username, password)
+    override suspend fun login(hostname: String, userId: UUID, token: String, deviceId: String): JellyfinAuthResponse {
+        println("JellyfinRepository.login() ===>\n    hostname: $hostname,\n    userId: $userId,\n    token: $token")
+        val client = createJellyfin(this.context, deviceId).createApi(
+            baseUrl = hostname,
+            accessToken = token,
+            userId = userId
+        )
 
-            client.userId = authenticationResult.user!!.id
-            client.accessToken = authenticationResult.accessToken
+        println("JellyfinRepository.login() ===> client:")
+        println(client)
 
+        return try {
+            val res by client.userApi.getCurrentUser()
 
             INSTANCE = client
-            return JellyfinAuthResponse(
+            println("JellyfinRepository.login() ===> res:")
+            println(res)
+            JellyfinAuthResponse(
                 response = JellyfinResponses.SUCCESSFUL,
-                user = authenticationResult.toJellyfinUser(client.baseUrl!!)
+                user = res.toJellyfinUser(client.baseUrl!!, token, deviceId)
             )
+        } catch (ex: InvalidStatusException) {
+            when (ex.status) {
+                401 -> JellyfinAuthResponse(response = JellyfinResponses.UNAUTHORIZED_RESPONSE, user = null)
+                else -> throw ex
+            }
+        } catch (ex: RuntimeException) {
+            println(ex)
+            throw ex
+        }
+    }
+    override suspend fun login(hostname: String, username: String, password: String): JellyfinAuthResponse {
+        val deviceId = UUID.randomUUID().toString()
+
+        val client = createJellyfin(this.context, deviceId).createApi(hostname)
+        return try {
+            val authenticationResult by client.userApi.authenticateUserByName(username, password)
+
+            login(hostname, authenticationResult.user!!.id, authenticationResult.accessToken!!,deviceId)
         } catch (err: InvalidStatusException) {
-            return when (err.status) {
+            when (err.status) {
                 401 -> JellyfinAuthResponse(response = JellyfinResponses.UNAUTHORIZED_RESPONSE, user = null)
                 else -> {
                     throw err
@@ -176,12 +203,16 @@ internal class JellyfinRepositoryImpl @Inject constructor(
         private var INSTANCE: ApiClient? = null
 
         fun getInstance(context: Context): ApiClient {
-            return INSTANCE ?: createJellyfin(context).createApi("").also { INSTANCE = it }
+            return INSTANCE ?: createJellyfin(context, UUID.randomUUID().toString()).createApi("").also { INSTANCE = it }
         }
 
-        private fun createJellyfin(appContext: Context): Jellyfin {
+        private fun createJellyfin(appContext: Context, deviceId: String): Jellyfin {
             return createJellyfin {
                 context = appContext
+                deviceInfo = DeviceInfo(
+                    id = deviceId,
+                    name = android.os.Build.MODEL
+                )
                 clientInfo = ClientInfo(
                     name = "Jellyfin WIP app",
                     version = "0.1-ALPHA"

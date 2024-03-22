@@ -10,9 +10,5 @@ class AuthenticatorUseCasePreview: AuthenticatorUseCase(
     ServerRepositoryPreview(),
     UserRepositoryPreview()
 ) {
-    override fun getAuthenticatedUser() = User(
-        id = 1,
-        username = "username",
-        password = "password"
-    )
+    override fun getAuthenticatedUser() = User.preview()
 }

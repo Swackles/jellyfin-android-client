@@ -14,6 +14,9 @@ interface ServerDao {
     @Query("SELECT * FROM servers WHERE id = :id")
     suspend fun getServer(id: Long): Server?
 
+    @Query("SELECT * FROM servers WHERE host = :host")
+    suspend fun getServerByHost(host: String): Server?
+
     @Query("SELECT * FROM servers")
     fun getAllServers(): List<Server>
 

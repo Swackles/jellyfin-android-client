@@ -10,6 +10,11 @@ import org.jellyfin.sdk.model.api.PlaybackInfoResponse
 import org.jellyfin.sdk.model.api.QueryFiltersLegacy
 
 class JellyfinRepositoryPreview: JellyfinRepository {
+    override suspend fun login(hostname: String, userId: UUID, token: String, deviceId: String) = JellyfinAuthResponse(
+        JellyfinResponses.SUCCESSFUL,
+        null
+    )
+
     override suspend fun login(hostname: String, username: String, password: String) = JellyfinAuthResponse(
         JellyfinResponses.SUCCESSFUL,
         null

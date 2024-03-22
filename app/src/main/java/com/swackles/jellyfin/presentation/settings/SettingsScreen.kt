@@ -117,17 +117,8 @@ fun SettingsScreen(
 
 @Composable
 private fun Preview(isDarkTheme: Boolean) {
-    val userOne = User(
-        id = 0,
-        username = "Test",
-        password = "Test"
-    )
-
-    val userTwo = User(
-        id = 1,
-        username = "Test",
-        password = "Test"
-    )
+    val userOne = User.preview().copy(id = 0)
+    val userTwo = User.preview().copy(id = 1)
 
     val state = SettingsViewModalState(
         users = listOf(userOne, userTwo),

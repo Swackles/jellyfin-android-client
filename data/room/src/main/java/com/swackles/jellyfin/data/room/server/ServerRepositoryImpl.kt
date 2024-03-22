@@ -9,5 +9,11 @@ internal class ServerRepositoryImpl(private val serverDao: ServerDao) :
 
     override suspend fun getServer(id: Long): Server? = serverDao.getServer(id)
 
-    override suspend fun insertOrUpdate(newServer: Server): Long = serverDao.insertOrUpdate(newServer)
+    override suspend fun insertOrUpdate(newServer: Server): Long {
+        serverDao.getServerByHost(newServer.host)?.let {
+            return serverDao.insertOrUpdate(newServer.copy(id = it.id))
+        }
+
+        return serverDao.insertOrUpdate(newServer)
+    }
 }

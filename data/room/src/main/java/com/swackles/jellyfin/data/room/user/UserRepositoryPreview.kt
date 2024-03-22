@@ -5,7 +5,7 @@ import com.swackles.jellyfin.data.room.models.UserAndServer
 import kotlinx.coroutines.flow.flow
 
 class UserRepositoryPreview : UserRepository {
-    override suspend fun insertOrUpdate(newUser: User) = 1L
+    override suspend fun insertOrUpdate(newUser: User) = User.preview()
 
     override suspend fun getLastActiveUserAndServer() = null
 

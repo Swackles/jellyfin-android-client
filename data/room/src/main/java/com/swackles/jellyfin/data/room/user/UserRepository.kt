@@ -5,7 +5,7 @@ import com.swackles.jellyfin.data.room.models.UserAndServer
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    suspend fun insertOrUpdate(newUser: User): Long
+    suspend fun insertOrUpdate(newUser: User): User
 
     suspend fun getLastActiveUserAndServer(): UserAndServer?
 
