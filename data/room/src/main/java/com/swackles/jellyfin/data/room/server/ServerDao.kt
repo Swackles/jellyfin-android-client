@@ -11,6 +11,9 @@ interface ServerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdate(server: Server): Long
 
+    @Query("SELECT * FROM servers WHERE id = :id")
+    suspend fun getServer(id: Long): Server?
+
     @Query("SELECT * FROM servers")
     fun getAllServers(): List<Server>
 

@@ -17,7 +17,7 @@ import com.swackles.jellyfin.presentation.common.R
 @Composable
 fun Image(
     url: String,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     description: String,
     scale: ContentScale = ContentScale.Crop,
     alpha: Float = DefaultAlpha

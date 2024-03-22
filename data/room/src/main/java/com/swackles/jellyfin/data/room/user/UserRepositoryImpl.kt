@@ -8,5 +8,7 @@ internal class UserRepositoryImpl(private val userDao: UserDao) :
 
     override suspend fun getLastActiveUserAndServer() = userDao.getLastActiveUserAndServer()
 
-    override fun getAllUsersForServer(serverId: Int) = userDao.getAllUsersForServer(serverId)
+    override suspend fun getUserAndServer(userId: Long) = userDao.getUserAndServer(userId)
+
+    override fun getAllUsersForServer(serverId: Long) = userDao.getAllUsersForServer(serverId)
 }

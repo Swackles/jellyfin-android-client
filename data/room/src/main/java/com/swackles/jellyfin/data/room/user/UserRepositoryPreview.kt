@@ -1,6 +1,7 @@
 package com.swackles.jellyfin.data.room.user
 
 import com.swackles.jellyfin.data.room.models.User
+import com.swackles.jellyfin.data.room.models.UserAndServer
 import kotlinx.coroutines.flow.flow
 
 class UserRepositoryPreview : UserRepository {
@@ -8,5 +9,7 @@ class UserRepositoryPreview : UserRepository {
 
     override suspend fun getLastActiveUserAndServer() = null
 
-    override fun getAllUsersForServer(serverId: Int) = flow { emit(null) }
+    override suspend fun getUserAndServer(userId: Long) = null
+
+    override fun getAllUsersForServer(serverId: Long) = flow { emit(emptyList<User>()) }
 }

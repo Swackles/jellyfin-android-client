@@ -6,5 +6,7 @@ import com.swackles.jellyfin.data.room.models.Server
 interface ServerRepository {
     val allServers: MutableLiveData<List<Server>>
 
+    suspend fun getServer(id: Long): Server?
+
     suspend fun insertOrUpdate(newServer: Server): Long
 }

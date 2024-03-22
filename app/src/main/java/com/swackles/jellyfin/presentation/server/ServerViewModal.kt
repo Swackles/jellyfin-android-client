@@ -50,7 +50,6 @@ open class ServerViewModal @Inject constructor(
     fun init(navigator: DestinationsNavigator) {
         viewModelScope.launch {
             handleLoginResponse(authenticatorUseCase.loginLastUsedUser(), navigator)
-            authenticatorUseCase.loginLastUsedUser()
             finishInitializing()
         }
     }

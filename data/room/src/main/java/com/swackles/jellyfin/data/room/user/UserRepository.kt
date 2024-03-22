@@ -9,5 +9,7 @@ interface UserRepository {
 
     suspend fun getLastActiveUserAndServer(): UserAndServer?
 
-    fun getAllUsersForServer(serverId: Int): Flow<List<User>?>
+    suspend fun getUserAndServer(userId: Long): UserAndServer?
+
+    fun getAllUsersForServer(serverId: Long): Flow<List<User>>
 }

@@ -9,7 +9,7 @@ fun AuthenticationResult.toJellyfinUser(baseUrl: String): JellyfinUser {
         id = user!!.id,
         name = user?.name,
         serverName = user?.serverName,
-        profileImageUrl =if (user?.primaryImageTag!!.isNotBlank())
+        profileImageUrl =if (user?.primaryImageTag != null)
             "$baseUrl/Users/${user!!.id}/images/${ImageType.PRIMARY.name}?tag=${user!!.primaryImageTag}"
         else null
     )

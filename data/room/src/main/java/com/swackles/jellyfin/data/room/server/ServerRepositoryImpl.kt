@@ -7,5 +7,7 @@ internal class ServerRepositoryImpl(private val serverDao: ServerDao) :
     ServerRepository {
     override val allServers = MutableLiveData<List<Server>>()
 
+    override suspend fun getServer(id: Long): Server? = serverDao.getServer(id)
+
     override suspend fun insertOrUpdate(newServer: Server): Long = serverDao.insertOrUpdate(newServer)
 }

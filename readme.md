@@ -27,8 +27,14 @@ Motiviation for creating this project was to reimagine the Jellyfin Android clie
     - [] Studios
   - [] Sorting
 - [] Settings
-  - [] User switching
+  - [X] User switching
   - [] Server switching
+  - [] Quick Connect
+  - [] Account settings
+  - [] Jellyfin settings
+  - [] App settings
+    - [] Theme
+  - [] Log out
 - [] Video downloading
 - [] Media Player
 - [] Detailed media info

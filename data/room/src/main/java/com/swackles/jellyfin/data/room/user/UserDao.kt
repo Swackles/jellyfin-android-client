@@ -16,6 +16,9 @@ interface UserDao {
     @Query("SELECT * FROM users ORDER BY lastActive asc LIMIT 1")
     suspend fun getLastActiveUserAndServer(): UserAndServer?
 
-    @Query("SELECT * FROM users WHERE serverId = :serverId ORDER BY lastActive asc")
-    fun getAllUsersForServer(serverId: Int): Flow<List<User>?>
+    @Query("SELECT * FROM users WHERE id = :userId")
+    suspend fun getUserAndServer(userId: Long): UserAndServer?
+
+    @Query("SELECT * FROM users WHERE serverId = :serverId ORDER BY username asc")
+    fun getAllUsersForServer(serverId: Long): Flow<List<User>>
 }

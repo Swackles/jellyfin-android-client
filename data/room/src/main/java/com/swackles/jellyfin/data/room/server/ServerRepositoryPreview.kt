@@ -6,5 +6,7 @@ import com.swackles.jellyfin.data.room.models.Server
 class ServerRepositoryPreview : ServerRepository {
     override val allServers = MutableLiveData<List<Server>>()
 
+    override suspend fun getServer(id: Long): Server? = null
+
     override suspend fun insertOrUpdate(newServer: Server): Long = 1
 }
