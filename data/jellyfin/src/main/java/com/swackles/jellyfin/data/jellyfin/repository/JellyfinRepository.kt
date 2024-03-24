@@ -29,6 +29,8 @@ interface JellyfinRepository {
      */
     suspend fun login(hostname: String, username: String, password: String): JellyfinAuthResponse
 
+    suspend fun logout()
+
     suspend fun getItem(itemId: UUID): BaseItemDto
 
     suspend fun getItems(filters: GetMediaFilters): List<BaseItemDto>

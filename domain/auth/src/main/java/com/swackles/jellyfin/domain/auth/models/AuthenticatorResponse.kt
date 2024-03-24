@@ -5,5 +5,6 @@ enum class AuthenticatorResponse {
     INVALID_CREDENTIALS,
     INVALID_URL,
     UNKNOWN_ERROR,
-    NO_USER
+    NO_USER,
+    LOGOUT
 }

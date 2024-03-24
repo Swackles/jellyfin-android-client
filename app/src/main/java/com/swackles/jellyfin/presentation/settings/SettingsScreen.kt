@@ -19,6 +19,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +34,7 @@ import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import com.swackles.jellyfin.presentation.settings.components.AddUserCard
 import com.swackles.jellyfin.presentation.settings.components.AddUserModal
 import com.swackles.jellyfin.presentation.settings.components.ProfileCard
+import kotlinx.coroutines.launch
 
 @Destination
 @Composable
@@ -40,6 +42,7 @@ fun SettingsScreen(
     navigator: DestinationsNavigator,
     viewModal: SettingsViewModal = hiltViewModel()
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val state = viewModal.state.value
 
@@ -92,13 +95,13 @@ fun SettingsScreen(
             )
             HorizontalDivider()
             ListItem(
-                onClick = { /*TODO*/ },
-                heading = "Logout All Users",
+                onClick = { coroutineScope.launch { viewModal.logoutServer(navigator) } },
+                heading = "Logout from server",
                 leadingIcon = Icons.AutoMirrored.Filled.Logout
             )
             HorizontalDivider()
             ListItem(
-                onClick = { /*TODO*/ },
+                onClick = { coroutineScope.launch { viewModal.logoutUser(navigator) } },
                 heading = "Logout",
                 leadingIcon = Icons.AutoMirrored.Filled.Logout
             )

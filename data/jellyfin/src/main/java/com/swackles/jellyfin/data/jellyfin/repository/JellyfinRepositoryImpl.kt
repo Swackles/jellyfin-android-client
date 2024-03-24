@@ -13,6 +13,7 @@ import org.jellyfin.sdk.api.client.extensions.filterApi
 import org.jellyfin.sdk.api.client.extensions.itemsApi
 import org.jellyfin.sdk.api.client.extensions.libraryApi
 import org.jellyfin.sdk.api.client.extensions.mediaInfoApi
+import org.jellyfin.sdk.api.client.extensions.sessionApi
 import org.jellyfin.sdk.api.client.extensions.tvShowsApi
 import org.jellyfin.sdk.api.client.extensions.userApi
 import org.jellyfin.sdk.api.client.extensions.userLibraryApi
@@ -29,12 +30,11 @@ import org.jellyfin.sdk.model.api.LocationType
 import org.jellyfin.sdk.model.api.PlaybackInfoResponse
 import org.jellyfin.sdk.model.api.QueryFiltersLegacy
 import org.jellyfin.sdk.model.api.SortOrder.DESCENDING
-import java.lang.RuntimeException
 import javax.inject.Inject
 
 
 internal class JellyfinRepositoryImpl @Inject constructor(
-    private val jellyfinClient: ApiClient,
+    private var jellyfinClient: ApiClient,
     private val context: Context
 ) : JellyfinRepository {
     override suspend fun login(hostname: String, userId: UUID, token: String, deviceId: String): JellyfinAuthResponse {
@@ -47,7 +47,9 @@ internal class JellyfinRepositoryImpl @Inject constructor(
         return try {
             val res by client.userApi.getCurrentUser()
 
+            // TODO: Better way of updating client when user changes
             INSTANCE = client
+            jellyfinClient = client
             JellyfinAuthResponse(
                 response = JellyfinResponses.SUCCESSFUL,
                 user = res.toJellyfinUser(client.baseUrl!!, token, deviceId)
@@ -77,6 +79,11 @@ internal class JellyfinRepositoryImpl @Inject constructor(
                 }
             }
         }
+    }
+
+    override suspend fun logout() {
+        jellyfinClient.sessionApi.reportSessionEnded()
+        INSTANCE = null
     }
 
     override suspend fun getItem(itemId: UUID): BaseItemDto {

@@ -4,12 +4,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.data.room.models.User
 import com.swackles.jellyfin.data.room.user.UserRepository
 import com.swackles.jellyfin.data.room.user.UserRepositoryPreview
 import com.swackles.jellyfin.domain.auth.AuthenticatorUseCase
 import com.swackles.jellyfin.domain.auth.AuthenticatorUseCasePreview
 import com.swackles.jellyfin.domain.auth.models.AuthenticatorResponse
+import com.swackles.jellyfin.presentation.destinations.ServerScreenDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -56,6 +58,20 @@ open class SettingsViewModal @Inject constructor(
         viewModelScope.launch {
             val res = authenticatorUseCase.login(id)
             if (res == AuthenticatorResponse.SUCCESS) _state.value = _state.value.copy(activeUser = authenticatorUseCase.getAuthenticatedUser()!!)
+        }
+    }
+
+    suspend fun logoutUser(navigator: DestinationsNavigator) {
+        when(authenticatorUseCase.logoutUser()) {
+            AuthenticatorResponse.LOGOUT -> navigator.navigate(ServerScreenDestination)
+            else -> { /* Do nothing */ }
+        }
+    }
+
+    suspend fun logoutServer(navigator: DestinationsNavigator) {
+        when(authenticatorUseCase.logoutServer()) {
+            AuthenticatorResponse.LOGOUT -> navigator.navigate(ServerScreenDestination)
+            else -> { /* Do nothing */ }
         }
     }
 

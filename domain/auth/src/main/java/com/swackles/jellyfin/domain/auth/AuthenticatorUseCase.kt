@@ -62,6 +62,36 @@ open class AuthenticatorUseCase @Inject constructor(
         return login(userRepository.getUserAndServer(id) ?: return AuthenticatorResponse.NO_USER)
     }
 
+    suspend fun logoutUser(): AuthenticatorResponse {
+        authenticatedUser?.let { authUser ->
+            userRepository.delete(authUser)
+            val users = userRepository.getAllForServer(authUser.serverId)
+                .sortedByDescending { it.lastActive }
+            repository.logout()
+
+            try {
+                return login(users.first().id)
+            } catch (ex: NoSuchElementException) {
+                return AuthenticatorResponse.LOGOUT
+            }
+        }
+
+        return AuthenticatorResponse.NO_USER
+    }
+
+    suspend fun logoutServer(): AuthenticatorResponse {
+        authenticatedUser?.let { authUser ->
+            userRepository.getAllForServer(authUser.serverId).forEach { user ->
+                repository.logout()
+                userRepository.delete(user)
+            }
+
+            return AuthenticatorResponse.LOGOUT
+        }
+
+        return AuthenticatorResponse.NO_USER
+    }
+
     private suspend fun handleResponse(res: JellyfinAuthResponse): AuthenticatorResponse {
         return when(res.response) {
             JellyfinResponses.SUCCESSFUL -> saveUser(res.user!!)
@@ -71,7 +101,6 @@ open class AuthenticatorUseCase @Inject constructor(
     }
 
     private suspend fun saveUser(jellyfinUser: JellyfinUser): AuthenticatorResponse {
-        println("AuthenticatorUseCase.saveUser()")
         val serverId = serverRepository.insertOrUpdate(
             Server(
                 name = jellyfinUser.serverName,

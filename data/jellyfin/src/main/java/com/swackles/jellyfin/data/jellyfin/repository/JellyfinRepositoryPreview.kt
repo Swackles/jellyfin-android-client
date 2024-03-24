@@ -20,6 +20,8 @@ class JellyfinRepositoryPreview: JellyfinRepository {
         null
     )
 
+    override suspend fun logout() { }
+
     override suspend fun getItem(itemId: UUID) = BaseItemDto(
         id = UUID.randomUUID(),
         type = BaseItemKind.AUDIO)
