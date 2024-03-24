@@ -21,12 +21,10 @@ open class AuthenticatorUseCase @Inject constructor(
     private val userRepository: UserRepository
     ) {
     open fun getAuthenticatedUser(): User? {
-        println("AuthenticatorUseCase.getAuthenticatedUser() ==> $authenticatedUser")
         return authenticatedUser
     }
 
     suspend fun loginLastUsedUser(): AuthenticatorResponse {
-        println("AuthenticatorUseCase.loginLastUsedUser()")
         val serverUser = userRepository.getLastActiveUserAndServer()
             ?: return AuthenticatorResponse.NO_USER
 
@@ -34,7 +32,6 @@ open class AuthenticatorUseCase @Inject constructor(
     }
 
     suspend fun login(user: UserAndServer): AuthenticatorResponse {
-        println("AuthenticatorUseCase.login()")
         return try {
             handleResponse(repository.login(user.server.host, user.externalId, user.token, user.deviceId))
         } catch (ex: URLParserException) {

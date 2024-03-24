@@ -38,22 +38,16 @@ internal class JellyfinRepositoryImpl @Inject constructor(
     private val context: Context
 ) : JellyfinRepository {
     override suspend fun login(hostname: String, userId: UUID, token: String, deviceId: String): JellyfinAuthResponse {
-        println("JellyfinRepository.login() ===>\n    hostname: $hostname,\n    userId: $userId,\n    token: $token")
         val client = createJellyfin(this.context, deviceId).createApi(
             baseUrl = hostname,
             accessToken = token,
             userId = userId
         )
 
-        println("JellyfinRepository.login() ===> client:")
-        println(client)
-
         return try {
             val res by client.userApi.getCurrentUser()
 
             INSTANCE = client
-            println("JellyfinRepository.login() ===> res:")
-            println(res)
             JellyfinAuthResponse(
                 response = JellyfinResponses.SUCCESSFUL,
                 user = res.toJellyfinUser(client.baseUrl!!, token, deviceId)
@@ -64,7 +58,6 @@ internal class JellyfinRepositoryImpl @Inject constructor(
                 else -> throw ex
             }
         } catch (ex: RuntimeException) {
-            println(ex)
             throw ex
         }
     }
@@ -113,8 +106,6 @@ internal class JellyfinRepositoryImpl @Inject constructor(
 
             return nextTvShows + resumeItems
         } catch (e: Exception) {
-            println(e.message)
-
             return emptyList()
         }
     }

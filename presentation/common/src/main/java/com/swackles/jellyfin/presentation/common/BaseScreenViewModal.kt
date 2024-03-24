@@ -23,15 +23,12 @@ abstract class BaseScreenViewModal<T>(
         getUseCase().onEach { result ->
             when(result) {
                 is Holder.Success -> {
-                    println("LOADED DATA - SUCCESS")
                     _state.value = StateHolder(data = result.data)
                 }
                 is Holder.Error -> {
-                    println("LOADED DATA - ERROR \"" + result.message + "\" ")
                     _state.value = StateHolder(error = result.message ?: "Unexpected error")
                 }
                 is Holder.Loading -> {
-                    println("LOADED DATA - LOADING")
                     _state.value = StateHolder(isLoading = true)
                 }
             }

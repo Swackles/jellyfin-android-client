@@ -39,15 +39,12 @@ open class SearchViewModal @Inject constructor(
         getMediaItemsUseCase(filters).onEach { result ->
             when(result) {
                 is Holder.Success -> {
-                    println("LOADED SEARCH FILTERS - SUCCESS")
                     _mediaItemsState.value = StateHolder(data = result.data)
                 }
                 is Holder.Error -> {
-                    println("LOADED SEARCH FILTERS - ERROR \"" + result.message + "\" ")
                     _mediaItemsState.value = StateHolder(error = result.message ?: "Unexpected error")
                 }
                 is Holder.Loading -> {
-                    println("LOADED SEARCH FILTERS - LOADING")
                     _mediaItemsState.value = StateHolder(isLoading = true)
                 }
             }
@@ -58,15 +55,12 @@ open class SearchViewModal @Inject constructor(
         getFiltersUseCase().onEach { result ->
             when(result) {
                 is Holder.Success -> {
-                    println("LOADED SEARCH FILTERS - SUCCESS")
                     _mediaFiltersState.value = StateHolder(data = result.data)
                 }
                 is Holder.Error -> {
-                    println("LOADED SEARCH FILTERS - ERROR \"" + result.message + "\" ")
                     _mediaFiltersState.value = StateHolder(error = result.message ?: "Unexpected error")
                 }
                 is Holder.Loading -> {
-                    println("LOADED SEARCH FILTERS - LOADING")
                     _mediaFiltersState.value = StateHolder(isLoading = true)
                 }
             }

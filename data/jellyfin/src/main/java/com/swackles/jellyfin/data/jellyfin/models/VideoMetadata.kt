@@ -31,10 +31,6 @@ class VideoMetadata(
             .build()
             .toString()
 
-        // val url = "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"//"$baseUr"
-        println(url)
-        println("fulluri: $baseUrl$url")
-
         return MediaItem.Builder()
             .setMimeType(MimeTypes.APPLICATION_M3U8)
             .setUri(baseUrl + url)

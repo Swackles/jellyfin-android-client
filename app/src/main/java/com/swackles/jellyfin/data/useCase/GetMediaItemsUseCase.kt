@@ -11,7 +11,6 @@ import javax.inject.Inject
 
 class GetMediaItemsUseCase @Inject constructor(private val repository: MediaRepository) {
     operator fun invoke(filters: GetMediaFilters): Flow<Holder<List<Media>>> = flow {
-        println("GetMediaItemsUseCase invoke")
         try {
             emit(Holder.Loading())
 

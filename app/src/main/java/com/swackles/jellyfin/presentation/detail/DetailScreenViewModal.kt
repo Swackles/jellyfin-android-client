@@ -34,12 +34,9 @@ open class DetailScreenViewModal @Inject constructor(
     }
 
     fun loadData(id: UUID) {
-        println("loadData")
         getDetailUseCase(id).onEach { result ->
             when(result) {
                 is Holder.Success -> {
-                    println("DetailScreenViewModal - LOADED DATA - SUCCESS")
-
                     val activeSeason = if (result.data!!.isSeries) result.data!!.getSeasons().first { it > 0 }
                         else 0
 
@@ -49,13 +46,11 @@ open class DetailScreenViewModal @Inject constructor(
                     )
                 }
                 is Holder.Error -> {
-                    println("DetailScreenViewModal - LOADED DATA - ERROR \"" + result.message + "\" ")
                     _state = DetailScreenState(
                         error = result.message ?: "Unexpected error",
                     )
                 }
                 is Holder.Loading -> {
-                    println("DetailScreenViewModal - LOADED DATA - LOADING")
                     _state = _state.copy(isLoading = true)
                 }
             }

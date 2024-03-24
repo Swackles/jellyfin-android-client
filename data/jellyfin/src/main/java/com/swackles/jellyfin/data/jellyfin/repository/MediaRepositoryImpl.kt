@@ -94,8 +94,6 @@ internal class MediaRepositoryImpl @Inject constructor(
         return when (ex.status) {
             401 -> Holder.Error(JellyfinResponses.UNAUTHORIZED_RESPONSE.name)
             400 -> {
-                println("Error ${ex.status} with msg ${ex.message}")
-
                 return Holder.Error(JellyfinResponses.BAD_REQUEST.name)
             }
             else -> {

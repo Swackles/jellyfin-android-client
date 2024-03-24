@@ -72,7 +72,7 @@ private fun PreviewMediaCard() {
         "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_FMjpg_UX974_.jpg"
     )
 
-    MediaCard(media) { id -> println(id) }
+    MediaCard(media) {  }
 }
 
 @Preview(showBackground = true)
@@ -84,5 +84,5 @@ private fun PreviewMediaCardWithProgress() {
         "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_FMjpg_UY1982_.jpg",
     )
 
-    MediaCard(media) { id -> println(id) }
+    MediaCard(media) { }
 }

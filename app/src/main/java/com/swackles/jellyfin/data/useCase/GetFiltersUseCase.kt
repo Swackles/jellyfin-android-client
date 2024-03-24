@@ -12,7 +12,6 @@ import javax.inject.Inject
 class GetFiltersUseCase @Inject constructor(private val repository: MediaRepository) :
     BaseUseCase<MediaFilters> {
     override operator fun invoke(): Flow<Holder<MediaFilters>> = flow {
-        println("GetSearchUseCase invoke")
         try {
             emit(Holder.Loading())
 
