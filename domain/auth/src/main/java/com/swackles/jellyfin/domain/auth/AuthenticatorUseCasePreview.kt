@@ -1,5 +1,6 @@
 package com.swackles.jellyfin.domain.auth
 
+import androidx.lifecycle.MutableLiveData
 import com.swackles.jellyfin.data.jellyfin.repository.JellyfinRepositoryPreview
 import com.swackles.jellyfin.data.room.models.User
 import com.swackles.jellyfin.data.room.server.ServerRepositoryPreview
@@ -10,5 +11,5 @@ class AuthenticatorUseCasePreview: AuthenticatorUseCase(
     ServerRepositoryPreview(),
     UserRepositoryPreview()
 ) {
-    override fun getAuthenticatedUser() = User.preview()
+    override val authenticatedUser = MutableLiveData(User.preview())
 }

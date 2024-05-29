@@ -12,25 +12,27 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
-
 @Composable
 fun ListItem(
     onClick: () -> Unit,
     heading: String,
-    leadingIcon: ImageVector,
+    subHeading: String? = null,
+    leadingIcon: ImageVector? = null
 ) {
     ListItem(
         modifier = Modifier.clickable(onClick = onClick),
         headlineContent = { Text(heading) },
+        supportingContent = { if (subHeading != null) Text(subHeading) },
         leadingContent = {
-            Icon(
-                leadingIcon,
-                contentDescription = heading,
-            )
+            if (leadingIcon != null) {
+                Icon(
+                    leadingIcon,
+                    contentDescription = heading,
+                )
+            }
         }
     )
 }
-
 
 @Composable
 private fun Preview(isDarkTheme: Boolean) {
@@ -38,6 +40,7 @@ private fun Preview(isDarkTheme: Boolean) {
         ListItem(
             onClick = {},
             heading = "Servers",
+            subHeading = "Manage your servers",
             leadingIcon = Icons.Filled.Dns
         )
     }

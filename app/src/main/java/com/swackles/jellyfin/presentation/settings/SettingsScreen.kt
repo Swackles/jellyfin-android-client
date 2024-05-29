@@ -31,6 +31,7 @@ import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.swackles.jellyfin.data.room.models.User
 import com.swackles.jellyfin.presentation.common.components.ListItem
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.destinations.ServersListScreenDestination
 import com.swackles.jellyfin.presentation.settings.components.AddUserCard
 import com.swackles.jellyfin.presentation.settings.components.AddUserModal
 import com.swackles.jellyfin.presentation.settings.components.ProfileCard
@@ -65,7 +66,7 @@ fun SettingsScreen(
                 item { Spacer(modifier = Modifier.width((screenWidth / 2) - 60.dp)) }
             }
             ListItem(
-                onClick = { /*TODO*/ },
+                onClick = { navigator.navigate(ServersListScreenDestination) },
                 heading = "Servers",
                 leadingIcon = Icons.Filled.Dns
             )

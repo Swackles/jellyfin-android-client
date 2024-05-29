@@ -9,7 +9,7 @@ interface UserRepository {
 
     suspend fun insertOrUpdate(newUser: User): User
 
-    suspend fun getLastActiveUserAndServer(): UserAndServer?
+    suspend fun getLastActiveUserAndServer(serverId: Long?): UserAndServer?
 
     suspend fun getUserAndServer(userId: Long): UserAndServer?
 

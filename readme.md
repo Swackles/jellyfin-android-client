@@ -8,12 +8,12 @@ Motiviation for creating this project was to reimagine the Jellyfin Android clie
 
 ## Features
 
-- [] Dashboard
+- [ ] Dashboard
   - [X] Continue Watching
   - [X] Newly added
   - [X] Favorites
-  - [] Reccomendations
-- [] Search
+  - [ ] Reccomendations
+- [ ] Search
   - [X] Search for media
   - Filters
     - [X] Movies
@@ -22,17 +22,21 @@ Motiviation for creating this project was to reimagine the Jellyfin Android clie
     - [X] Years
     - [X] Age Ratings
     - [X] Name
-    - [] Person
-    - [] Tags
-    - [] Studios
-  - [] Sorting
-- [] Settings
+    - [ ] Person
+    - [ ] Tags
+    - [ ] Studios
+  - [ ] Sorting
+- [ ] Settings
   - [X] User switching
-  - [] Server switching
-  - [] Quick Connect
-  - [] Account settings
-  - [] Jellyfin settings
-  - [] App settings
+  - [ ] Server
+    - [ ] Add
+    - [X] View
+    - [ ] Delete
+    - [ ] Switch
+  - [ ] Quick Connect
+  - [ ] Account settings
+  - [ ] Jellyfin settings
+  - [ ] App settings
     - [] Theme
   - [] Log out
 - [] Video downloading

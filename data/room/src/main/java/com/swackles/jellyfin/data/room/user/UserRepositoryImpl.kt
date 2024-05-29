@@ -1,6 +1,7 @@
 package com.swackles.jellyfin.data.room.user
 
 import com.swackles.jellyfin.data.room.models.User
+import com.swackles.jellyfin.data.room.models.UserAndServer
 
 internal class UserRepositoryImpl(private val userDao: UserDao) :
     UserRepository {
@@ -14,7 +15,13 @@ internal class UserRepositoryImpl(private val userDao: UserDao) :
         return newUser.copy(id = savedUserId)
     }
 
-    override suspend fun getLastActiveUserAndServer() = userDao.getLastActiveUserAndServer()
+    override suspend fun getLastActiveUserAndServer(serverId: Long?): UserAndServer? {
+        if (serverId == null) {
+            return userDao.getLastActiveUserAndServer()
+        } else {
+            return userDao.getLastActiveUserAndServer(serverId)
+        }
+    }
 
     override suspend fun getUserAndServer(userId: Long) = userDao.getUserAndServer(userId)
 

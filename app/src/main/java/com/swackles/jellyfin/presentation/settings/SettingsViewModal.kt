@@ -32,7 +32,7 @@ open class SettingsViewModal @Inject constructor(
 ) : ViewModel() {
     private val _state = mutableStateOf(
         SettingsViewModalState(
-        activeUser = authenticatorUseCase.getAuthenticatedUser()!!
+        activeUser = authenticatorUseCase.authenticatedUser.value!!
     )
     )
     open val state: State<SettingsViewModalState> = _state
@@ -50,14 +50,14 @@ open class SettingsViewModal @Inject constructor(
 
         viewModelScope.launch {
             val res = authenticatorUseCase.login(username, password)
-            if (res == AuthenticatorResponse.SUCCESS) _state.value = _state.value.copy(activeUser = authenticatorUseCase.getAuthenticatedUser()!!)
+            if (res == AuthenticatorResponse.SUCCESS) _state.value = _state.value.copy(activeUser = authenticatorUseCase.authenticatedUser.value!!)
         }
     }
 
     fun login(id: Long) {
         viewModelScope.launch {
             val res = authenticatorUseCase.login(id)
-            if (res == AuthenticatorResponse.SUCCESS) _state.value = _state.value.copy(activeUser = authenticatorUseCase.getAuthenticatedUser()!!)
+            if (res == AuthenticatorResponse.SUCCESS) _state.value = _state.value.copy(activeUser = authenticatorUseCase.authenticatedUser.value!!)
         }
     }
 
@@ -76,7 +76,7 @@ open class SettingsViewModal @Inject constructor(
     }
 
     private fun loadUsers() {
-        userRepository.getAllUsersForServer(authenticatorUseCase.getAuthenticatedUser()?.serverId ?: 0).onEach {
+        userRepository.getAllUsersForServer(authenticatorUseCase.authenticatedUser.value?.serverId ?: 0).onEach {
             _state.value = _state.value.copy(users = it)
         }.launchIn(viewModelScope)
     }

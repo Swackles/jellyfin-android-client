@@ -21,6 +21,9 @@ interface UserDao {
     @Query("SELECT * FROM users ORDER BY lastActive desc LIMIT 1")
     suspend fun getLastActiveUserAndServer(): UserAndServer?
 
+    @Query("SELECT * FROM users WHERE serverId = :serverId ORDER BY lastActive desc LIMIT 1")
+    suspend fun getLastActiveUserAndServer(serverId: Long): UserAndServer?
+
     @Query("SELECT * FROM users WHERE externalId = :externalId AND serverId = :serverId LIMIT 1")
     suspend fun getByExternalIdAndServerId(externalId: UUID, serverId: Long): User?
 

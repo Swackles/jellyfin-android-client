@@ -1,5 +1,7 @@
 package com.swackles.jellyfin.domain.auth
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.swackles.jellyfin.data.jellyfin.enums.JellyfinResponses
 import com.swackles.jellyfin.data.jellyfin.models.JellyfinAuthResponse
 import com.swackles.jellyfin.data.jellyfin.models.JellyfinUser
@@ -20,12 +22,10 @@ open class AuthenticatorUseCase @Inject constructor(
     private val serverRepository: ServerRepository,
     private val userRepository: UserRepository
     ) {
-    open fun getAuthenticatedUser(): User? {
-        return authenticatedUser
-    }
+    open val authenticatedUser: LiveData<User?> = AuthenticatorUseCase.authenticatedUser
 
-    suspend fun loginLastUsedUser(): AuthenticatorResponse {
-        val serverUser = userRepository.getLastActiveUserAndServer()
+    suspend fun loginLastUsedUser(serverId: Long? = null): AuthenticatorResponse {
+        val serverUser = userRepository.getLastActiveUserAndServer(serverId)
             ?: return AuthenticatorResponse.NO_USER
 
         return login(serverUser)
@@ -52,7 +52,7 @@ open class AuthenticatorUseCase @Inject constructor(
     }
 
     suspend fun login(username: String, password: String): AuthenticatorResponse {
-        val server = serverRepository.getServer(authenticatedUser!!.serverId)
+        val server = serverRepository.getServer(authenticatedUser.value!!.serverId)
             ?: return AuthenticatorResponse.UNKNOWN_ERROR
 
         return login(server.host, username, password)
@@ -63,7 +63,7 @@ open class AuthenticatorUseCase @Inject constructor(
     }
 
     suspend fun logoutUser(): AuthenticatorResponse {
-        authenticatedUser?.let { authUser ->
+        authenticatedUser.value?.let { authUser ->
             userRepository.delete(authUser)
             val users = userRepository.getAllForServer(authUser.serverId)
                 .sortedByDescending { it.lastActive }
@@ -80,7 +80,7 @@ open class AuthenticatorUseCase @Inject constructor(
     }
 
     suspend fun logoutServer(): AuthenticatorResponse {
-        authenticatedUser?.let { authUser ->
+        authenticatedUser.value?.let { authUser ->
             userRepository.getAllForServer(authUser.serverId).forEach { user ->
                 repository.logout()
                 userRepository.delete(user)
@@ -108,7 +108,7 @@ open class AuthenticatorUseCase @Inject constructor(
             )
         )
 
-        val copyUser = User(
+        AuthenticatorUseCase.authenticatedUser.postValue(userRepository.insertOrUpdate(User(
             externalId = jellyfinUser.id,
             serverId = serverId,
             profileImageUrl = jellyfinUser.getProfileImageUrl(),
@@ -116,14 +116,12 @@ open class AuthenticatorUseCase @Inject constructor(
             token = jellyfinUser.token,
             deviceId = jellyfinUser.deviceId,
             lastActive = LocalDateTime.now()
-        )
-
-        authenticatedUser = userRepository.insertOrUpdate(copyUser)
+        )))
 
         return AuthenticatorResponse.SUCCESS
     }
 
     companion object {
-        private var authenticatedUser: User? = null
+        private var authenticatedUser = MutableLiveData<User?>(null)
     }
 }

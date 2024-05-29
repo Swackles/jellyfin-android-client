@@ -8,7 +8,7 @@ class UserRepositoryPreview : UserRepository {
 
     override suspend fun insertOrUpdate(newUser: User) = User.preview()
 
-    override suspend fun getLastActiveUserAndServer() = null
+    override suspend fun getLastActiveUserAndServer(serverId: Long?) = null
 
     override suspend fun getUserAndServer(userId: Long) = null
 

@@ -1,10 +1,10 @@
 package com.swackles.jellyfin.data.room.server
 
-import androidx.lifecycle.MutableLiveData
 import com.swackles.jellyfin.data.room.models.Server
+import kotlinx.coroutines.flow.Flow
 
 interface ServerRepository {
-    val allServers: MutableLiveData<List<Server>>
+    fun allServers(): Flow<List<Server>>
 
     suspend fun getServer(id: Long): Server?
 

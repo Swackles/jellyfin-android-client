@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.swackles.jellyfin.data.room.models.Server
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ServerDao {
@@ -18,6 +19,6 @@ interface ServerDao {
     suspend fun getServerByHost(host: String): Server?
 
     @Query("SELECT * FROM servers")
-    fun getAllServers(): List<Server>
+    fun getAllServers(): Flow<List<Server>>
 
 }
