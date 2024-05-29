@@ -10,6 +10,7 @@ import com.swackles.jellyfin.data.room.user.UserRepository
 import com.swackles.jellyfin.data.room.user.UserRepositoryPreview
 import com.swackles.jellyfin.domain.auth.AuthenticatorUseCase
 import com.swackles.jellyfin.domain.auth.AuthenticatorUseCasePreview
+import com.swackles.jellyfin.domain.auth.models.AuthCredentials
 import com.swackles.jellyfin.domain.auth.models.AuthenticatorResponse
 import com.swackles.jellyfin.presentation.destinations.ServerScreenDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,7 +50,7 @@ open class SettingsViewModal @Inject constructor(
         _state.value = _state.value.copy(isLoading = true)
 
         viewModelScope.launch {
-            val res = authenticatorUseCase.login(username, password)
+            val res = authenticatorUseCase.login(AuthCredentials(username = username, password = password))
             if (res == AuthenticatorResponse.SUCCESS) _state.value = _state.value.copy(activeUser = authenticatorUseCase.authenticatedUser.value!!)
         }
     }

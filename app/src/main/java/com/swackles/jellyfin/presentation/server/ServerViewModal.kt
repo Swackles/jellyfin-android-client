@@ -6,34 +6,21 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.swackles.auth.enums.ErrorKey
+import com.swackles.auth.models.ServerLoginFormResponseState
 import com.swackles.jellyfin.data.jellyfin.repository.JellyfinRepositoryPreview
 import com.swackles.jellyfin.data.room.server.ServerRepositoryPreview
 import com.swackles.jellyfin.data.room.user.UserRepositoryPreview
 import com.swackles.jellyfin.domain.auth.AuthenticatorUseCase
+import com.swackles.jellyfin.domain.auth.models.AuthCredentials
 import com.swackles.jellyfin.domain.auth.models.AuthenticatorResponse
 import com.swackles.jellyfin.presentation.destinations.DashboardScreenDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class ErrorKey {
-    HOST,
-    USERNAME,
-    PASSWORD
-}
-
-data class Inputs(
-    val host: String = "",
-    val username: String = "",
-    val password: String = ""
-)
-
 data class ServerUiState(
-    val inputs: Inputs = Inputs(),
-    val isValidInput: Boolean = false,
-    val isLoading: Boolean = false,
-    val isInitializing: Boolean = true,
-    val errors: Map<ErrorKey, String> = emptyMap()
+    val isInitializing: Boolean = true
 )
 
 
@@ -42,6 +29,9 @@ open class ServerViewModal @Inject constructor(
     private val authenticatorUseCase: AuthenticatorUseCase
     ) : ViewModel() {
     private var _serverUiState by mutableStateOf(ServerUiState())
+    private var _authResponseState by mutableStateOf(ServerLoginFormResponseState())
+
+    open val authResponseState: ServerLoginFormResponseState = this._authResponseState
 
     open fun getState(): ServerUiState {
         return _serverUiState
@@ -54,18 +44,10 @@ open class ServerViewModal @Inject constructor(
         }
     }
 
-    fun updateState(inputs: Inputs) {
-        _serverUiState = _serverUiState.copy(
-            inputs = inputs,
-            isValidInput = isValid(inputs)
-        )
-    }
-
-    suspend fun saveServer(navigator: DestinationsNavigator) {
+    suspend fun saveServer(credentials: AuthCredentials, navigator: DestinationsNavigator) {
         setLoading(true)
-        val inputs = _serverUiState.inputs
 
-        handleLoginResponse(authenticatorUseCase.login(inputs.host, inputs.username, inputs.password), navigator)
+        handleLoginResponse(authenticatorUseCase.login(credentials), navigator)
 
         setLoading(false)
     }
@@ -83,15 +65,15 @@ open class ServerViewModal @Inject constructor(
     }
 
     private fun setError(key: ErrorKey, msg: String) {
-        val errors = _serverUiState.errors
+        val errors = _authResponseState.errors
             .minus(key)
             .plus(Pair(key, msg))
 
-        _serverUiState = _serverUiState.copy(errors = errors)
+        _authResponseState = _authResponseState.copy(errors = errors)
     }
 
     private fun setError(keys: List<ErrorKey>, msg: String) {
-        val errors = _serverUiState.errors
+        val errors = _authResponseState.errors
 
         keys.forEach {
             errors
@@ -99,7 +81,7 @@ open class ServerViewModal @Inject constructor(
                 .plus(Pair(it, msg))
         }
 
-        _serverUiState = _serverUiState.copy(errors = errors)
+        _authResponseState = _authResponseState.copy(errors = errors)
     }
 
     private fun finishInitializing() {
@@ -107,16 +89,13 @@ open class ServerViewModal @Inject constructor(
     }
 
     private fun setLoading(isLoading: Boolean) {
-        _serverUiState = _serverUiState.copy(isLoading = isLoading)
-    }
-
-    private fun isValid(inputs: Inputs): Boolean {
-        return inputs.host.isNotBlank() && inputs.username.isNotBlank()
+        _authResponseState = _authResponseState.copy(isLoading = isLoading)
     }
 }
 
 class PreviewServerViewModal constructor(
-    private val _serverUiState: ServerUiState = ServerUiState()
+    private val _serverUiState: ServerUiState = ServerUiState(),
+    private val _authResponseState: ServerLoginFormResponseState = ServerLoginFormResponseState()
 ) : ServerViewModal(AuthenticatorUseCase(JellyfinRepositoryPreview(),
     ServerRepositoryPreview(),
     UserRepositoryPreview()

@@ -11,6 +11,7 @@ import com.swackles.jellyfin.data.room.models.User
 import com.swackles.jellyfin.data.room.models.UserAndServer
 import com.swackles.jellyfin.data.room.server.ServerRepository
 import com.swackles.jellyfin.data.room.user.UserRepository
+import com.swackles.jellyfin.domain.auth.models.AuthCredentials
 import com.swackles.jellyfin.domain.auth.models.AuthenticatorResponse
 import io.ktor.http.URLParserException
 import org.jellyfin.sdk.api.client.exception.SecureConnectionException
@@ -41,21 +42,18 @@ open class AuthenticatorUseCase @Inject constructor(
         }
     }
 
-    suspend fun login(host: String, username: String, password: String): AuthenticatorResponse {
+    suspend fun login(credentials: AuthCredentials): AuthenticatorResponse {
+        val host = credentials.host
+            ?: serverRepository.getServer(authenticatedUser.value!!.serverId)?.host
+            ?: return AuthenticatorResponse.UNKNOWN_ERROR
+
         return try {
-            handleResponse(repository.login(host, username, password))
+            handleResponse(repository.login(host, credentials.username, credentials.password))
         } catch (ex: URLParserException) {
             AuthenticatorResponse.INVALID_URL
         } catch (ex: SecureConnectionException) {
             AuthenticatorResponse.INVALID_URL
         }
-    }
-
-    suspend fun login(username: String, password: String): AuthenticatorResponse {
-        val server = serverRepository.getServer(authenticatedUser.value!!.serverId)
-            ?: return AuthenticatorResponse.UNKNOWN_ERROR
-
-        return login(server.host, username, password)
     }
 
     suspend fun login(id: Long): AuthenticatorResponse {

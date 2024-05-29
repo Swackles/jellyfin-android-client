@@ -1,29 +1,23 @@
 package com.swackles.jellyfin.presentation.server
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.swackles.jellyfin.presentation.common.components.P
-import com.swackles.jellyfin.presentation.common.components.PasswordOutlinedTextField
+import com.swackles.auth.ServerLoginForm
+import com.swackles.auth.enums.ErrorKey
+import com.swackles.auth.models.ServerLoginFormResponseState
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import kotlinx.coroutines.launch
 
@@ -48,72 +42,14 @@ fun ServerScreen(
                 )
             }
         } else {
-            ServerScreenInput(
-                state = viewModal.getState(),
-                onChange = viewModal::updateState,
-                onSave = { coroutineScope.launch { viewModal.saveServer(navigator) } }
+            ServerLoginForm(
+                responseState = viewModal.authResponseState,
+                onSave = { coroutineScope.launch { viewModal.saveServer(it, navigator) } }
             )
         }
     }
 }
 
-@Composable
-private fun ServerScreenInput(
-    state: ServerUiState,
-    onChange: (inputs: Inputs) -> Unit,
-    onSave: () -> Unit
-) {
-    ConstraintLayout(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        val (submitButton, inputs) = createRefs()
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .constrainAs(inputs) {
-                    centerHorizontallyTo(parent)
-                    centerVerticallyTo(parent)
-                },
-            horizontalAlignment = CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            OutlinedTextField(
-                value = state.inputs.host,
-                label = { P(text = "Host") },
-                readOnly = state.isLoading,
-                placeholder = { P(text = "https://localhost:8096") },
-                onValueChange = { onChange(state.inputs.copy(host = it)) },
-                isError = state.errors.containsKey(ErrorKey.HOST),
-                supportingText = { P(text = state.errors[ErrorKey.HOST] ?: "") })
-            OutlinedTextField(
-                value = state.inputs.username,
-                label = { P(text = "Username") },
-                readOnly = state.isLoading,
-                onValueChange = { onChange(state.inputs.copy(username = it)) },
-                isError = state.errors.containsKey(ErrorKey.USERNAME),
-                supportingText = { P(text = state.errors[ErrorKey.USERNAME] ?: "") })
-            PasswordOutlinedTextField(
-                value = state.inputs.password,
-                label = { P(text = "Password") },
-                readOnly = state.isLoading,
-                onValueChange = { onChange(state.inputs.copy(password = it)) },
-                isError = state.errors.containsKey(ErrorKey.PASSWORD),
-                supportingText = { P(text = state.errors[ErrorKey.PASSWORD] ?: "") })
-        }
-        Button(
-            modifier = Modifier.constrainAs(submitButton) {
-                centerHorizontallyTo(parent)
-                centerVerticallyTo(parent)
-                top.linkTo(inputs.bottom)
-            },
-            enabled = state.isValidInput && !state.isLoading,
-            onClick = onSave
-        ) {
-            P(text = "connect")
-        }
-    }
-}
 
 @Composable
 private fun PreviewWithInitialization(isDarkTheme: Boolean) {
@@ -142,8 +78,6 @@ private fun PreviewWithInitialization_White() {
 private fun PreviewServerScreenInput(isDarkTheme: Boolean) {
     val viewModal = PreviewServerViewModal(
         ServerUiState(
-            inputs = Inputs(),
-            isValidInput = false,
             isInitializing = false
         )
     )
@@ -166,47 +100,12 @@ private fun PreviewServerScreenInput_White() {
 }
 
 @Composable
-private fun PreviewServerScreenWithValidInput(isDarkTheme: Boolean) {
-    val viewModal = PreviewServerViewModal(
-        ServerUiState(
-            inputs = Inputs(
-                host = "http://localhost:8096",
-                username = "Swackles"
-            ),
-            isValidInput = true,
-            isInitializing = false
-        )
-    )
-    JellyfinTheme(isDarkTheme) {
-        ServerScreen(EmptyDestinationsNavigator, viewModal)
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewServerScreenWithValidInput_Dark() {
-    PreviewServerScreenWithValidInput(true)
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewServerScreenWithValidInput_White() {
-    PreviewServerScreenWithValidInput(false)
-}
-
-@Composable
 private fun PreviewServerScreenLoading(isDarkTheme: Boolean) {
     val viewModal = PreviewServerViewModal(
         ServerUiState(
-            inputs = Inputs(
-                host = "http://localhost:8096",
-                username = "Swackles",
-                password = "Password"
-            ),
-            isValidInput = true,
-            isLoading = true,
             isInitializing = false
-        )
+        ),
+        ServerLoginFormResponseState(isLoading = true)
     )
     JellyfinTheme(isDarkTheme) {
         ServerScreen(EmptyDestinationsNavigator, viewModal)
@@ -229,18 +128,14 @@ private fun PreviewServerScreenLoading_White() {
 private fun PreviewServerScreenErrors(isDarkTheme: Boolean) {
     val viewModal = PreviewServerViewModal(
         ServerUiState(
-            inputs = Inputs(
-                host = "http://localhost:8096",
-                username = "Swackles",
-                password = "Password"
-            ),
-            isValidInput = true,
-            isLoading = false,
-            isInitializing = false,
+            isInitializing = false
+        ),
+        ServerLoginFormResponseState(
             errors = emptyMap<ErrorKey, String>()
                 .plus(Pair(ErrorKey.HOST, "Cannot connect"))
                 .plus(Pair(ErrorKey.USERNAME, "Invalid username or password"))
-                .plus(Pair(ErrorKey.PASSWORD, "Invalid username or password"))
+                .plus(Pair(ErrorKey.PASSWORD, "Invalid username or password")),
+            isLoading = true
         )
     )
     JellyfinTheme(isDarkTheme) {
