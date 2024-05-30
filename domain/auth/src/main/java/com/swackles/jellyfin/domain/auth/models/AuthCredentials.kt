@@ -8,6 +8,8 @@ package com.swackles.jellyfin.domain.auth.models
  */
 data class AuthCredentials(
     val host: String? = null,
-    val username: String,
-    val password: String
-)
+    val username: String = "",
+    val password: String = ""
+) {
+    fun isValid() = (host == null || host.isNotBlank()) && username.isNotBlank() && password.isNotBlank()
+}

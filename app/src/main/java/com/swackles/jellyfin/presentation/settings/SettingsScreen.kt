@@ -28,12 +28,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.swackles.auth.ServerLoginFormDialog
+import com.swackles.auth.models.ServerLoginFormResponseState
 import com.swackles.jellyfin.data.room.models.User
 import com.swackles.jellyfin.presentation.common.components.ListItem
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import com.swackles.jellyfin.presentation.destinations.ServersListScreenDestination
 import com.swackles.jellyfin.presentation.settings.components.AddUserCard
-import com.swackles.jellyfin.presentation.settings.components.AddUserModal
 import com.swackles.jellyfin.presentation.settings.components.ProfileCard
 import kotlinx.coroutines.launch
 
@@ -109,10 +110,11 @@ fun SettingsScreen(
         }
 
         if (state.isAddUserModalVisible) {
-            AddUserModal(
-                isLoading = state.isLoading,
-                onToggleVisibility = viewModal::toggleModalVisibility,
-                onAdd = viewModal::login
+            ServerLoginFormDialog(
+                responseState = ServerLoginFormResponseState(isLoading = state.isLoading),
+                showHost = false,
+                onDismiss = viewModal::toggleModalVisibility,
+                onLogin = { viewModal.login(it) }
             )
         }
     }
@@ -143,4 +145,31 @@ private fun Preview_Dark() {
 @Composable
 private fun Preview_White() {
     Preview(false)
+}
+
+@Composable
+private fun Preview_addUserModal(isDarkTheme: Boolean) {
+    val userOne = User.preview().copy(id = 0)
+    val userTwo = User.preview().copy(id = 1)
+
+    val state = SettingsViewModalState(
+        users = listOf(userOne, userTwo),
+        activeUser = userOne,
+        isAddUserModalVisible = true
+    )
+    JellyfinTheme(isDarkTheme) {
+        SettingsScreen(EmptyDestinationsNavigator, SettingsViewModalPreview(state))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun Preview_addUserModal_Dark() {
+    Preview_addUserModal(true)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun Preview_addUserModal_White() {
+    Preview_addUserModal(false)
 }

@@ -31,10 +31,11 @@ open class SettingsViewModal @Inject constructor(
     private val authenticatorUseCase: AuthenticatorUseCase,
     private val userRepository: UserRepository,
 ) : ViewModel() {
+
     private val _state = mutableStateOf(
         SettingsViewModalState(
-        activeUser = authenticatorUseCase.authenticatedUser.value!!
-    )
+            activeUser = authenticatorUseCase.authenticatedUser.value!!
+        )
     )
     open val state: State<SettingsViewModalState> = _state
 
@@ -46,11 +47,11 @@ open class SettingsViewModal @Inject constructor(
         _state.value = _state.value.copy(isAddUserModalVisible = !_state.value.isAddUserModalVisible)
     }
 
-    fun login(username: String, password: String) {
+    fun login(authCredentials: AuthCredentials) {
         _state.value = _state.value.copy(isLoading = true)
 
         viewModelScope.launch {
-            val res = authenticatorUseCase.login(AuthCredentials(username = username, password = password))
+            val res = authenticatorUseCase.login(authCredentials)
             if (res == AuthenticatorResponse.SUCCESS) _state.value = _state.value.copy(activeUser = authenticatorUseCase.authenticatedUser.value!!)
         }
     }

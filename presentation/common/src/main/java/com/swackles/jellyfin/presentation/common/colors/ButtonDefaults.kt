@@ -8,11 +8,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 
 
-
 @Composable
 fun ButtonDefaults.primaryButtonColors() = buttonColors(
     containerColor = MaterialTheme.colorScheme.primary,
     contentColor = MaterialTheme.colorScheme.onPrimary
+)
+
+@Composable
+fun ButtonDefaults.primaryTextButtonColors() = textButtonColors(
+    contentColor = MaterialTheme.colorScheme.primary
+)
+
+@Composable
+fun ButtonDefaults.errorTextButtonColors() = textButtonColors(
+    contentColor = MaterialTheme.colorScheme.error
 )
 
 @Composable
