@@ -1,18 +1,14 @@
 package com.swackles.jellyfin.presentation.player
 
+import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.AndroidViewModel
 import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import com.swackles.jellyfin.data.jellyfin.repository.VideoMetadataReader
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import java.util.UUID
 import javax.inject.Inject
 
 data class PlayerUiState(
@@ -28,12 +24,10 @@ data class PlayerUiState(
 
 @HiltViewModel
 class PlayerViewModal @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
-    val player: Player,
-    private val metadataReader: VideoMetadataReader
-): ViewModel() {
-    private val videoIds = savedStateHandle.getStateFlow("videoIds", emptyList<UUID>())
-    private var episodes by mutableStateOf(emptyList<UUID>())
+    application: Application,
+    final val metadataReader: VideoMetadataReader,
+): AndroidViewModel(application) {
+    val player: ExoPlayer
     private var _state by mutableStateOf(PlayerUiState())
     private val listener =
         object : Player.Listener {
@@ -46,13 +40,8 @@ class PlayerViewModal @Inject constructor(
             }
         }
 
-    fun getState(): PlayerUiState = _state
-
-    val videoItems = videoIds.map { ids ->
-        ids.map { metadataReader.getMetadataUsingId(it).getVideoItem() }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
     init {
+        player = ExoPlayer.Builder(application).build()
         player.prepare()
 
         player.addListener(listener)
@@ -67,46 +56,10 @@ class PlayerViewModal @Inject constructor(
         )
     }
 
-    suspend fun addVideoUri(id: UUID) {
-        savedStateHandle["videoIds"] = videoIds.value + id
-        player.addMediaItem(metadataReader.getMetadataUsingId(id).getMediaItem())
-    }
-
-    suspend fun playVideo(id: UUID, isTvShow: Boolean, startPosition: Long = 0) {
-        _state = _state.copy(isLoading = true, isTvShow = isTvShow, isLastEpisode = episodes.lastOrNull() === id)
-        player.playWhenReady = true
-        val metadata = metadataReader.getMetadataUsingId(id)
-
-        player.setMediaItem(metadata.getMediaItem())
-        player.seekTo(startPosition / 10000)
-        _state = _state.copy(isLoading = false)
-    }
-
     override fun onCleared() {
         super.onCleared()
 
         player.removeListener(listener)
         player.release()
-    }
-
-    fun toggleControls() {
-        _state = _state.copy(isVisible = !_state.isVisible)
-    }
-
-    fun togglePlay() {
-        if (player.isPlaying) player.pause()
-        else player.play()
-    }
-
-    fun seekTo(timeMs: Float) {
-        player.seekTo(timeMs.toLong())
-    }
-
-    fun rewind() {
-        player.seekBack()
-    }
-
-    fun forward() {
-        player.seekForward()
     }
 }

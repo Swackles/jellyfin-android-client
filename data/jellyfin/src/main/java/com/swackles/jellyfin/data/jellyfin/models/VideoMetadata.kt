@@ -1,42 +1,18 @@
 package com.swackles.jellyfin.data.jellyfin.models
 
-import android.net.Uri
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MimeTypes
-import org.jellyfin.sdk.model.api.MediaSourceInfo
 import org.jellyfin.sdk.model.api.PlaybackInfoResponse
 import java.util.UUID
 
 class VideoMetadata(
     private val id: UUID,
     private val metadata: PlaybackInfoResponse,
-    private val baseUrl: String
+    baseUrl: String
 ) {
-    fun getVideoItem(): VideoItem {
-        val source = getMediaSource()
+    val scheme = "https"
 
-        return VideoItem(
-            name = source.name ?: "",
-            mediaItem = getMediaItem(source)
-        )
-    }
+    val host = baseUrl.replace("https://", "")
 
-    fun getMediaItem(): MediaItem = getMediaItem(getMediaSource())
-
-
-    private fun getMediaItem(source: MediaSourceInfo): MediaItem {
-        val url = Uri.Builder()
-            .path("/Videos/$id/master.m3u8")
-            .appendQueryParameter("mediaSourceId", source.id)
-            .build()
-            .toString()
-
-        return MediaItem.Builder()
-            .setMimeType(MimeTypes.APPLICATION_M3U8)
-            .setUri(baseUrl + url)
-            .build()
-    }
-
+    val mediaSourceId = getMediaSource().id
 
     private fun getMediaSource() = metadata.mediaSources.first()
 }

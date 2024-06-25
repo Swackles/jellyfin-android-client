@@ -98,4 +98,5 @@ dependencies {
     implementation(project(":domain:common"))
     implementation(project(":presentation:auth"))
     implementation(project(":presentation:common"))
+    implementation(project(":presentation:player"))
 }
