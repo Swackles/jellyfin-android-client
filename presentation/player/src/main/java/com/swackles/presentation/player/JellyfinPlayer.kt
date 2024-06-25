@@ -30,6 +30,11 @@ class JellyfinPlayer(
             )
         )
         player = ExoPlayer.Builder(context, default).build()
+        player.playWhenReady = true
+    }
+
+    fun release() {
+        player.release()
     }
 
     fun addMedia(id: UUID) {

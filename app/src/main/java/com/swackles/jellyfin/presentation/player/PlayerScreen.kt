@@ -41,6 +41,7 @@ fun PlayerScreen(
         activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         onDispose {
+            player.release()
             systemUiController.isStatusBarVisible = true // Status bar
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
