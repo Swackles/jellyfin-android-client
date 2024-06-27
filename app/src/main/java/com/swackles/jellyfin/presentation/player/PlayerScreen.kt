@@ -43,7 +43,7 @@ fun PlayerScreen(
         onDispose {
             player.release()
             systemUiController.isStatusBarVisible = true // Status bar
-            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 

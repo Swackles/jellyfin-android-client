@@ -25,11 +25,15 @@ import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.BaseItemKind.MOVIE
 import org.jellyfin.sdk.model.api.BaseItemKind.SERIES
+import org.jellyfin.sdk.model.api.DeviceProfile
 import org.jellyfin.sdk.model.api.ItemFilter
 import org.jellyfin.sdk.model.api.LocationType
+import org.jellyfin.sdk.model.api.PlaybackInfoDto
 import org.jellyfin.sdk.model.api.PlaybackInfoResponse
 import org.jellyfin.sdk.model.api.QueryFiltersLegacy
 import org.jellyfin.sdk.model.api.SortOrder.DESCENDING
+import org.jellyfin.sdk.model.api.SubtitleDeliveryMethod
+import org.jellyfin.sdk.model.api.SubtitleProfile
 import javax.inject.Inject
 
 
@@ -154,8 +158,27 @@ internal class JellyfinRepositoryImpl @Inject constructor(
         return episodes.filter { filterDuplicateEpisodes(episodes, it) }
     }
 
-    override suspend fun getMetadata(itemId: UUID): PlaybackInfoResponse =
-        jellyfinClient.mediaInfoApi.getPlaybackInfo(itemId, getUserId()).content
+    override suspend fun getMetadata(itemId: UUID): PlaybackInfoResponse {
+        val body = PlaybackInfoDto(
+            userId = getUserId(),
+            deviceProfile = DeviceProfile(
+                codecProfiles = emptyList(),
+                containerProfiles = emptyList(),
+                directPlayProfiles = emptyList(),
+                responseProfiles = emptyList(),
+                supportedMediaTypes = "",
+                transcodingProfiles = emptyList(),
+                xmlRootAttributes = emptyList(),
+                subtitleProfiles = listOf(
+                    SubtitleProfile(format = "vtt", method = SubtitleDeliveryMethod.EXTERNAL),
+                    SubtitleProfile(format = "ass", method = SubtitleDeliveryMethod.EXTERNAL),
+                    SubtitleProfile(format = "ssa", method = SubtitleDeliveryMethod.EXTERNAL)
+                )
+            )
+        )
+
+        return jellyfinClient.mediaInfoApi.getPostedPlaybackInfo(itemId, body).content
+    }
 
     override fun getBaseUrl(): String {
         jellyfinClient.clientInfo.name
