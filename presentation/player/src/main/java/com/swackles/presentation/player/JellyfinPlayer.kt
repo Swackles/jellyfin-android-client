@@ -12,6 +12,7 @@ import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import com.swackles.jellyfin.data.jellyfin.repository.VideoMetadataReader
+import com.swackles.presentation.player.subtitle.JellyfinSubtitleParserFactory
 import kotlinx.coroutines.runBlocking
 import java.util.UUID
 
@@ -23,13 +24,18 @@ class JellyfinPlayer(
     val player: ExoPlayer
 
     init {
-        val default = DefaultMediaSourceFactory(
+        val mediaSourceFactory = DefaultMediaSourceFactory(
             DefaultDataSource.Factory(
                 context,
                 JellyfinHTTPDataSource(AUTH_TOKEN, DEVICE_ID)
             )
-        )
-        player = ExoPlayer.Builder(context, default).build()
+        ).setSubtitleParserFactory(JellyfinSubtitleParserFactory())
+
+        val renderersFactory = JellyfinRenderersFactory(context)
+
+        player = ExoPlayer
+            .Builder(context, renderersFactory, mediaSourceFactory)
+            .build()
         player.playWhenReady = true
     }
 
