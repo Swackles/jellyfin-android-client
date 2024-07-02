@@ -112,15 +112,15 @@ class SsaEventsParser {
             )
         if (style.underline)
             spannableText.setSpan(
-                UnderlineSpan(),  /* start= */
-                0,  /* end= */
+                UnderlineSpan(),
+                0,
                 spannableText.length,
                 SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         if (style.strikeOut)
             spannableText.setSpan(
-                StrikethroughSpan(),  /* start= */
-                0,  /* end= */
+                StrikethroughSpan(),
+                0,
                 spannableText.length,
                 SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
             )
@@ -131,10 +131,6 @@ class SsaEventsParser {
 
         cue.setPosition(computeDefaultLineOrPosition(cue.getPositionAnchor()))
         cue.setLine(computeDefaultLineOrPosition(cue.getLineAnchor()), LINE_TYPE_FRACTION)
-
-        if (text.contains("Sis")) {
-            Log.d("Player", text)
-        }
 
         return cue.build()
     }
