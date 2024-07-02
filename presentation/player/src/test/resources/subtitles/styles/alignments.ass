@@ -1,0 +1,10 @@
+Format: Name, Fontname, Fontsize, PrimaryColour, Alignment, Encoding
+Style: A1, Arial,34,&H3030FF,1,0
+Style: A2, Arial,34,&H3030FF,2,0
+Style: A3, Arial,34,&H3030FF,3,0
+Style: A4, Arial,34,&H3030FF,4,0
+Style: A5, Arial,34,&H3030FF,5,0
+Style: A6, Arial,34,&H3030FF,6,0
+Style: A7, Arial,34,&H3030FF,7,0
+Style: A8, Arial,34,&H3030FF,8,0
+Style: A9, Arial,34,&H3030FF,9,0

@@ -1,0 +1,5 @@
+Format: Name, Fontname, Fontsize, PrimaryColour, Bold, Italic, Underline, StrikeOut, Alignment, Encoding
+Style: S1, Arial,60,&HFFB0B0,-1, 0, 0, 0, 7, 0
+Style: S2, Arial,60,&HFFB0B0, 0,-1, 0, 0, 7, 0
+Style: S3, Arial,60,&HFFB0B0, 0, 0,-1, 0, 7, 0
+Style: S4, Arial,60,&HFFB0B0, 0, 0, 0,-1, 7, 0
