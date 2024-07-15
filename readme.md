@@ -46,6 +46,25 @@ Motiviation for creating this project was to reimagine the Jellyfin Android clie
   - [ ] Audio
   - [ ] Bitrate
   - [ ] Watch series in a row
+  - [ ] SSA support
+    - [ ] Font (ref 5.2)
+    - [ ] Font Size (ref 5.3)
+    - [X] Primary Color (ref 5.4)
+    - [ ] Secondary Colour (ref 5.5)
+    - [ ] Outline Colour (ref 5.6)
+    - [X] Background Color (ref 5.7)
+    - [X] Bold (ref 5.8)
+    - [X] Italic (ref 5.9)
+    - [X] Underline (ref 5.9.1)
+    - [X] Strikeout (ref 5.9.2)
+    - [ ] Font width and height (ref 5.9.3/4)
+    - [ ] Spacing  (ref 5.9.5)
+    - [ ] Angle (ref 5.9.6)
+    - [ ] Border style (ref 5.10)
+    - [ ] Outline (ref 5.11)
+    - [ ] Shadow (ref 5.12)
+    - [ ] Alignment (ref 5.13)
+    - [ ] Margin  (ref 5.14/15/16)
 - [ ] Detailed media info
   - [X] Watch
   - [ ] Links to search view
