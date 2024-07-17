@@ -3,7 +3,6 @@ package com.swackles.presentation.player.subtitle.ssa.models
 import android.graphics.Color
 import com.google.common.primitives.Ints
 import com.swackles.presentation.player.subtitle.ssa.enums.SsaAlignment
-import com.swackles.presentation.player.subtitle.ssa.enums.SsaBorderStyle
 
 @OptIn(ExperimentalStdlibApi::class)
 class SsaStyle(
@@ -11,8 +10,8 @@ class SsaStyle(
     val fontName: String?,
     val fontSize: Int?,
     primaryColour: String?,
-    val outlineColor: String?, // TODO: Implement
-    backColour: String?,
+    private val outlineColor: String?,
+    private val backColour: String?,
     val bold: Boolean,
     val italic: Boolean,
     val underline: Boolean,
@@ -21,9 +20,20 @@ class SsaStyle(
     val scaleY: Int, // TODO: Implement
     val spacing: Float, // TODO: Implement
     val angle: Float, // TODO: Implement
-    val borderStyle: SsaBorderStyle?, // TODO: Implement
-    val outline: Float, // TODO: Implement
-    val shadow: Float, // TODO: Implement
+    /*
+     * 0 - None
+     * 1 - Outline + Shadow. Specific size is determined, by the properties and color by outline color
+     * 3 - Opaque box. Color is determined by backColor
+     */
+    private val borderStyle: Int,
+    /*
+     * Specifies the outline width, this can be between 0 and 4
+     */
+    private val outline: Int,
+    /*
+     * Specifies the outline width, this can be between
+     */
+    private val shadow: Int,
     val alignment: SsaAlignment?,
     val marginL: Int, // TODO: Implement
     val marginR: Int, // TODO: Implement
@@ -31,8 +41,31 @@ class SsaStyle(
     val encoding: Int // TODO: Implement
 ) {
     val primaryColour: Int = parseColor(primaryColour)
-    // It seems that when the back color is "0" then it's fully transparent. Doesn't make much sense, why this happens, might be missing something
-    val backColour: Int = if (HIDDEN_COLOR == backColour) Color.TRANSPARENT else parseColor(backColour)
+
+    private fun shouldRenderBackground(): Boolean = this.borderStyle == BORDER_STYLE_OPAQUE
+    fun backgroundColor(): Int = if(shouldRenderBackground()) parseColor(backColour) else Color.TRANSPARENT
+
+    fun shouldRenderOutlineAndShadow(): Boolean = this.borderStyle == BORDER_STYLE_OUTLINE
+    /*
+     * This isn't correct solution, it should return the dpi value based
+     * on outline being the number of pixels in a border. But I'm unable
+     * to figure out how can I get the screen density to here, so for now
+     * this will have to do.
+     *
+     * Although, most likely does require some balancing based on how it looks on other screens.
+     */
+    fun outlineWidth(): Float = outline * BORDER_WIDTH_MULTIPLIER
+    fun outlineColor(): Int = parseColor(outlineColor)
+    /*
+     * This isn't correct solution, it should return the dpi value based
+     * on shadow being the number of pixels in a shadow. But I'm unable
+     * to figure out how can I get the screen density to here, so for now
+     * this will have to do.
+     *
+     * Although, most likely does require some balancing based on how it looks on other screens.
+     */
+    fun shadowDepth(): Float = shadow * BORDER_SHADOW_MULTIPLIER
+    fun shadowColor(): Int = outlineColor()
 
     private fun parseColor(color: String?): Int {
         if (color == null) return Color.TRANSPARENT
@@ -46,7 +79,13 @@ class SsaStyle(
         return Color.argb(a, r, g, b)
     }
 
-    private companion object {
+    companion object {
+        const val BORDER_STYLE_NONE = 0
+        const val BORDER_STYLE_OUTLINE = 1
+        const val BORDER_STYLE_OPAQUE = 3
+        private const val BORDER_WIDTH_MULTIPLIER = 5f
+        private const val BORDER_SHADOW_MULTIPLIER = 2.5f
+
         const val HIDDEN_COLOR = "&H00000000"
     }
 }

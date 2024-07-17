@@ -19,6 +19,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.extractor.text.CuesWithTiming
 import com.swackles.presentation.player.subtitle.ssa.enums.SsaAlignment
 import com.swackles.presentation.player.subtitle.ssa.models.SsaStyle
+import com.swackles.presentation.player.subtitle.ssa.spans.OutlineShadowSpan
 import com.swackles.presentation.player.subtitle.ssa.util.readLines
 
 
@@ -80,11 +81,21 @@ class SsaEventsParser {
             SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         spannableText.setSpan(
-            BackgroundColorSpan(style.backColour),
+            BackgroundColorSpan(style.backgroundColor()),
             0,
             spannableText.length,
             SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
         )
+        if (style.shouldRenderOutlineAndShadow()) {
+            spannableText.setSpan(
+                OutlineShadowSpan(
+                    style.outlineWidth(), style.outlineColor(),
+                    style.shadowDepth(), style.shadowColor()
+                ),
+                0, spannableText.length,
+                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
         if (style.fontSize != null) {
             //TODO: Replace static screen height
             cue.setTextSize(style.fontSize / 360f, Cue.TEXT_SIZE_TYPE_FRACTIONAL_IGNORE_PADDING)

@@ -4,7 +4,6 @@ import androidx.annotation.OptIn
 import androidx.media3.common.util.ParsableByteArray
 import androidx.media3.common.util.UnstableApi
 import com.swackles.presentation.player.subtitle.ssa.enums.SsaAlignment
-import com.swackles.presentation.player.subtitle.ssa.enums.SsaBorderStyle
 import com.swackles.presentation.player.subtitle.ssa.models.SsaStyle
 import com.swackles.presentation.player.subtitle.ssa.util.readLines
 import kotlin.RuntimeException
@@ -48,9 +47,9 @@ class SsaStylesV4PlusParser {
             scaleY = getIntValue("ScaleY", values) ?: 100,
             spacing = getFloatValue("Spacing", values) ?: 0f,
             angle = getFloatValue("Angle", values) ?: 0f,
-            borderStyle = parseBorderStyle("BorderStyle", values),
-            outline = getFloatValue("Outline", values) ?: 0f,
-            shadow = getFloatValue("Shadow", values) ?: 0f,
+            borderStyle = getIntValue("BorderStyle", values) ?: SsaStyle.BORDER_STYLE_NONE,
+            outline = getIntValue("Outline", values) ?: 0,
+            shadow = getIntValue("Shadow", values) ?: 1,
             alignment = parseAlignment("Alignment", values),
             marginL = getIntValue("MarginL", values) ?: 0,
             marginR = getIntValue("MarginR", values) ?: 0,
@@ -87,18 +86,6 @@ class SsaStylesV4PlusParser {
             "8" -> SsaAlignment.TOP_CENTER
             "9" -> SsaAlignment.TOP_RIGHT
             else -> throw RuntimeException("Unknown alignment value \"$values[index]\"")
-        }
-    }
-
-    private fun parseBorderStyle(key: String, values: List<String>): SsaBorderStyle {
-        val index = format.indexOf(key)
-
-        if (index == -1) return SsaBorderStyle.UNKNOWN
-
-        return when(values[index]) {
-            "1" -> SsaBorderStyle.OUTLINE
-            "3" -> SsaBorderStyle.OPAQUE_BOX
-            else -> throw RuntimeException("Unknown border style value \"$values[index]\"")
         }
     }
 

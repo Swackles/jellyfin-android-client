@@ -2,8 +2,8 @@ package com.swackles.presentation.player.subtitle.ssa
 
 import androidx.media3.common.util.ParsableByteArray
 import com.swackles.presentation.player.subtitle.ssa.enums.SsaAlignment
-import com.swackles.presentation.player.subtitle.ssa.enums.SsaBorderStyle
 import com.swackles.presentation.player.subtitle.ssa.models.SsaStyle
+import com.swackles.presentation.player.subtitle.ssa.models.SsaStyle.Companion.BORDER_STYLE_OUTLINE
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -32,9 +32,9 @@ class SsaStylesV4PlusParserTest {
             100,
             0f,
             0f,
-            SsaBorderStyle.OUTLINE,
-            1f,
-            2f,
+            BORDER_STYLE_OUTLINE,
+            1,
+            2,
             SsaAlignment.TOP_LEFT,
             30,
             10,
@@ -57,9 +57,9 @@ class SsaStylesV4PlusParserTest {
             100,
             0f,
             0f,
-            SsaBorderStyle.OUTLINE,
-            1f,
-            2f,
+            BORDER_STYLE_OUTLINE,
+            1,
+            2,
             SsaAlignment.TOP_LEFT,
             30,
             10,
