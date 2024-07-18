@@ -63,7 +63,7 @@ Motiviation for creating this project was to reimagine the Jellyfin Android clie
     - [X] Border style (ref 5.10)
     - [X] Outline (ref 5.11) NB! Not correct support, but works
     - [X] Shadow (ref 5.12) NB! Not correct support, but works
-    - [ ] Alignment (ref 5.13)
+    - [X] Alignment (ref 5.13)
     - [ ] Margin  (ref 5.14/15/16)
 - [ ] Detailed media info
   - [X] Watch
