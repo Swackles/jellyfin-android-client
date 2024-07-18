@@ -5,6 +5,7 @@ import android.text.Layout
 import android.text.SpannableString
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
+import android.text.style.ScaleXSpan
 import android.text.style.StrikethroughSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
@@ -86,6 +87,13 @@ class SsaEventsParser {
             spannableText.length,
             SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
         )
+        if (style.scaleX() != 1f) {
+            spannableText.setSpan(
+                ScaleXSpan(style.scaleX()),
+                0, spannableText.length,
+                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
         if (style.shouldRenderOutlineAndShadow()) {
             spannableText.setSpan(
                 OutlineShadowSpan(

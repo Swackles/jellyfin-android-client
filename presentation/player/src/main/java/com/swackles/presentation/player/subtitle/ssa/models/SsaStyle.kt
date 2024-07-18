@@ -16,8 +16,10 @@ class SsaStyle(
     val italic: Boolean,
     val underline: Boolean,
     val strikeOut: Boolean,
-    val scaleX: Int, // TODO: Implement
-    val scaleY: Int, // TODO: Implement
+    /*
+     * 100 is default and from there it gets scaled up and down
+     */
+    private val scaleX: Int,
     val spacing: Float, // TODO: Implement
     val angle: Float, // TODO: Implement
     /*
@@ -41,6 +43,9 @@ class SsaStyle(
     val encoding: Int // TODO: Implement
 ) {
     val primaryColour: Int = parseColor(primaryColour)
+
+    fun shouldRenderScaleX(): Boolean = scaleX != SCALE_DEFAULT.toInt()
+    fun scaleX(): Float = scaleX / SCALE_DEFAULT
 
     private fun shouldRenderBackground(): Boolean = this.borderStyle == BORDER_STYLE_OPAQUE
     fun backgroundColor(): Int = if(shouldRenderBackground()) parseColor(backColour) else Color.TRANSPARENT
@@ -85,6 +90,8 @@ class SsaStyle(
         const val BORDER_STYLE_OPAQUE = 3
         private const val BORDER_WIDTH_MULTIPLIER = 5f
         private const val BORDER_SHADOW_MULTIPLIER = 2.5f
+
+        const val SCALE_DEFAULT = 100f
 
         const val HIDDEN_COLOR = "&H00000000"
     }

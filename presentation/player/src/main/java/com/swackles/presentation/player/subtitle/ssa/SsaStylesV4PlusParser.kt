@@ -5,6 +5,7 @@ import androidx.media3.common.util.ParsableByteArray
 import androidx.media3.common.util.UnstableApi
 import com.swackles.presentation.player.subtitle.ssa.enums.SsaAlignment
 import com.swackles.presentation.player.subtitle.ssa.models.SsaStyle
+import com.swackles.presentation.player.subtitle.ssa.models.SsaStyle.Companion.SCALE_DEFAULT
 import com.swackles.presentation.player.subtitle.ssa.util.readLines
 import kotlin.RuntimeException
 
@@ -43,8 +44,7 @@ class SsaStylesV4PlusParser {
             italic = getBooleanValue("Italic", values),
             underline = getBooleanValue("Underline", values),
             strikeOut = getBooleanValue("StrikeOut", values),
-            scaleX = getIntValue("ScaleX", values) ?: 100,
-            scaleY = getIntValue("ScaleY", values) ?: 100,
+            scaleX = getIntValue("ScaleX", values) ?: SCALE_DEFAULT.toInt(),
             spacing = getFloatValue("Spacing", values) ?: 0f,
             angle = getFloatValue("Angle", values) ?: 0f,
             borderStyle = getIntValue("BorderStyle", values) ?: SsaStyle.BORDER_STYLE_NONE,

@@ -57,7 +57,7 @@ Motiviation for creating this project was to reimagine the Jellyfin Android clie
     - [X] Italic (ref 5.9)
     - [X] Underline (ref 5.9.1)
     - [X] Strikeout (ref 5.9.2)
-    - [ ] Font width and height (ref 5.9.3/4)
+    - [X] Scale (ref 5.9.3/4) NB! Scale Y is not implemented due to android limitations. Probably doable trough ReplacementSpan, but it already has it's own set of problems.
     - [ ] Spacing  (ref 5.9.5)
     - [ ] Angle (ref 5.9.6)
     - [X] Border style (ref 5.10)
