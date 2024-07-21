@@ -8,28 +8,21 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaItem.SubtitleConfiguration
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import com.swackles.jellyfin.data.jellyfin.repository.VideoMetadataReader
 import kotlinx.coroutines.runBlocking
 import java.util.UUID
 
 @OptIn(UnstableApi::class)
 class JellyfinPlayer(
-    private val context: Context,
+    context: Context,
+    private val userContext: JellyfinPlayerUserContext,
     private val metadataReader: VideoMetadataReader
 ) {
     val player: ExoPlayer
 
     init {
-        val default = DefaultMediaSourceFactory(
-            DefaultDataSource.Factory(
-                context,
-                JellyfinHTTPDataSource(AUTH_TOKEN, DEVICE_ID)
-            )
-        )
-        player = ExoPlayer.Builder(context, default).build()
+        player = ExoPlayer.Builder(context).build()
         player.playWhenReady = true
     }
 
@@ -46,7 +39,8 @@ class JellyfinPlayer(
                 .authority(metaData.host)
                 .path("/Videos/$id/master.m3u8")
                 .appendQueryParameter(MEDIA_SOURCE_ID_KEY, metaData.mediaSourceId)
-                .appendQueryParameter(MEDIA_DEVICE_ID_KEY, DEVICE_ID)
+                .appendQueryParameter(MEDIA_DEVICE_ID_KEY, userContext.deviceId)
+                .appendQueryParameter(MEDIA_API_KEY_KEY, userContext.authToken)
                 .appendQueryParameter(MEDIA_VIDEO_CODEC_KEY, MEDIA_VIDEO_CODEC_VALUE)
                 .appendQueryParameter(MEDIA_PLAY_SESSION_ID_KEY, metaData.playSessionId)
                 .build()
@@ -62,6 +56,7 @@ class JellyfinPlayer(
                     .scheme(metaData.scheme)
                     .authority(metaData.host)
                     .path(urlPathAndParams.first())
+                    .appendQueryParameter(MEDIA_API_KEY_KEY, userContext.authToken)
 
                 urlPathAndParams[1].split("&").forEach {
                     val keyAndValue = it.split("=")
@@ -86,12 +81,8 @@ class JellyfinPlayer(
         }
     }
 
-    // TODO: Temporary, Remove before committing
     private companion object {
-        const val PLAY_SESSION_ID = ""
-        const val DEVICE_ID = ""
-        const val AUTH_TOKEN = ""
-
+        const val MEDIA_API_KEY_KEY = "api_key"
         const val MEDIA_SOURCE_ID_KEY = "mediaSourceId"
         const val MEDIA_DEVICE_ID_KEY = "DeviceId"
         const val MEDIA_VIDEO_CODEC_KEY = "VideoCodec"

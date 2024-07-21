@@ -17,6 +17,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.presentation.player.JellyfinPlayer
+import com.swackles.presentation.player.JellyfinPlayerUserContext
 import java.util.UUID
 
 @Destination
@@ -29,7 +30,9 @@ fun PlayerScreen(
     navigator: DestinationsNavigator
 ) {
     val activity = LocalContext.current as Activity
-    val player = JellyfinPlayer(LocalContext.current, viewModal.metadataReader)
+    val activeUser = viewModal.activeUser.value
+
+    val player = JellyfinPlayer(LocalContext.current, JellyfinPlayerUserContext(activeUser.token, activeUser.deviceId), viewModal.metadataReader)
     val systemUiController = rememberSystemUiController()
     
     LaunchedEffect(key1 = id) {

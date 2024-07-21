@@ -1,6 +1,7 @@
 package com.swackles.jellyfin.presentation.player
 
 import android.app.Application
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,6 +9,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.swackles.jellyfin.data.jellyfin.repository.VideoMetadataReader
+import com.swackles.jellyfin.data.room.models.User
+import com.swackles.jellyfin.domain.auth.AuthenticatorUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -26,8 +29,13 @@ data class PlayerUiState(
 class PlayerViewModal @Inject constructor(
     application: Application,
     final val metadataReader: VideoMetadataReader,
+    private val authenticatorUseCase: AuthenticatorUseCase,
 ): AndroidViewModel(application) {
     val player: ExoPlayer
+
+    private val _activeUser = mutableStateOf(authenticatorUseCase.authenticatedUser.value!!)
+    val activeUser: State<User> = _activeUser
+
     private var _state by mutableStateOf(PlayerUiState())
     private val listener =
         object : Player.Listener {
