@@ -16,8 +16,6 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.swackles.auth.ServerLoginForm
-import com.swackles.auth.enums.ErrorKey
-import com.swackles.auth.models.ServerLoginFormResponseState
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import kotlinx.coroutines.launch
 
@@ -104,8 +102,7 @@ private fun PreviewServerScreenLoading(isDarkTheme: Boolean) {
     val viewModal = PreviewServerViewModal(
         ServerUiState(
             isInitializing = false
-        ),
-        ServerLoginFormResponseState(isLoading = true)
+        )
     )
     JellyfinTheme(isDarkTheme) {
         ServerScreen(EmptyDestinationsNavigator, viewModal)
@@ -129,13 +126,6 @@ private fun PreviewServerScreenErrors(isDarkTheme: Boolean) {
     val viewModal = PreviewServerViewModal(
         ServerUiState(
             isInitializing = false
-        ),
-        ServerLoginFormResponseState(
-            errors = emptyMap<ErrorKey, String>()
-                .plus(Pair(ErrorKey.HOST, "Cannot connect"))
-                .plus(Pair(ErrorKey.USERNAME, "Invalid username or password"))
-                .plus(Pair(ErrorKey.PASSWORD, "Invalid username or password")),
-            isLoading = true
         )
     )
     JellyfinTheme(isDarkTheme) {

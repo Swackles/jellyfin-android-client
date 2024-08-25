@@ -1,5 +1,6 @@
 package com.swackles.jellyfin.presentation.server
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -29,9 +30,8 @@ open class ServerViewModal @Inject constructor(
     private val authenticatorUseCase: AuthenticatorUseCase
     ) : ViewModel() {
     private var _serverUiState by mutableStateOf(ServerUiState())
-    private var _authResponseState by mutableStateOf(ServerLoginFormResponseState())
-
-    open val authResponseState: ServerLoginFormResponseState = this._authResponseState
+    var authResponseState by mutableStateOf(ServerLoginFormResponseState())
+        private set
 
     open fun getState(): ServerUiState {
         return _serverUiState
@@ -53,6 +53,7 @@ open class ServerViewModal @Inject constructor(
     }
 
     private fun handleLoginResponse(response: AuthenticatorResponse, navigator: DestinationsNavigator) {
+        Log.d("ServerViewModal", "handleLoginResponse: $response")
         when(response) {
             AuthenticatorResponse.NO_USER -> { /* Do nothing */ }
             AuthenticatorResponse.SUCCESS -> {
@@ -65,23 +66,23 @@ open class ServerViewModal @Inject constructor(
     }
 
     private fun setError(key: ErrorKey, msg: String) {
-        val errors = _authResponseState.errors
+        val errors = authResponseState.errors
             .minus(key)
             .plus(Pair(key, msg))
 
-        _authResponseState = _authResponseState.copy(errors = errors)
+        authResponseState = authResponseState.copy(errors = errors)
     }
 
     private fun setError(keys: List<ErrorKey>, msg: String) {
-        val errors = _authResponseState.errors
+        var errors = authResponseState.errors
 
         keys.forEach {
-            errors
+            errors = errors
                 .minus(it)
                 .plus(Pair(it, msg))
         }
 
-        _authResponseState = _authResponseState.copy(errors = errors)
+        authResponseState = authResponseState.copy(errors = errors)
     }
 
     private fun finishInitializing() {
@@ -89,13 +90,12 @@ open class ServerViewModal @Inject constructor(
     }
 
     private fun setLoading(isLoading: Boolean) {
-        _authResponseState = _authResponseState.copy(isLoading = isLoading)
+        authResponseState = authResponseState.copy(isLoading = isLoading)
     }
 }
 
 class PreviewServerViewModal constructor(
     private val _serverUiState: ServerUiState = ServerUiState(),
-    private val _authResponseState: ServerLoginFormResponseState = ServerLoginFormResponseState()
 ) : ServerViewModal(AuthenticatorUseCase(JellyfinRepositoryPreview(),
     ServerRepositoryPreview(),
     UserRepositoryPreview()
