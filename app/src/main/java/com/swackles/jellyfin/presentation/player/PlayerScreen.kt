@@ -2,7 +2,6 @@ package com.swackles.jellyfin.presentation.player
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +16,8 @@ import androidx.media3.ui.PlayerView
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.swackles.jellyfin.presentation.player.controls.PlayerControls
+import com.swackles.presentation.player.JellyfinPlayer
+import com.swackles.presentation.player.JellyfinPlayerUserContext
 import java.util.UUID
 
 @Destination
@@ -30,21 +30,23 @@ fun PlayerScreen(
     navigator: DestinationsNavigator
 ) {
     val activity = LocalContext.current as Activity
-    val systemUiController = rememberSystemUiController()
+    val activeUser = viewModal.activeUser.value
 
-    LaunchedEffect(Unit){
-        viewModal.playVideo(id, isTvShow, startPosition)
+    val player = JellyfinPlayer(LocalContext.current, JellyfinPlayerUserContext(activeUser.token, activeUser.deviceId), viewModal.metadataReader)
+    val systemUiController = rememberSystemUiController()
+    
+    LaunchedEffect(key1 = id) {
+        player.addMedia(id)
     }
 
     DisposableEffect(key1 = Unit){
-
-
         systemUiController.isStatusBarVisible = false // Status bar
         activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         onDispose {
+            player.release()
             systemUiController.isStatusBarVisible = true // Status bar
-            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 
@@ -52,25 +54,12 @@ fun PlayerScreen(
         AndroidView(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(16 / 9f)
-                .clickable {
-                    viewModal.toggleControls()
-                },
+                .aspectRatio(16 / 9f),
             factory = { context ->
                 PlayerView(context).also {
-                    it.player = viewModal.player
-                    it.useController = false
+                    it.player = player.player
                 }
             }
-        )
-
-        PlayerControls(
-            state = viewModal.getState(),
-            goBack = { navigator.navigateUp() },
-            onRewind = { viewModal.rewind() },
-            onPlayToggle = { viewModal.togglePlay() },
-            onForward = { viewModal.forward() },
-            onSeekChanged = { viewModal.seekTo(it) }
         )
     }
 }

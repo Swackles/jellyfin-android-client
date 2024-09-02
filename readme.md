@@ -37,13 +37,18 @@ Motiviation for creating this project was to reimagine the Jellyfin Android clie
   - [ ] Account settings
   - [ ] Jellyfin settings
   - [ ] App settings
-    - [] Theme
-  - [] Log out
-- [] Video downloading
-- [] Media Player
-- [] Detailed media info
+    - [ ] Player types (Default/Custom/External)
+    - [ ] Theme
+  - [ ] Log out
+- [ ] Video downloading
+- [ ] Media Player
+  - [ ] Subtitles
+  - [ ] Audio
+  - [ ] Bitrate
+  - [ ] Watch series in a row
+- [ ] Detailed media info
   - [X] Watch
-  - [] Links to search view
+  - [ ] Links to search view
 
 ## Known Issues
 
