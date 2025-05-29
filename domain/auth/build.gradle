@@ -23,21 +23,16 @@ android {
 }
 
 dependencies {
-    // Dagger - Hilt
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_version"
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    kapt "androidx.hilt:hilt-compiler:$hilt_compiler_version"
+    implementation libs.dagger.hilt
+    implementation libs.androidx.hilt.navigation
+    implementation libs.destinations.core
+    implementation libs.coil
+    implementation libs.jellyfin
 
-    // Compose Destinations
-    implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"
-    ksp "io.github.raamcosta.compose-destinations:ksp:$compose_destination_version"
+    kapt libs.dagger.hilt.compiler
+    kapt libs.androidx.hilt.compiler
 
-    // Coil
-    implementation "io.coil-kt:coil-compose:$coil_version"
-
-    // Jellyfin
-    implementation "org.jellyfin.sdk:jellyfin-core:$jellyfin_sdk_version"
+    ksp libs.destinations.ksp
 
     implementation(project(":data:jellyfin"))
     implementation(project(":data:room"))

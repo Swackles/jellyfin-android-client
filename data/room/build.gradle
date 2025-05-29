@@ -24,15 +24,12 @@ android {
 }
 
 dependencies {
-    // Dagger - Hilt
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_version"
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    kapt "androidx.hilt:hilt-compiler:$hilt_compiler_version"
+    implementation libs.dagger.hilt
+    implementation libs.androidx.hilt.navigation
+    implementation libs.bundles.room.impl
+    implementation libs.androidx.runtime
 
-    // Room
-    implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.room:room-ktx:$room_version"
-    implementation "androidx.compose.runtime:runtime-livedata:$androidx_runtime"
-    ksp "androidx.room:room-compiler:$room_version"
+    kapt libs.dagger.hilt.compiler
+    kapt libs.androidx.hilt.compiler
+    ksp libs.room.compiler
 }

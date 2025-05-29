@@ -1,7 +1,8 @@
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
-    id 'com.google.dagger.hilt.android'
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.hilt
+
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
 }
@@ -24,18 +25,11 @@ android {
 }
 
 dependencies {
-    // Dagger - Hilt
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_version"
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    kapt "androidx.hilt:hilt-compiler:$hilt_compiler_version"
+    implementation libs.dagger.hilt
+    implementation libs.androidx.hilt.navigation
+    implementation libs.jellyfin
+    implementation libs.bundles.exoplayer.impl
 
-    // Jellyfin
-    implementation "org.jellyfin.sdk:jellyfin-core:$jellyfin_sdk_version"
-
-    // Exoplayer
-    implementation "androidx.media3:media3-exoplayer:$exoplayer_version"
-    implementation "androidx.media3:media3-exoplayer-dash:$exoplayer_version"
-    implementation "androidx.media3:media3-ui:$exoplayer_version"
-    implementation "androidx.media3:media3-exoplayer-hls:$exoplayer_version"
+    kapt libs.dagger.hilt.compiler
+    kapt libs.androidx.hilt.compiler
 }

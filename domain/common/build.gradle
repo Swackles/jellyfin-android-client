@@ -21,7 +21,7 @@ android {
 }
 
 dependencies {
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$androidx_lifecycle"
+    implementation libs.androidx.lifecycle.runtime
 
     implementation(project(":data:jellyfin"))
 }

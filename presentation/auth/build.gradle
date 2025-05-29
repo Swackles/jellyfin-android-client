@@ -32,17 +32,11 @@ java {
 }
 
 dependencies {
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_lifecycle"
-    implementation "androidx.constraintlayout:constraintlayout-compose:$androidx_constraintlayout"
-    implementation "androidx.activity:activity-compose:$androidx_activity"
-
-    // UI
-    implementation "androidx.compose.ui:ui:$compose_ui_version"
-    implementation "androidx.compose.ui:ui-graphics:$compose_ui_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
-    implementation "androidx.compose.material3:material3:$compose_material_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
+    implementation libs.androidx.lifecycle.viewmodel
+    implementation libs.androidx.layout
+    implementation libs.androidx.activity
+    implementation libs.bundles.ui.impl
+    debugImplementation libs.compose.ui.tooling
 
     implementation(project(":domain:auth"))
     implementation(project(":presentation:common"))
