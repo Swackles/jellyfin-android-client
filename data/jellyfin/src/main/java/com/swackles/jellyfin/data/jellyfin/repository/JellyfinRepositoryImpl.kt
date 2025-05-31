@@ -26,10 +26,12 @@ import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.BaseItemKind.MOVIE
 import org.jellyfin.sdk.model.api.BaseItemKind.SERIES
 import org.jellyfin.sdk.model.api.ItemFilter
+import org.jellyfin.sdk.model.api.ItemSortBy
 import org.jellyfin.sdk.model.api.LocationType
 import org.jellyfin.sdk.model.api.PlaybackInfoResponse
 import org.jellyfin.sdk.model.api.QueryFiltersLegacy
 import org.jellyfin.sdk.model.api.SortOrder.DESCENDING
+import org.jellyfin.sdk.model.api.request.GetItemsRequest
 import javax.inject.Inject
 
 
@@ -40,8 +42,7 @@ internal class JellyfinRepositoryImpl @Inject constructor(
     override suspend fun login(hostname: String, userId: UUID, token: String, deviceId: String): JellyfinAuthResponse {
         val client = createJellyfin(this.context, deviceId).createApi(
             baseUrl = hostname,
-            accessToken = token,
-            userId = userId
+            accessToken = token
         )
 
         return try {
@@ -88,28 +89,25 @@ internal class JellyfinRepositoryImpl @Inject constructor(
 
     override suspend fun getItem(itemId: UUID): BaseItemDto {
         return jellyfinClient.userLibraryApi.getItem(
-            userId = getUserId(),
             itemId = itemId
         ).content
     }
 
     override suspend fun getItems(filters: GetMediaFilters): List<BaseItemDto> {
         return jellyfinClient.itemsApi.getItems(
-            userId = getUserId(),
             searchTerm = filters.query,
             genres = filters.genres,
             years = filters.years,
             officialRatings = filters.officialRatings,
             includeItemTypes = filters.mediaTypes.map { it.baseItem },
             recursive = true
-        ).content.items ?: emptyList(
-        )
+        ).content.items
     }
 
     override suspend fun getContinueWatching(): List<BaseItemDto> {
         try {
-            val nextTvShows = jellyfinClient.tvShowsApi.getNextUp(getUserId()).content.items ?: emptyList()
-            val resumeItems = jellyfinClient.itemsApi.getResumeItems(getUserId()).content.items ?: emptyList()
+            val nextTvShows = jellyfinClient.tvShowsApi.getNextUp().content.items
+            val resumeItems = jellyfinClient.itemsApi.getResumeItems().content.items
 
             return nextTvShows + resumeItems
         } catch (e: Exception) {
@@ -119,43 +117,41 @@ internal class JellyfinRepositoryImpl @Inject constructor(
 
     override suspend fun getNewlyAdded(): List<BaseItemDto> {
         return jellyfinClient.itemsApi.getItems(
-            userId = getUserId(),
-            includeItemTypes = listOf(MOVIE, SERIES),
-            sortBy = listOf("DateCreated"),
-            sortOrder = listOf(DESCENDING),
-            recursive = true,
-            limit = 10
-        ).content.items ?: emptyList()
+            GetItemsRequest(
+                includeItemTypes = listOf(MOVIE, SERIES),
+                sortBy = listOf(ItemSortBy.DATE_CREATED),
+                sortOrder = listOf(DESCENDING),
+                recursive = true,
+                limit = 10
+            )
+        ).content.items
     }
 
     override suspend fun getFavorites(): List<BaseItemDto> {
         return jellyfinClient.itemsApi.getItems(
-            userId = getUserId(),
             filters = listOf(ItemFilter.IS_FAVORITE),
             includeItemTypes = listOf(MOVIE, SERIES),
             recursive = true
-        ).content.items ?: emptyList()
+        ).content.items
     }
 
     override suspend fun getSimilar(itemId: UUID): List<BaseItemDto> {
         return jellyfinClient.libraryApi.getSimilarItems(
-            userId = getUserId(),
             itemId = itemId,
             limit = RECCOMENDED_COUNT
-        ).content.items ?: emptyList()
+        ).content.items
     }
 
     override suspend fun getEpisodes(seriesId: UUID): List<BaseItemDto> {
         val episodes = jellyfinClient.tvShowsApi.getEpisodes(
-            userId = getUserId(),
             seriesId = seriesId
-        ).content.items ?: emptyList()
+        ).content.items
 
         return episodes.filter { filterDuplicateEpisodes(episodes, it) }
     }
 
     override suspend fun getMetadata(itemId: UUID): PlaybackInfoResponse =
-        jellyfinClient.mediaInfoApi.getPlaybackInfo(itemId, getUserId()).content
+        jellyfinClient.mediaInfoApi.getPlaybackInfo(itemId).content
 
     override fun getBaseUrl(): String {
         jellyfinClient.clientInfo.name
@@ -176,14 +172,8 @@ internal class JellyfinRepositoryImpl @Inject constructor(
 
     override suspend fun getFilters(items: Collection<BaseItemKind>): QueryFiltersLegacy =
         jellyfinClient.filterApi.getQueryFiltersLegacy(
-            userId = getUserId(),
             includeItemTypes = items
         ).content
-
-
-    private fun getUserId(): UUID {
-        return jellyfinClient.userId!!
-    }
 
     // Due to bug with TVDB not removing missing media items after they created, need to filter out those missing items
     private fun filterDuplicateEpisodes(episodes: List<BaseItemDto>, episode: BaseItemDto): Boolean {

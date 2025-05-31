@@ -21,10 +21,12 @@ class EpisodeMediaPreview(
         overview = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a risus enim. Nullam nulla.",
         runTimeTicks = durationInMinutes * 600000000,
         userData = UserItemDataDto(
-            isFavorite = false,
-            playCount = 0,
             playbackPositionTicks = 0,
+            playCount = 0,
+            isFavorite = false,
             played = playedPercentage == 100f,
+            key = "test-key",
+            itemId = UUID.randomUUID(),
             playedPercentage = (playedPercentage * 100).toDouble()
         )
     ),

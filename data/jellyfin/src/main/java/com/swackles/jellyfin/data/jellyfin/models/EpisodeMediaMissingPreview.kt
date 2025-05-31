@@ -21,10 +21,12 @@ class EpisodeMediaMissingPreview(
         name = "Episode $episode",
         premiereDate = premiereDate,
         userData = UserItemDataDto(
-            isFavorite = false,
-            playCount = 0,
             playbackPositionTicks = 0,
-            played = false
+            playCount = 0,
+            isFavorite = false,
+            played = false,
+            key = "test-key",
+            itemId = UUID.randomUUID(),
         )
     ),
     "test-url"

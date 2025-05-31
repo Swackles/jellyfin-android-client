@@ -7,6 +7,7 @@ import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.ImageType
 import org.jellyfin.sdk.model.api.ImageType.BACKDROP
 import org.jellyfin.sdk.model.api.ImageType.LOGO
+import org.jellyfin.sdk.model.api.PersonKind
 
 abstract class DetailMediaBase(
     private val baseItem: BaseItemDto,
@@ -18,10 +19,10 @@ abstract class DetailMediaBase(
     override val overview = baseItem.overview ?: ""
     override val genres = baseItem.genres ?: emptyList()
     override val rating = baseItem.officialRating
-    override val actors = findPeopleNamesOfTypes("Actor")
-    override val directors = findPeopleNamesOfTypes("Director")
-    override val writers = findPeopleNamesOfTypes("Writer")
-    override val producers = findPeopleNamesOfTypes("Producer")
+    override val actors = findPeopleNamesOfTypes(PersonKind.ACTOR)
+    override val directors = findPeopleNamesOfTypes(PersonKind.DIRECTOR)
+    override val writers = findPeopleNamesOfTypes(PersonKind.WRITER)
+    override val producers = findPeopleNamesOfTypes(PersonKind.PRODUCER)
     override val isMovie = baseItem.type == BaseItemKind.MOVIE
     override val isSeries = baseItem.type == BaseItemKind.SERIES
 
@@ -40,7 +41,7 @@ abstract class DetailMediaBase(
         return "$baseUrl/items/$id/images/${type.name}/0${args.entries.joinToString(prefix = "?", separator = "&")}"
     }
 
-    private fun findPeopleNamesOfTypes(type: String): List<String> {
+    private fun findPeopleNamesOfTypes(type: PersonKind): List<String> {
         val people = baseItem.people ?: emptyList()
 
         return people.filter { it.type == type && it.name != null }.map { it.name!! }

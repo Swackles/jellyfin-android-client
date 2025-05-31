@@ -9,6 +9,7 @@ import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.BaseItemPerson
 import org.jellyfin.sdk.model.api.MediaStream
 import org.jellyfin.sdk.model.api.MediaStreamType
+import org.jellyfin.sdk.model.api.PersonKind
 import org.jellyfin.sdk.model.api.UserItemDataDto
 import java.util.UUID
 
@@ -43,10 +44,12 @@ class DetailMediaSeriesPreview(
         ),
         aspectRatio = "0.75",
         userData = UserItemDataDto(
-            isFavorite = true,
-            playCount = 0,
             playbackPositionTicks = 0,
-            played = false
+            playCount = 0,
+            isFavorite = true,
+            played = false,
+            key = "test-key",
+            itemId = UUID.randomUUID(),
         )
     ),
     similar = listOf(
@@ -67,15 +70,15 @@ class DetailMediaSeriesPreview(
 
 }
 
-private fun createPerson(name: String, type: String) = BaseItemPerson(
+private fun createPerson(name: String, type: PersonKind) = BaseItemPerson(
     id = UUID.randomUUID(),
     name = name,
     type = type
 )
-private fun createActorPerson(name: String) = createPerson(name, "Actor")
-private fun createDirectorPerson(name: String) = createPerson(name, "Director")
-private fun createWriterPerson(name: String) = createPerson(name, "Writer")
-private fun createProducerPerson(name: String) = createPerson(name, "Producer")
+private fun createActorPerson(name: String) = createPerson(name, PersonKind.ACTOR)
+private fun createDirectorPerson(name: String) = createPerson(name, PersonKind.DIRECTOR)
+private fun createWriterPerson(name: String) = createPerson(name, PersonKind.WRITER)
+private fun createProducerPerson(name: String) = createPerson(name, PersonKind.PRODUCER)
 
 private fun createMedia(title: String, type: MediaStreamType) = MediaStream(
     index = 1,
@@ -86,7 +89,8 @@ private fun createMedia(title: String, type: MediaStreamType) = MediaStream(
     isTextSubtitleStream = true,
     supportsExternalStream = true,
     type = type,
-    title = title
+    title = title,
+    isHearingImpaired = false
 )
 private fun createSubtitleMedia(title: String) = createMedia(title, MediaStreamType.SUBTITLE)
 private fun createAudioMedia(title: String) = createMedia(title, MediaStreamType.AUDIO)

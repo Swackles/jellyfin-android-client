@@ -19,7 +19,7 @@ androidx-activity = { module = "androidx.activity:activity-compose", version = "
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version = "1.8.0" }
 compose-bom = { module = "androidx.compose:compose-bom", version = "2022.10.00" }
 systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version = "0.31.2-alpha"}
-jellyfin = { module = "org.jellyfin.sdk:jellyfin-core", version = "1.4.2" }
+jellyfin = { module = "org.jellyfin.sdk:jellyfin-core", version = "1.6.8" }
 androidx-runtime = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "compose" }
 coil = { module = "io.coil-kt:coil-compose", version = "2.4.0" }
 
