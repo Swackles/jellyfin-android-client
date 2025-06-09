@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.swackles.jellyfin.data.jellyfin.models.Holder
-import com.swackles.jellyfin.data.jellyfin.models.DetailMediaBase
-import com.swackles.jellyfin.data.jellyfin.repository.MediaRepositoryPreview
+import com.swackles.jellyfin.data.jellyfin.models.MediaItem
 import com.swackles.jellyfin.data.useCase.GetDetailUseCase
+import com.swackles.jellyfin.domain.common.models.Holder
+import com.swackles.jellyfin.presentation.common.preview.JellyfinClientPreview
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -16,7 +16,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 data class DetailScreenState(
-    val data: DetailMediaBase? = null,
+    val data: MediaItem? = null,
     val showOverlay: Boolean = false,
     val activeSeason: Int = 1,
     val isLoading: Boolean = false,
@@ -37,8 +37,10 @@ open class DetailScreenViewModal @Inject constructor(
         getDetailUseCase(id).onEach { result ->
             when(result) {
                 is Holder.Success -> {
-                    val activeSeason = if (result.data!!.isSeries) result.data!!.getSeasons().first { it > 0 }
-                        else 0
+                    val activeSeason = when(result.data) {
+                        is MediaItem.Movie -> 0
+                        is MediaItem.Series -> (result.data as MediaItem.Series).seasons().firstOrNull { it > 0 } ?: 0
+                    }
 
                     _state = DetailScreenState(
                         data = result.data,
@@ -47,7 +49,7 @@ open class DetailScreenViewModal @Inject constructor(
                 }
                 is Holder.Error -> {
                     _state = DetailScreenState(
-                        error = result.message ?: "Unexpected error",
+                        error = result.message,
                     )
                 }
                 is Holder.Loading -> {
@@ -68,6 +70,6 @@ open class DetailScreenViewModal @Inject constructor(
 
 class PreviewDetailScreenViewModal constructor(
     private val _state: DetailScreenState
-) : DetailScreenViewModal(GetDetailUseCase(MediaRepositoryPreview())) {
+) : DetailScreenViewModal(GetDetailUseCase(JellyfinClientPreview())) {
     override fun getState() = _state
 }

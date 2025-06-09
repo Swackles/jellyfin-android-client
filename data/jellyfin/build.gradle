@@ -1,35 +1,22 @@
 plugins {
-    alias libs.plugins.android.library
-    alias libs.plugins.kotlin.android
-    alias libs.plugins.hilt
-
-    id 'kotlin-kapt'
-    id 'kotlin-parcelize'
+    id 'java-library'
+    alias(libs.plugins.jvm)
 }
 
-android {
-    namespace 'com.swackles.jellyfin.data.jellyfin'
-    compileSdk 34
-
-    defaultConfig {
-        minSdk 26
-        targetSdk 34
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = '17'
-    }
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
-    implementation libs.dagger.hilt
-    implementation libs.androidx.hilt.navigation
     implementation libs.jellyfin
-    implementation libs.bundles.exoplayer.impl
 
-    kapt libs.dagger.hilt.compiler
-    kapt libs.androidx.hilt.compiler
+    testImplementation libs.junit
+    testImplementation libs.mockk
+    testImplementation libs.coroutines.test
+    testImplementation libs.bundles.mockito
+}
+
+test {
+    useJUnitPlatform()
 }

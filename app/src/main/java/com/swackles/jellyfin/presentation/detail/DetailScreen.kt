@@ -33,29 +33,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.swackles.jellyfin.data.jellyfin.models.DetailMediaBase
-import com.swackles.jellyfin.data.jellyfin.models.DetailMediaMoviePreview
-import com.swackles.jellyfin.data.jellyfin.models.DetailMediaSeriesPreview
-import com.swackles.jellyfin.data.jellyfin.models.PlayShortcutInfo
+import com.swackles.jellyfin.data.jellyfin.models.MediaItem
 import com.swackles.jellyfin.presentation.common.colors.primaryAssistChipBorder
 import com.swackles.jellyfin.presentation.common.colors.primaryAssistChipColors
 import com.swackles.jellyfin.presentation.common.colors.primaryButtonColors
 import com.swackles.jellyfin.presentation.common.colors.primaryButtonContentPadding
 import com.swackles.jellyfin.presentation.common.components.H2
 import com.swackles.jellyfin.presentation.common.components.P
+import com.swackles.jellyfin.presentation.common.preview.preview
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import com.swackles.jellyfin.presentation.destinations.DetailScreenDestination
 import com.swackles.jellyfin.presentation.destinations.PlayerScreenDestination
 import com.swackles.jellyfin.presentation.detail.components.BannerImage
 import com.swackles.jellyfin.presentation.detail.components.LogoImage
+import com.swackles.jellyfin.presentation.detail.extensions.getInfo
+import com.swackles.jellyfin.presentation.detail.extensions.getPlayShortcutInfo
 import com.swackles.jellyfin.presentation.detail.tabs.DetailScreenTabs
-import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import org.jellyfin.sdk.model.UUID
+
+data class DetailMediaBarLabel(
+    val text: String,
+    val align: TextAlign
+)
+
+data class PlayShortcutInfo(
+    val progress: Float,
+    val labels: List<DetailMediaBarLabel>,
+    val mediaId: java.util.UUID,
+    val startPosition: Long,
+    val isInProgress: Boolean
+)
+
 
 @Destination
 @Composable
@@ -107,7 +122,7 @@ fun DetailScreen(
                                 PlayerScreenDestination(
                                     id = id,
                                     startPosition = startPosition,
-                                    isTvShow = viewModal.getState().data?.isSeries ?: false)
+                                    isTvShow = state.data is MediaItem.Series)
                             )
                         }
                         DetailScreenTabs(state.data,
@@ -119,13 +134,14 @@ fun DetailScreen(
                     }
                 }
             }
-            if (state.showOverlay) Overlay(state.data.getSeasons(), viewModal::selectSeason, viewModal::toggleOverlay)
+            if (state.showOverlay && state.data is MediaItem.Series)
+                Overlay(state.data.seasons(), viewModal::selectSeason, viewModal::toggleOverlay)
         }
     }
 }
 
 @Composable
-private fun HeaderBox(media: DetailMediaBase, playVideo: (id: UUID, startPosition: Long) -> Unit) {
+private fun HeaderBox(media: MediaItem, playVideo: (id: UUID, startPosition: Long) -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -138,14 +154,14 @@ private fun HeaderBox(media: DetailMediaBase, playVideo: (id: UUID, startPositio
         Spacer(modifier = Modifier.size(15.dp))
         PlayButtonAndProgressBar(media.getPlayShortcutInfo(), playVideo)
         Spacer(modifier = Modifier.size(15.dp))
-        if (media.overview.isNotBlank()) P(text = media.overview, modifier = Modifier.padding(horizontal = 5.dp))
+        if (!media.overview.isNullOrBlank()) P(text = media.overview!!, modifier = Modifier.padding(horizontal = 5.dp))
     }
 }
 
 @Composable
-private fun PlayButtonAndProgressBar(info: PlayShortcutInfo, playVideo: (id: UUID, startPosition: Long) -> Unit) {
+private fun PlayButtonAndProgressBar(info: PlayShortcutInfo?, playVideo: (id: UUID, startPosition: Long) -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        if (info.isInProgress) {
+        if (info != null && info.isInProgress) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 info.labels.map {
                     P(text = it.text, align = it.align, modifier = Modifier
@@ -161,9 +177,10 @@ private fun PlayButtonAndProgressBar(info: PlayShortcutInfo, playVideo: (id: UUI
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.primaryButtonColors(),
             contentPadding = ButtonDefaults.primaryButtonContentPadding(),
-            onClick = { playVideo(info.mediaId, info.startPosition) }) {
+            enabled = info != null,
+            onClick = { if (info != null) playVideo(info.mediaId, info.startPosition) }) {
             Icon(imageVector = Icons.Outlined.PlayArrow, contentDescription = "play arrow")
-            P(text = if (info.isInProgress) "Continue Watching" else "Play")
+            P(text = if (info != null && info.isInProgress) "Continue Watching" else "Play")
         }
     }
 }
@@ -286,7 +303,7 @@ private fun PreviewWithError_White() {
 @Composable
 private fun PreviewWithMovieData(isDarkTheme: Boolean) {
     val viewModal = PreviewDetailScreenViewModal(
-        DetailScreenState(data = DetailMediaMoviePreview())
+        DetailScreenState(data = MediaItem.Movie.preview())
     )
 
     JellyfinTheme(isDarkTheme) {
@@ -308,7 +325,7 @@ private fun PreviewWithMovieData_White() {
 @Composable
 private fun PreviewWithMovieDataInProgress(isDarkTheme: Boolean) {
     val viewModal = PreviewDetailScreenViewModal(
-        DetailScreenState(data = DetailMediaMoviePreview(playedPercentage = .24))
+        DetailScreenState(data = MediaItem.Movie.preview(playedPercentage = .24f))
     )
 
     JellyfinTheme(isDarkTheme) {
@@ -333,7 +350,7 @@ private fun PreviewWithMovieDataInProgress_White() {
 @Composable
 private fun PreviewWithSeriesData(isDarkTheme: Boolean) {
     val viewModal = PreviewDetailScreenViewModal(
-        DetailScreenState(data = DetailMediaSeriesPreview())
+        DetailScreenState(data = MediaItem.Series.preview())
     )
 
     JellyfinTheme(isDarkTheme) {
@@ -356,7 +373,7 @@ private fun PreviewWithSeriesData_White() {
 @Composable
 private fun PreviewWithSeriesDataInProgress(isDarkTheme: Boolean) {
     val viewModal = PreviewDetailScreenViewModal(
-        DetailScreenState(data = DetailMediaSeriesPreview())
+        DetailScreenState(data = MediaItem.Series.preview())
     )
 
     JellyfinTheme(isDarkTheme) {
@@ -379,7 +396,7 @@ private fun PreviewWithSeriesDataInProgress_White() {
 @Composable
 private fun PreviewWithSeriesDataWithOverlay(isDarkTheme: Boolean) {
     val viewModal = PreviewDetailScreenViewModal(
-        DetailScreenState(data = DetailMediaSeriesPreview(), showOverlay = true)
+        DetailScreenState(data = MediaItem.Series.preview(), showOverlay = true)
     )
 
     JellyfinTheme(isDarkTheme) {

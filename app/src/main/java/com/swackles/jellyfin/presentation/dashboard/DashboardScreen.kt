@@ -15,11 +15,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.swackles.jellyfin.data.jellyfin.models.Media
-import com.swackles.jellyfin.data.jellyfin.models.MediaSection
+import com.swackles.jellyfin.data.jellyfin.models.LibraryItem
 import com.swackles.jellyfin.presentation.common.StateHolder
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.common.components.mediaSection.MediaSection
+import com.swackles.jellyfin.presentation.common.models.MediaSection
+import com.swackles.jellyfin.presentation.common.preview.preview
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import com.swackles.jellyfin.presentation.destinations.DetailScreenDestination
 
@@ -108,28 +109,28 @@ private fun PreviewWithData(isDarkTheme: Boolean) {
     val continueWatchingMediaSection = MediaSection(
         "Continue watching",
         listOf(
-            Media.preview(),
-            Media.preview(),
-            Media.preview(),
-            Media.preview()
+            LibraryItem.preview(),
+            LibraryItem.preview(),
+            LibraryItem.preview(),
+            LibraryItem.preview()
         )
     )
     val newlyAddedMediaSection = MediaSection(
         "Newly added",
         listOf(
-            Media.preview(),
-            Media.preview(),
-            Media.preview(),
-            Media.preview()
+            LibraryItem.preview(),
+            LibraryItem.preview(),
+            LibraryItem.preview(),
+            LibraryItem.preview()
         )
     )
     val favoritesMediaSection = MediaSection(
         "My favorites",
         listOf(
-            Media.preview(),
-            Media.preview(),
-            Media.preview(),
-            Media.preview()
+            LibraryItem.preview(),
+            LibraryItem.preview(),
+            LibraryItem.preview(),
+            LibraryItem.preview()
         )
     )
     val viewModal = PreviewDashboardViewModal(

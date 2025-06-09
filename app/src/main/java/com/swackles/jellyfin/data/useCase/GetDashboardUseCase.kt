@@ -1,23 +1,32 @@
 package com.swackles.jellyfin.data.useCase
 
-import com.swackles.jellyfin.data.jellyfin.models.Holder
-import com.swackles.jellyfin.data.jellyfin.models.MediaSection
-import com.swackles.jellyfin.data.jellyfin.repository.MediaRepository
+import com.swackles.jellyfin.data.jellyfin.JellyfinClient
 import com.swackles.jellyfin.domain.common.BaseUseCase
+import com.swackles.jellyfin.domain.common.models.Holder
+import com.swackles.jellyfin.presentation.common.models.MediaSection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.lang.RuntimeException
 import javax.inject.Inject
 
-class GetDashboardUseCase @Inject constructor(private val repository: MediaRepository) :
+class GetDashboardUseCase @Inject constructor(private val client: JellyfinClient) :
     BaseUseCase<List<MediaSection>> {
     override operator fun invoke(): Flow<Holder<List<MediaSection>>> = flow {
         try {
             emit(Holder.Loading())
+
             val mediaSection = listOf(
-                repository.getContinueWatching(),
-                repository.getNewlyAdded(),
-                repository.getRecommended()
+                MediaSection(
+                    title = "Continue Watching",
+                    medias = client.libraryService.getContinueWatching()
+                ),
+                MediaSection(
+                    title = "New",
+                    medias = client.libraryService.getNewlyAdded()
+                ),
+                MediaSection(
+                    title = "Recommended",
+                    medias = client.libraryService.getRecommended()
+                )
             )
 
             emit(Holder.Success(mediaSection))

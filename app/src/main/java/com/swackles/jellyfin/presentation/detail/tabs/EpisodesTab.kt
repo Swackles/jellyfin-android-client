@@ -13,27 +13,25 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.swackles.jellyfin.R
-import com.swackles.jellyfin.data.jellyfin.models.EpisodeMediaMissingPreview
-import com.swackles.jellyfin.data.jellyfin.models.EpisodeMedia
-import com.swackles.jellyfin.data.jellyfin.models.EpisodeMediaPreview
+import com.swackles.jellyfin.data.jellyfin.models.LibraryItem
 import com.swackles.jellyfin.presentation.common.colors.variantAssistChipBorder
 import com.swackles.jellyfin.presentation.common.colors.variantAssistChipColors
 import com.swackles.jellyfin.presentation.common.components.P
-import com.swackles.jellyfin.presentation.detail.components.EpisodeListItem
+import com.swackles.jellyfin.presentation.common.preview.missingPreview
+import com.swackles.jellyfin.presentation.common.preview.preview
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.detail.components.EpisodeListItem
 import org.jellyfin.sdk.model.DateTime
 import org.jellyfin.sdk.model.UUID
 
 @Composable
 fun EpisodesTab(
-    episodes: Map<Int,
-    List<EpisodeMedia>>,
+    episodesBySeason: Map<Int, List<LibraryItem.Episode>>,
     activeSeason: Int,
     toggleOverlay: () -> Unit,
     playVideo: (id: UUID, startPosition: Long) -> Unit
 ) {
-    val hasMultipleSeasons = episodes.keys.size > 1
+    val hasMultipleSeasons = episodesBySeason.keys.size > 1
 
     Column(modifier = Modifier.fillMaxWidth()) {
         AssistChip(
@@ -44,7 +42,7 @@ fun EpisodesTab(
             label = { P(text = "Season $activeSeason") },
             trailingIcon = { if (hasMultipleSeasons) Icon(Icons.Outlined.ExpandMore, contentDescription = "Season select caret", tint = MaterialTheme.colorScheme.onSurface) }
         )
-        episodes[activeSeason]!!.map {
+        episodesBySeason[activeSeason]!!.map {
             EpisodeListItem(media = it, playVideo)
         }
     }
@@ -60,12 +58,12 @@ private fun PreviewEpisodeTab(isDarkTheme: Boolean) {
             EpisodesTab(
                 mapOf(
                     Pair(1, listOf(
-                        EpisodeMediaPreview(1f, 1, 1, R.drawable.episode_thumbnail_image_1),
-                        EpisodeMediaPreview(1f, 1, 1, R.drawable.episode_thumbnail_image_2),
-                        EpisodeMediaPreview(.44f, 3, 1, R.drawable.episode_thumbnail_image_3),
-                        EpisodeMediaMissingPreview(3, 1, DateTime.now().minusMonths(4)),
-                        EpisodeMediaPreview(0f, 5, 1, R.drawable.episode_thumbnail_image_5),
-                        EpisodeMediaMissingPreview(3, 1, DateTime.now().plusMonths(4)),
+                        LibraryItem.Episode.preview(1f, 1, 1),
+                        LibraryItem.Episode.preview(1f, 1, 1),
+                        LibraryItem.Episode.preview(.44f, 3, 1),
+                        LibraryItem.Episode.missingPreview(3, 1, DateTime.now().minusMonths(4)),
+                        LibraryItem.Episode.preview(0f, 5, 1),
+                        LibraryItem.Episode.missingPreview(3, 1, DateTime.now().plusMonths(4)),
                     ))
                 ), 1, {}
             ) { _, _ -> }
@@ -95,16 +93,16 @@ private fun PreviewEpisodeTabHasMultipleSeasons(isDarkTheme: Boolean) {
             EpisodesTab(
                 mapOf(
                     Pair(1, listOf(
-                        EpisodeMediaPreview(1f, 1, 1, R.drawable.episode_thumbnail_image_1),
-                        EpisodeMediaPreview(1f, 1, 1, R.drawable.episode_thumbnail_image_2),
-                        EpisodeMediaPreview(.44f, 3, 1, R.drawable.episode_thumbnail_image_3),
-                        EpisodeMediaPreview(0f, 4, 1, R.drawable.episode_thumbnail_image_4),
-                        EpisodeMediaPreview(0f, 5, 1, R.drawable.episode_thumbnail_image_5)
+                        LibraryItem.Episode.preview(1f, 1, 1),
+                        LibraryItem.Episode.preview(1f, 1, 1),
+                        LibraryItem.Episode.preview(.44f, 3, 1),
+                        LibraryItem.Episode.preview(0f, 4, 1),
+                        LibraryItem.Episode.preview(0f, 5, 1)
                     )),
                     Pair(2, listOf(
-                        EpisodeMediaPreview(1f, 1, 2, R.drawable.episode_thumbnail_image_1),
-                        EpisodeMediaPreview(1f, 1, 2, R.drawable.episode_thumbnail_image_2),
-                        EpisodeMediaPreview(.44f, 3, 2, R.drawable.episode_thumbnail_image_3)
+                        LibraryItem.Episode.preview(1f, 1, 2),
+                        LibraryItem.Episode.preview(1f, 1, 2),
+                        LibraryItem.Episode.preview(.44f, 3, 2)
                     ))
                 ), 1, {}
             ) { _, _ -> }

@@ -11,14 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.swackles.jellyfin.data.jellyfin.models.DetailMediaBase
-import com.swackles.jellyfin.data.jellyfin.models.DetailMediaMoviePreview
+import com.swackles.jellyfin.data.jellyfin.models.MediaItem
 import com.swackles.jellyfin.presentation.common.components.H5
 import com.swackles.jellyfin.presentation.common.components.P
+import com.swackles.jellyfin.presentation.common.preview.preview
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
 @Composable
-fun DetailTab(media: DetailMediaBase) {
+fun DetailTab(media: MediaItem) {
     Column(modifier = Modifier.fillMaxWidth()) {
         if (media.genres.isNotEmpty()) DetailKeyValue("Genres") {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -28,24 +28,24 @@ fun DetailTab(media: DetailMediaBase) {
         if (media.rating != null) DetailKeyValue("Rating") {
             P(text = media.rating!!)
         }
-        if (media.directors.isNotEmpty()) DetailKeyValue("Directors") {
+        if (media.getDirectors().isNotEmpty()) DetailKeyValue("Directors") {
             Column(modifier = Modifier.fillMaxWidth()) {
-                media.directors.map { P(text = it) }
+                media.getDirectors().map { P(text = it) }
             }
         }
-        if (media.producers.isNotEmpty()) DetailKeyValue("Producers") {
+        if (media.getProducers().isNotEmpty()) DetailKeyValue("Producers") {
             Column(modifier = Modifier.fillMaxWidth()) {
-                media.producers.map { P(text = it) }
+                media.getProducers().map { P(text = it) }
             }
         }
-        if (media.writers.isNotEmpty()) DetailKeyValue("Writers") {
+        if (media.getWriters().isNotEmpty()) DetailKeyValue("Writers") {
             Column(modifier = Modifier.fillMaxWidth()) {
-                media.writers.map { P(text = it) }
+                media.getWriters().map { P(text = it) }
             }
         }
-        if (media.actors.isNotEmpty()) DetailKeyValue("Actors") {
+        if (media.getActors().isNotEmpty()) DetailKeyValue("Actors") {
             Column(modifier = Modifier.fillMaxWidth()) {
-                media.actors.map { P(text = it) }
+                media.getActors().map { P(text = it) }
             }
         }
     }
@@ -68,7 +68,7 @@ private fun PreviewDetailTab(isDarkTheme: Boolean) {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            DetailTab(DetailMediaMoviePreview())
+            DetailTab(MediaItem.Movie.preview())
         }
     }
 }

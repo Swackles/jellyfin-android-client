@@ -3,10 +3,9 @@ package com.swackles.jellyfin.domain.auth
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.swackles.jellyfin.data.jellyfin.enums.JellyfinResponses
-import com.swackles.jellyfin.data.jellyfin.models.JellyfinAuthResponse
-import com.swackles.jellyfin.data.jellyfin.models.JellyfinUser
-import com.swackles.jellyfin.data.jellyfin.repository.JellyfinRepository
+import com.swackles.jellyfin.data.jellyfin.JellyfinClientErrors
+import com.swackles.jellyfin.data.jellyfin.JellyfinClientImpl
+import com.swackles.jellyfin.data.jellyfin.models.Credentials
 import com.swackles.jellyfin.data.room.models.Server
 import com.swackles.jellyfin.data.room.models.User
 import com.swackles.jellyfin.data.room.models.UserAndServer
@@ -14,14 +13,10 @@ import com.swackles.jellyfin.data.room.server.ServerRepository
 import com.swackles.jellyfin.data.room.user.UserRepository
 import com.swackles.jellyfin.domain.auth.models.AuthCredentials
 import com.swackles.jellyfin.domain.auth.models.AuthenticatorResponse
-import io.ktor.http.URLParserException
-import org.jellyfin.sdk.api.client.exception.SecureConnectionException
-import org.jellyfin.sdk.api.client.exception.TimeoutException
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 open class AuthenticatorUseCase @Inject constructor(
-    private val repository: JellyfinRepository,
     private val serverRepository: ServerRepository,
     private val userRepository: UserRepository
     ) {
@@ -41,16 +36,8 @@ open class AuthenticatorUseCase @Inject constructor(
     /**
      * Logs in a user with existing credentials, used for already authenticated users
      */
-    suspend fun login(user: UserAndServer): AuthenticatorResponse {
-        return try {
-            handleResponse(repository.login(user.server.host, user.externalId, user.token, user.deviceId))
-        } catch (ex: Exception) {
-            return when(ex) {
-                is URLParserException, is SecureConnectionException, is TimeoutException -> AuthenticatorResponse.INVALID_URL
-                else -> throw ex
-            }
-        }
-    }
+    suspend fun login(user: UserAndServer): AuthenticatorResponse =
+        performLogin(user.server.host, Credentials.AccessTokenCredentials(user.token))
 
     /**
      * Logs in a user with the provided credentials, used for new users
@@ -62,19 +49,10 @@ open class AuthenticatorUseCase @Inject constructor(
             ?: return AuthenticatorResponse.UNKNOWN_ERROR)
 
         for (host in hosts) {
-            return try {
-                Log.d("AuthenticatorUseCase", "Attempting to login to $host")
-                handleResponse(repository.login(host, credentials.username, credentials.password))
-            } catch (ex: Exception) {
-                when(ex) {
-                    is URLParserException, is SecureConnectionException, is TimeoutException -> {
-                        if (host == hosts.last()) AuthenticatorResponse.INVALID_URL
-                        else continue
-                    }
-
-                    else -> throw ex
-                }
-            }
+            return performLogin(host, Credentials.UsernamePasswordCredentials(
+                username = credentials.username,
+                password = credentials.password
+            ))
         }
 
         // Code should not reach here, so return unknown error
@@ -94,7 +72,9 @@ open class AuthenticatorUseCase @Inject constructor(
             userRepository.delete(authUser)
             val users = userRepository.getAllForServer(authUser.serverId)
                 .sortedByDescending { it.lastActive }
-            repository.logout()
+
+            AuthContext.getJellyfinClient().logout()
+            AuthContext.clearJellyfinClient()
 
             try {
                 return login(users.first().id)
@@ -109,7 +89,10 @@ open class AuthenticatorUseCase @Inject constructor(
     suspend fun logoutServer(): AuthenticatorResponse {
         authenticatedUser.value?.let { authUser ->
             userRepository.getAllForServer(authUser.serverId).forEach { user ->
-                repository.logout()
+
+                AuthContext.getJellyfinClient().logout()
+                AuthContext.clearJellyfinClient()
+
                 userRepository.delete(user)
             }
 
@@ -119,34 +102,43 @@ open class AuthenticatorUseCase @Inject constructor(
         return AuthenticatorResponse.NO_USER
     }
 
-    private suspend fun handleResponse(res: JellyfinAuthResponse): AuthenticatorResponse {
-        return when(res.response) {
-            JellyfinResponses.SUCCESSFUL -> saveUser(res.user!!)
-            JellyfinResponses.UNAUTHORIZED_RESPONSE -> AuthenticatorResponse.INVALID_CREDENTIALS
-            else -> AuthenticatorResponse.UNKNOWN_ERROR
-        }
-    }
+    private suspend fun performLogin(host: String, credentials: Credentials): AuthenticatorResponse =
+        try {
+            Log.d("AuthenticatorUseCase", "Attempting to login to $host")
 
-    private suspend fun saveUser(jellyfinUser: JellyfinUser): AuthenticatorResponse {
-        val serverId = serverRepository.insertOrUpdate(
-            Server(
-                name = jellyfinUser.serverName,
-                host = jellyfinUser.host
+            val client = JellyfinClientImpl.login(host, credentials)
+            val jellyfinUser = client.getJellyfinUser()
+
+            val serverId = serverRepository.insertOrUpdate(
+                Server(
+                    name = jellyfinUser.serverName,
+                    host = jellyfinUser.host
+                )
             )
-        )
 
-        AuthenticatorUseCase.authenticatedUser.postValue(userRepository.insertOrUpdate(User(
-            externalId = jellyfinUser.id,
-            serverId = serverId,
-            profileImageUrl = jellyfinUser.getProfileImageUrl(),
-            username = jellyfinUser.name,
-            token = jellyfinUser.token,
-            deviceId = jellyfinUser.deviceId,
-            lastActive = LocalDateTime.now()
-        )))
+            AuthenticatorUseCase.authenticatedUser.postValue(userRepository.insertOrUpdate(User(
+                externalId = jellyfinUser.id,
+                serverId = serverId,
+                profileImageUrl = jellyfinUser.getProfileImageUrl(),
+                username = jellyfinUser.name,
+                token = jellyfinUser.token,
+                deviceId = jellyfinUser.deviceId,
+                lastActive = LocalDateTime.now()
+            )))
 
-        return AuthenticatorResponse.SUCCESS
-    }
+            AuthContext.setJellyfinClient(client)
+            AuthenticatorResponse.SUCCESS
+        } catch (ex: JellyfinClientErrors) {
+            when(ex) {
+                is JellyfinClientErrors.InvalidHostnameError -> AuthenticatorResponse.INVALID_URL
+                is JellyfinClientErrors.UnauthorizedError -> AuthenticatorResponse.INVALID_CREDENTIALS
+                else -> throw ex
+            }
+        } catch (ex: Exception) {
+            Log.e("AuthenticatorUseCase", "Error logging in to $host", ex)
+            AuthenticatorResponse.UNKNOWN_ERROR
+        }
+
 
     private fun generateAcceptableHosts(host: String): List<String> {
         val hosts = mutableListOf<String>()

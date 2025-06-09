@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.swackles.jellyfin.data.jellyfin.models.DetailMediaBase
+import com.swackles.jellyfin.data.jellyfin.models.MediaItem
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.detail.tabs.Tabs.DETAILS
 import com.swackles.jellyfin.presentation.detail.tabs.Tabs.EPISODES
@@ -28,16 +28,17 @@ private enum class Tabs {
 
 @Composable
 fun DetailScreenTabs(
-    media: DetailMediaBase,
+    media: MediaItem,
     navigateToMediaView: (mediaId: UUID) -> Unit,
     toggleOverlay: () -> Unit,
     playVideo: (id: UUID, startPosition: Long) -> Unit,
     activeSeason: Int
 ) {
-    var state by remember { mutableStateOf( if(media.isSeries) EPISODES else SIMILAR ) }
-    val tabs = if (media.isMovie) DetailScreenDataTabsProps.movieTabs
-    else if (media.isSeries) DetailScreenDataTabsProps.seasonTabs
-    else throw RuntimeException("Unknown media type for id \"${media.id}\"")
+    var state by remember { mutableStateOf( if(media is MediaItem.Series) EPISODES else SIMILAR ) }
+    val tabs = when (media) {
+        is MediaItem.Movie -> listOf(SIMILAR, DETAILS)
+        is MediaItem.Series -> listOf(EPISODES, SIMILAR, DETAILS)
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -53,15 +54,10 @@ fun DetailScreenTabs(
         }
         Box(modifier = Modifier.padding(20.dp)) {
             when(state) {
-                EPISODES -> EpisodesTab(media.getEpisodes(), activeSeason, toggleOverlay, playVideo)
+                EPISODES -> if (media is MediaItem.Series) EpisodesTab(media.groupEpisodeBySeason(), activeSeason, toggleOverlay, playVideo)
                 SIMILAR -> SimilarTab(media.similar, navigateToMediaView = navigateToMediaView)
                 DETAILS -> DetailTab(media)
             }
         }
     }
-}
-
-private object DetailScreenDataTabsProps {
-    val movieTabs = listOf(SIMILAR, DETAILS)
-    val seasonTabs = listOf(EPISODES, SIMILAR, DETAILS)
 }

@@ -17,19 +17,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.swackles.jellyfin.R
-import com.swackles.jellyfin.data.jellyfin.models.EpisodeMediaMissingPreview
-import com.swackles.jellyfin.data.jellyfin.models.EpisodeMedia
-import com.swackles.jellyfin.data.jellyfin.models.EpisodeMediaPreview
+import com.swackles.jellyfin.data.jellyfin.models.LibraryItem
 import com.swackles.jellyfin.presentation.common.components.Image
 import com.swackles.jellyfin.presentation.common.components.P
+import com.swackles.jellyfin.presentation.common.extensions.getAiredString
+import com.swackles.jellyfin.presentation.common.extensions.getBackDropImage
+import com.swackles.jellyfin.presentation.common.extensions.getDurationString
+import com.swackles.jellyfin.presentation.common.preview.missingPreview
+import com.swackles.jellyfin.presentation.common.preview.preview
 import com.swackles.jellyfin.presentation.common.progressStatus
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import org.jellyfin.sdk.model.DateTime
 import org.jellyfin.sdk.model.UUID
 
 @Composable
-fun EpisodeListItem(media: EpisodeMedia, playVideo: (id: UUID, startPosition: Long) -> Unit) {
+fun EpisodeListItem(media: LibraryItem.Episode, playVideo: (id: UUID, startPosition: Long) -> Unit) {
     Surface(
         onClick = { playVideo(media.id, media.playbackPositionTicks) } ,
         modifier = Modifier.fillMaxWidth()
@@ -43,33 +45,38 @@ fun EpisodeListItem(media: EpisodeMedia, playVideo: (id: UUID, startPosition: Lo
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 EpisodeListItemImage(media = media)
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    P(text = media.title)
-                    P(text = media.getSubText())
+                    P(text = media.title ?: "Unknown Title")
+                    P(text =
+                        if (media.isMissing) media.getAiredString()
+                        else media.getDurationString()
+                    )
                 }
             }
-            P(text = media.overview)
+            P(text = media.overview ?: "")
         }
     }
 }
 
 @Composable
-private fun EpisodeListItemImage(media: EpisodeMedia) {
-    val size = media.getSize(LocalDensity.current, EpisodeListItemProps.size)
-    val modifier = if (!media.isMissing()) Modifier
+private fun EpisodeListItemImage(media: LibraryItem.Episode) {
+    val modifier = if (!media.isMissing) Modifier
         else Modifier.drawWithContent {
             drawContent()
             drawRect(color = Color.Black, alpha = .3f, blendMode = BlendMode.Darken)
         }
 
+    val width = EpisodeListItemProps.size * 1.8f
+    val height = EpisodeListItemProps.size
+
     Image(
-        url = media.getImageUrl(size),
+        url = media.getBackDropImage(LocalDensity.current, width, height),
         description = "Episode thumbnail",
         modifier = modifier
             .background(MaterialTheme.colorScheme.background)
-            .size(size.width, size.height)
+            .size(width, height)
             .then(
-                if (media.isInProgress()) Modifier.progressStatus(
-                    media.progress(),
+                if (media.isInProgress) Modifier.progressStatus(
+                    media.progress,
                     MaterialTheme.colorScheme.primary,
                     MaterialTheme.colorScheme.onSurfaceVariant
                 ) else Modifier
@@ -89,7 +96,7 @@ private fun PreviewEpisodeListItem(isDarkTheme: Boolean) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            EpisodeListItem(EpisodeMediaPreview(0f, 1, 1, R.drawable.episode_thumbnail_image_1)) { _, _ -> }
+            EpisodeListItem(LibraryItem.Episode.preview(0f, 1, 1)) { _, _ -> }
         }
     }
 }
@@ -112,7 +119,7 @@ private fun PreviewEpisodeListItemWithProgress(isDarkTheme: Boolean) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            EpisodeListItem(EpisodeMediaPreview(.44f, 1, 1, R.drawable.episode_thumbnail_image_1)) { _, _ -> }
+            EpisodeListItem(LibraryItem.Episode.preview(.44f, 1, 1)) { _, _ -> }
         }
     }
 }
@@ -135,7 +142,7 @@ private fun PreviewEpisodeListItemMissingAired(isDarkTheme: Boolean) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            EpisodeListItem(EpisodeMediaMissingPreview(1, 1, DateTime.now().minusMonths(4))) { _, _ -> }
+            EpisodeListItem(LibraryItem.Episode.missingPreview(1, 1, DateTime.now().minusMonths(4))) { _, _ -> }
         }
     }
 }
@@ -158,7 +165,7 @@ private fun PreviewEpisodeListItemMissingComingSoon(isDarkTheme: Boolean) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            EpisodeListItem(EpisodeMediaMissingPreview(1, 1, DateTime.now().plusMonths(4))) { _, _ -> }
+            EpisodeListItem(LibraryItem.Episode.missingPreview(1, 1, DateTime.now().plusMonths(4))) { _, _ -> }
         }
     }
 }

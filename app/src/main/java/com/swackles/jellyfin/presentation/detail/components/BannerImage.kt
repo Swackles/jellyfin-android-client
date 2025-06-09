@@ -25,13 +25,15 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.swackles.jellyfin.data.jellyfin.models.DetailMediaBase
-import com.swackles.jellyfin.data.jellyfin.models.DetailMediaMoviePreview
+import com.swackles.jellyfin.data.jellyfin.models.MediaItem
 import com.swackles.jellyfin.presentation.common.components.Image
+import com.swackles.jellyfin.presentation.common.extensions.getBackdropUrl
+import com.swackles.jellyfin.presentation.common.extensions.getPosterImageHeight
+import com.swackles.jellyfin.presentation.common.preview.preview
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
 @Composable
-internal fun BannerImage(media: DetailMediaBase, scrollState: ScrollState) {
+internal fun BannerImage(media: MediaItem, scrollState: ScrollState) {
     val width = LocalConfiguration.current.screenWidthDp.dp
     val height = media.getPosterImageHeight(width)
     val offsetY = 0.5f * scrollState.value
@@ -72,7 +74,7 @@ private fun PreviewBannerImage(isDarkTheme: Boolean) {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            BannerImage(media = DetailMediaMoviePreview(), scrollState = rememberScrollState())
+            BannerImage(media = MediaItem.Movie.preview(), scrollState = rememberScrollState())
             Spacer(modifier = Modifier.size(20.dp))
         }
     }

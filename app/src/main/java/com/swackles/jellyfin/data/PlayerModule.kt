@@ -5,9 +5,8 @@ import androidx.media3.common.Player
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import com.swackles.jellyfin.data.jellyfin.repository.JellyfinRepository
-import com.swackles.jellyfin.data.jellyfin.repository.VideoMetadataReader
-import com.swackles.jellyfin.data.jellyfin.repository.VideoMetadataReaderImpl
+import com.swackles.jellyfin.data.jellyfin.JellyfinClient
+import com.swackles.jellyfin.data.jellyfin.MediaService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,9 +21,9 @@ object PlayerModule {
 
     @Provides
     @ViewModelScoped
-    fun  provideVideoPlayer(app: Application, jellyfinRepository: JellyfinRepository): Player {
+    fun  provideVideoPlayer(app: Application, jellyfinClient: JellyfinClient): Player {
         val datasource = DefaultHttpDataSource.Factory()
-            .setDefaultRequestProperties(jellyfinRepository.getHeaders())
+            .setDefaultRequestProperties(jellyfinClient.getHeaders())
 
         return ExoPlayer.Builder(app)
             .apply {
@@ -37,8 +36,8 @@ object PlayerModule {
 
     @Provides
     @ViewModelScoped
-    fun provideMetaDataReader(api: JellyfinRepository): VideoMetadataReader =
-        VideoMetadataReaderImpl(api)
+    fun provideMetaDataReader(api: JellyfinClient): MediaService =
+        api.mediaService
 }
 
 private const val PLAYER_SEEK_INCREMENT = 10 * 1000L // 10 seconds

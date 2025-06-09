@@ -22,6 +22,4 @@ android {
 
 dependencies {
     implementation libs.androidx.lifecycle.runtime
-
-    implementation(project(":data:jellyfin"))
 }

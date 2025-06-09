@@ -19,14 +19,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
-import com.swackles.jellyfin.data.jellyfin.models.Media
-import com.swackles.jellyfin.data.jellyfin.models.MediaFilters
+import com.swackles.jellyfin.data.jellyfin.models.LibraryItem
+import com.swackles.jellyfin.data.jellyfin.models.PossibleFilters
 import com.swackles.jellyfin.presentation.common.StateHolder
 import com.swackles.jellyfin.presentation.common.components.P
 import com.swackles.jellyfin.presentation.common.components.mediaSection.MediaCard
+import com.swackles.jellyfin.presentation.common.preview.preview
+import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import com.swackles.jellyfin.presentation.destinations.DetailScreenDestination
 import com.swackles.jellyfin.presentation.search.common.SearchScreenFilters
-import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Destination
@@ -52,7 +53,7 @@ fun SearchScreen(
         } else {
             Column {
                 SearchScreenFilters(
-                    filterItems = viewModal.mediaFiltersState.value.data ?: MediaFilters(),
+                    filterItems = viewModal.mediaFiltersState.value.data ?: PossibleFilters(),
                     searchItems = viewModal::searchItems
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -76,18 +77,18 @@ fun SearchScreen(
 private fun PreviewWithData(isDarkTheme: Boolean) {
     val viewModal = PreviewSearchViewModal(
         StateHolder(
-            data = MediaFilters(
+            data = PossibleFilters(
                 genres = emptyList(),
-                officialRatings = emptyList(),
+                ratings = emptyList(),
                 years = emptyList()
             )
         ),
         StateHolder(
             data = listOf(
-                Media.preview(),
-                Media.preview(),
-                Media.preview(),
-                Media.preview()
+                LibraryItem.preview(),
+                LibraryItem.preview(),
+                LibraryItem.preview(),
+                LibraryItem.preview()
             )
         )
     )
@@ -118,10 +119,10 @@ private fun PreviewWithFiltersError(isDarkTheme: Boolean) {
         ),
         StateHolder(
             data = listOf(
-                Media.preview(),
-                Media.preview(),
-                Media.preview(),
-                Media.preview()
+                LibraryItem.preview(),
+                LibraryItem.preview(),
+                LibraryItem.preview(),
+                LibraryItem.preview()
             )
         )
     )
@@ -148,9 +149,9 @@ private fun PreviewWithFiltersError_White() {
 private fun PreviewWithMediaError(isDarkTheme: Boolean) {
     val viewModal = PreviewSearchViewModal(
         StateHolder(
-            data = MediaFilters(
+            data = PossibleFilters(
                 genres = emptyList(),
-                officialRatings = emptyList(),
+                ratings = emptyList(),
                 years = emptyList()
             )
         ),

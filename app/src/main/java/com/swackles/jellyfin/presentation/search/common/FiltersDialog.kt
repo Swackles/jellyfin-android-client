@@ -13,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -23,12 +22,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.swackles.jellyfin.data.jellyfin.models.MediaFilters
+import com.swackles.jellyfin.data.jellyfin.models.PossibleFilters
 import com.swackles.jellyfin.presentation.common.components.FilterChip
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
 @Composable
 fun FiltersDialog(
-    items: MediaFilters,
+    items: PossibleFilters,
     selectedItems: MediaFilters,
     isFiltersDialogVisible: Boolean,
 
@@ -52,7 +52,7 @@ fun FiltersDialog(
                 FiltersGroup(title = "Filters", items = items.genres, selectedItems = selectedItems.genres, onClick = {
                     updateSelectedItems(selectedItems.copy(genres = it))
                 })
-                FiltersGroup(title = "Official Ratings", items = items.officialRatings, selectedItems = selectedItems.officialRatings, onClick = {
+                FiltersGroup(title = "Official Ratings", items = items.ratings, selectedItems = selectedItems.officialRatings, onClick = {
                     updateSelectedItems(selectedItems.copy(officialRatings = it))
                 })
                 FiltersGroup(title = "Years", items = items.years, selectedItems = selectedItems.years, onClick = {
@@ -96,9 +96,10 @@ private fun <T>FiltersGroup(
 private fun PreviewWithData(isDarkTheme: Boolean) {
     JellyfinTheme(isDarkTheme) {
         FiltersDialog(
-            items = MediaFilters(
+            items = PossibleFilters(
                 genres = listOf("Action", "Comedy", "Drama", "Horror", "Romance", "Sci-Fi", "Thriller"),
-                officialRatings = listOf("G", "PG", "PG-13", "R", "NC-17"),
+                tags = listOf(""),
+                ratings = listOf("G", "PG", "PG-13", "R", "NC-17"),
                 years = listOf(2021, 2020, 2019, 2018, 2017, 2016, 2015)
             ),
             selectedItems = MediaFilters(
@@ -129,7 +130,7 @@ private fun PreviewWithoutData(isDarkTheme: Boolean) {
 
     JellyfinTheme(isDarkTheme) {
         FiltersDialog(
-            items = MediaFilters(emptyList(), emptyList(), emptyList()),
+            items = PossibleFilters(emptyList(), emptyList(), emptyList(), emptyList()),
             selectedItems = MediaFilters(emptyList(), emptyList(), emptyList()),
             isFiltersDialogVisible = true,
             toggleVisibility = { },
@@ -155,7 +156,7 @@ private fun Preview(isDarkTheme: Boolean) {
 
     JellyfinTheme(isDarkTheme) {
         FiltersDialog(
-            items = MediaFilters(emptyList(), emptyList(), emptyList()),
+            items = PossibleFilters(emptyList(), emptyList(), emptyList(), emptyList()),
             selectedItems = MediaFilters(emptyList(), emptyList(), emptyList()),
             isFiltersDialogVisible = true,
             toggleVisibility = { },

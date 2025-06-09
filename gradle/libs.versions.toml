@@ -9,6 +9,7 @@ compose = "1.6.4"
 cd = "1.10.2"
 room = "2.6.1"
 alife = "2.7.0"
+mockito = "5.18.0"
 
 [libraries]
 androidx-core = { module = "androidx.core:core-ktx", version = "1.8.0" }
@@ -19,7 +20,7 @@ androidx-activity = { module = "androidx.activity:activity-compose", version = "
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version = "1.8.0" }
 compose-bom = { module = "androidx.compose:compose-bom", version = "2022.10.00" }
 systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version = "0.31.2-alpha"}
-jellyfin = { module = "org.jellyfin.sdk:jellyfin-core", version = "1.6.8" }
+jellyfin = { module = "org.jellyfin.sdk:jellyfin-core-jvm", version = "1.6.8" }
 androidx-runtime = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "compose" }
 coil = { module = "io.coil-kt:coil-compose", version = "2.4.0" }
 
@@ -53,10 +54,18 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 
+### Testing ###
+junit = { module = "org.junit.jupiter:junit-jupiter-engine", version = "5.13.0" }
+mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-junit = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+mockk = { module = "io.mockk:mockk", version = "1.14.2" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version = "1.9.0" }
+
 [bundles]
 ui-impl = [ "compose-ui-core", "compose-ui-graphics", "compose-ui-preview", "material-core", "material-icons" ]
 room-impl = [ "room-runtime", "room-ktx" ]
 exoplayer-impl = [ "exoplayer-core", "exoplayer-dash", "exoplayer-ui", "exoplayer-hls" ]
+mockito = [ "mockito", "mockito-junit" ]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android" }

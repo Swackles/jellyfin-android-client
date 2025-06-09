@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.auth.enums.ErrorKey
 import com.swackles.auth.models.ServerLoginFormResponseState
-import com.swackles.jellyfin.data.jellyfin.repository.JellyfinRepositoryPreview
 import com.swackles.jellyfin.data.room.server.ServerRepositoryPreview
 import com.swackles.jellyfin.data.room.user.UserRepositoryPreview
 import com.swackles.jellyfin.domain.auth.AuthenticatorUseCase
@@ -96,7 +95,7 @@ open class ServerViewModal @Inject constructor(
 
 class PreviewServerViewModal constructor(
     private val _serverUiState: ServerUiState = ServerUiState(),
-) : ServerViewModal(AuthenticatorUseCase(JellyfinRepositoryPreview(),
+) : ServerViewModal(AuthenticatorUseCase(
     ServerRepositoryPreview(),
     UserRepositoryPreview()
 )) {

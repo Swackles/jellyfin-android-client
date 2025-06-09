@@ -34,14 +34,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.swackles.jellyfin.data.jellyfin.enums.MediaItemType
-import com.swackles.jellyfin.data.jellyfin.models.GetMediaFilters
 import com.swackles.jellyfin.data.jellyfin.models.MediaFilters
+import com.swackles.jellyfin.data.jellyfin.models.PossibleFilters
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
 @Composable
 fun SearchScreenFilters(
-    filterItems: MediaFilters,
-    searchItems: (filters: GetMediaFilters) -> Unit
+    filterItems: PossibleFilters,
+    searchItems: (filters: MediaFilters) -> Unit
 ) {
     var isFiltersDialogVisible by remember { mutableStateOf(false) }
     var selectedFiltersDialogItems by rememberSaveable { mutableStateOf(MediaFilters()) }
@@ -50,7 +50,7 @@ fun SearchScreenFilters(
 
     fun search() {
         searchItems(
-            GetMediaFilters(
+            MediaFilters(
                 query = query,
                 mediaTypes = if (selectedMediaItem == null) listOf(MediaItemType.MOVIE, MediaItemType.SERIES) else listOf(selectedMediaItem!!),
                 genres = selectedFiltersDialogItems.genres,
@@ -139,7 +139,7 @@ private fun getTabIndex(mediaItemType: MediaItemType?): Int {
 private fun Preview(isDarkTheme: Boolean) {
     JellyfinTheme(isDarkTheme) {
         SearchScreenFilters(
-            filterItems = MediaFilters(emptyList(), emptyList(), emptyList()),
+            filterItems = PossibleFilters(emptyList(), emptyList(), emptyList(), emptyList()),
             searchItems = {}
         )
     }

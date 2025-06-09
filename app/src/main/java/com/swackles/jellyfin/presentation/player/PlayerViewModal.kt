@@ -7,7 +7,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
-import com.swackles.jellyfin.data.jellyfin.repository.VideoMetadataReader
+import com.swackles.jellyfin.data.jellyfin.JellyfinClient
+import com.swackles.jellyfin.presentation.player.extensions.getVideoItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -30,8 +31,10 @@ data class PlayerUiState(
 class PlayerViewModal @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     val player: Player,
-    private val metadataReader: VideoMetadataReader
+    private val client: JellyfinClient
 ): ViewModel() {
+    private val metadataReader = client.mediaService
+
     private val videoIds = savedStateHandle.getStateFlow("videoIds", emptyList<UUID>())
     private var episodes by mutableStateOf(emptyList<UUID>())
     private var _state by mutableStateOf(PlayerUiState())
@@ -69,7 +72,7 @@ class PlayerViewModal @Inject constructor(
 
     suspend fun addVideoUri(id: UUID) {
         savedStateHandle["videoIds"] = videoIds.value + id
-        player.addMediaItem(metadataReader.getMetadataUsingId(id).getMediaItem())
+        player.addMediaItem(metadataReader.getMetadataUsingId(id).getVideoItem().mediaItem)
     }
 
     suspend fun playVideo(id: UUID, isTvShow: Boolean, startPosition: Long = 0) {
@@ -77,7 +80,7 @@ class PlayerViewModal @Inject constructor(
         player.playWhenReady = true
         val metadata = metadataReader.getMetadataUsingId(id)
 
-        player.setMediaItem(metadata.getMediaItem())
+        player.setMediaItem(metadata.getVideoItem().mediaItem)
         player.seekTo(startPosition / 10000)
         _state = _state.copy(isLoading = false)
     }

@@ -14,8 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.swackles.jellyfin.presentation.common.components.H2
-import com.swackles.jellyfin.data.jellyfin.models.Media
-import com.swackles.jellyfin.data.jellyfin.models.MediaSection
+import com.swackles.jellyfin.data.jellyfin.models.LibraryItem
+import com.swackles.jellyfin.presentation.common.models.MediaSection
+import com.swackles.jellyfin.presentation.common.preview.preview
 import java.util.UUID
 
 @Composable
@@ -55,11 +56,11 @@ private fun PreviewMediaSection() {
     val section = MediaSection(
         title = "Media section preview",
         medias = listOf(
-            Media.preview(),
-            Media.preview(),
-            Media.preview(),
-            Media.preview(),
-            Media.preview(),
+            LibraryItem.preview(),
+            LibraryItem.preview(),
+            LibraryItem.preview(),
+            LibraryItem.preview(),
+            LibraryItem.preview(),
         )
     )
 

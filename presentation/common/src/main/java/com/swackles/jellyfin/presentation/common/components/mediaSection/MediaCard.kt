@@ -17,12 +17,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.swackles.jellyfin.data.jellyfin.models.Media
+import com.swackles.jellyfin.data.jellyfin.models.LibraryItem
+import com.swackles.jellyfin.presentation.common.extensions.getPosterUrl
+import com.swackles.jellyfin.presentation.common.preview.preview
 import com.swackles.jellyfin.presentation.common.progressStatus
 import java.util.UUID
 
 @Composable
-fun MediaCard(media: Media, onClick: (mediaId: UUID) -> Unit) {
+fun MediaCard(media: LibraryItem, onClick: (mediaId: UUID) -> Unit) {
     Card(
         modifier = Modifier
             .padding(CardProps.padding)
@@ -35,7 +37,7 @@ fun MediaCard(media: Media, onClick: (mediaId: UUID) -> Unit) {
 }
 
 @Composable
-private fun CardImage(media: Media) {
+private fun CardImage(media: LibraryItem) {
     val painter = rememberAsyncImagePainter(
         ImageRequest.Builder(LocalContext.current)
             .data(media.getPosterUrl(
@@ -65,24 +67,12 @@ private object CardProps {
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewMediaCard() {
-    val media = Media(
-        UUID.randomUUID(),
-        0.0,
-        "https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_FMjpg_UX974_.jpg"
-    )
-
-    MediaCard(media) {  }
-}
+private fun PreviewMediaCard() =
+    MediaCard(LibraryItem.preview()) {  }
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewMediaCardWithProgress() {
-    val media = Media(
-        UUID.randomUUID(),
-        20.0,
-        "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_FMjpg_UY1982_.jpg",
-    )
-
-    MediaCard(media) { }
-}
+private fun PreviewMediaCardWithProgress() =
+    MediaCard(LibraryItem.preview(
+        playedPercentage = 20.0
+    )) { }
