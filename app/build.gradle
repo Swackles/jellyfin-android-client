@@ -47,6 +47,10 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 dependencies {
@@ -63,18 +67,21 @@ dependencies {
     implementation libs.bundles.ui.impl
     implementation libs.jellyfin
     implementation libs.bundles.exoplayer.impl
+    implementation libs.bundles.room.impl
 
     kapt libs.dagger.hilt.compiler
     kapt libs.androidx.hilt.compiler
+
+    ksp libs.room.compiler
     ksp libs.destinations.ksp
 
     debugImplementation libs.compose.ui.tooling
     debugImplementation libs.compose.ui.manifest
 
-    implementation(project(":data:jellyfin"))
     implementation(project(":data:room"))
-    implementation(project(":domain:auth"))
     implementation(project(":domain:common"))
-    implementation(project(":presentation:auth"))
     implementation(project(":presentation:common"))
+
+    implementation(project(":libs:auth"))
+    implementation(project(":libs:jellyfin"))
 }
