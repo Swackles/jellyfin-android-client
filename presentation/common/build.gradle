@@ -36,5 +36,4 @@ dependencies {
     debugImplementation libs.compose.ui.tooling
 
     implementation(project(":domain:common"))
-    implementation(project(":data:jellyfin"))
 }

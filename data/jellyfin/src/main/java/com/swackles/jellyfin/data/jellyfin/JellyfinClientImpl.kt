@@ -57,9 +57,9 @@ class JellyfinClientImpl(
          * @param hostname The hostname of the Jellyfin server.
          * @param credentials The credentials to use for login.
          *
-         * @throws [JellyfinClientErrors.InvalidHostnameError] hostname is invalid or unreachable.
-         * @throws [JellyfinClientErrors.UnsupportedVersion] server version is unsupported.
-         * @throws [JellyfinClientErrors.UnauthorizedError] if access to the server is not granted.
+         * @throws [com.swackles.libs.jellyfin.JellyfinClientErrors.InvalidHostnameError] hostname is invalid or unreachable.
+         * @throws [com.swackles.libs.jellyfin.JellyfinClientErrors.UnsupportedVersion] server version is unsupported.
+         * @throws [com.swackles.libs.jellyfin.JellyfinClientErrors.UnauthorizedError] if access to the server is not granted.
          */
         @Throws(JellyfinClientErrors::class)
         suspend fun login(hostname: String, credentials: Credentials): JellyfinClient =
@@ -74,9 +74,9 @@ class JellyfinClientImpl(
          * @param hostname The hostname of the Jellyfin server.
          * @param credentials The credentials to use for login.
          *
-         * @throws [JellyfinClientErrors.InvalidHostnameError] hostname is invalid or unreachable.
-         * @throws [JellyfinClientErrors.UnsupportedVersion] server version is unsupported.
-         * @throws [JellyfinClientErrors.UnauthorizedError] if access to the server is not granted.
+         * @throws [com.swackles.libs.jellyfin.JellyfinClientErrors.InvalidHostnameError] hostname is invalid or unreachable.
+         * @throws [com.swackles.libs.jellyfin.JellyfinClientErrors.UnsupportedVersion] server version is unsupported.
+         * @throws [com.swackles.libs.jellyfin.JellyfinClientErrors.UnauthorizedError] if access to the server is not granted.
          */
         @Throws(JellyfinClientErrors::class)
         suspend fun login(hostname: String, credentials: Credentials.AccessTokenCredentials): JellyfinClient {
@@ -104,9 +104,9 @@ class JellyfinClientImpl(
          * @param hostname The hostname of the Jellyfin server.
          * @param credentials The credentials to use for login.
          *
-         * @throws [JellyfinClientErrors.InvalidHostnameError] hostname is invalid or unreachable.
-         * @throws [JellyfinClientErrors.UnsupportedVersion] server version is unsupported.
-         * @throws [JellyfinClientErrors.InvalidHostnameError] if access to the server is not granted.
+         * @throws [com.swackles.libs.jellyfin.JellyfinClientErrors.InvalidHostnameError] hostname is invalid or unreachable.
+         * @throws [com.swackles.libs.jellyfin.JellyfinClientErrors.UnsupportedVersion] server version is unsupported.
+         * @throws [com.swackles.libs.jellyfin.JellyfinClientErrors.InvalidHostnameError] if access to the server is not granted.
          */
         @Throws(JellyfinClientErrors::class)
         suspend fun login(hostname: String, credentials: Credentials.UsernamePasswordCredentials): JellyfinClient {
@@ -133,8 +133,8 @@ class JellyfinClientImpl(
          * @param hostname The hostname to check.
          * @return The hostname if valid.
          *
-         * @throws [JellyfinClientErrors.InvalidHostnameError] hostname is invalid or unreachable.
-         * @throws [JellyfinClientErrors.UnsupportedVersion] server version is unsupported.
+         * @throws [com.swackles.libs.jellyfin.JellyfinClientErrors.InvalidHostnameError] hostname is invalid or unreachable.
+         * @throws [com.swackles.libs.jellyfin.JellyfinClientErrors.UnsupportedVersion] server version is unsupported.
          */
         @Throws(JellyfinClientErrors.InvalidHostnameError::class, JellyfinClientErrors.UnsupportedVersion::class)
         private suspend fun validateHostnameAndVersion(hostname: String): ApiClient {
