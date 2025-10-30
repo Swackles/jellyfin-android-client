@@ -20,8 +20,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
 import com.swackles.jellyfin.presentation.common.components.P
-import com.swackles.jellyfin.presentation.destinations.AuthScreenDestination
-import com.swackles.jellyfin.presentation.destinations.DashboardScreenDestination
+import com.swackles.jellyfin.presentation.screens.destinations.AuthScreenDestination
+import com.swackles.jellyfin.presentation.screens.destinations.DashboardScreenDestination
 
 @Destination(start = true)
 @Composable
