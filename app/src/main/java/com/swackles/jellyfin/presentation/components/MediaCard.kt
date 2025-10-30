@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.components
+package com.swackles.jellyfin.presentation.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image

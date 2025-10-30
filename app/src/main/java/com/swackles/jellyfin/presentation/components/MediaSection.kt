@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.components
+package com.swackles.jellyfin.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
