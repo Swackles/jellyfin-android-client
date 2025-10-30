@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.presentation.dashboard
+package com.swackles.jellyfin.presentation.screens.dashboard
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
@@ -12,6 +12,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.absoluteValue
+import kotlin.text.iterator
 
 data class ButtonCard(val title: String, val color: Color, val libraryItem: LibraryItem)
 
