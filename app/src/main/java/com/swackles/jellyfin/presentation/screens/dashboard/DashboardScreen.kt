@@ -43,7 +43,7 @@ import coil.size.Size
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.R
-import com.swackles.jellyfin.components.MediaSection
+import com.swackles.jellyfin.presentation.components.MediaSection
 import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.libs.jellyfin.LibraryItem
 import com.swackles.libs.jellyfin.getBackDropUrl
