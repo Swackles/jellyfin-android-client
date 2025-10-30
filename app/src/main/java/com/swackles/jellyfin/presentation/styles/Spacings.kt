@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.styles
+package com.swackles.jellyfin.presentation.styles
 
 import androidx.compose.ui.unit.dp
 
