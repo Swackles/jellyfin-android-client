@@ -1,6 +1,7 @@
 package com.swackles.libs.jellyfin
 
 import android.content.Context
+import com.swackles.libs.jellyfin.inter.LibraryClientImpl
 import kotlinx.coroutines.runBlocking
 import org.jellyfin.sdk.Jellyfin
 import org.jellyfin.sdk.JellyfinOptions
@@ -30,6 +31,8 @@ internal object Factory {
 class JellyfinClientImpl(
     private val apiClient: ApiClient
 ): JellyfinClient {
+    override val libraryClient: LibraryClient = LibraryClientImpl(apiClient)
+
     override val jellyfinUser: JellyfinUser
         get() = runBlocking {
             JellyfinUser(

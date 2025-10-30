@@ -3,6 +3,7 @@ package com.swackles.jellyfin.session.inter.di
 import android.content.Context
 import com.swackles.libs.jellyfin.JellyfinClient
 import com.swackles.libs.jellyfin.JellyfinClientImpl
+import com.swackles.libs.jellyfin.LibraryClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.EntryPoint
@@ -51,4 +52,8 @@ internal object JellyfinProviderModule {
     fun providerJellyfinClient(holder: MutableJellyfinProviderHolder): JellyfinClient =
         holder.jellyfinClient ?: throw RuntimeException("Cannot use jellyfin client before setting it")
 
+    @Singleton
+    @Provides
+    fun provideJellyfinLibraryClient(jellyfinClient: JellyfinClient): LibraryClient =
+        jellyfinClient.libraryClient
 }

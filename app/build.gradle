@@ -68,6 +68,7 @@ dependencies {
     implementation libs.jellyfin
     implementation libs.bundles.exoplayer.impl
     implementation libs.bundles.room.impl
+    implementation libs.coil
 
     kapt libs.dagger.hilt.compiler
     kapt libs.androidx.hilt.compiler

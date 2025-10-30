@@ -19,4 +19,7 @@ sealed class JellyfinClientErrors(message: String, cause: Throwable?): Throwable
      * Thrown either when authentication fails or has expired.
      */
     class UnauthorizedError(cause: Throwable? = null): JellyfinClientErrors("Unauthorized user", cause)
+
+    class BadDataFormatError(message: String, cause: Throwable? = null):
+            JellyfinClientErrors(message, cause)
 }
