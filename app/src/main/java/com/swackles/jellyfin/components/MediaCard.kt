@@ -39,7 +39,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.swackles.jellyfin.R
-import com.swackles.jellyfin.styles.Spacings
+import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.libs.jellyfin.LibraryItem
 import com.swackles.libs.jellyfin.getPosterUrl
 import com.swackles.libs.jellyfin.getThumbUrl

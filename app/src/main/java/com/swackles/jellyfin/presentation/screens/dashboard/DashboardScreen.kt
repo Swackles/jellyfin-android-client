@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalLayoutApi::class)
 
-package com.swackles.jellyfin.presentation.dashboard
+package com.swackles.jellyfin.presentation.screens.dashboard
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,7 +44,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.R
 import com.swackles.jellyfin.components.MediaSection
-import com.swackles.jellyfin.styles.Spacings
+import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.libs.jellyfin.LibraryItem
 import com.swackles.libs.jellyfin.getBackDropUrl
 import java.util.UUID
