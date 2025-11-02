@@ -1,13 +1,9 @@
 package com.swackles.libs.jellyfin
 
-import androidx.core.net.toUri
-import org.jellyfin.sdk.model.api.ImageType
 import java.util.UUID
 
 
-sealed interface LibraryItem {
-    val id: UUID
-    val baseUrl: String
+sealed interface LibraryItem: JellyfinItem {
     val playedPercentage: Float
     val playbackPositionTicks: Long
 
@@ -39,28 +35,6 @@ sealed interface LibraryItem {
     ) : LibraryItem
 }
 
-fun LibraryItem.getPosterUrl(width: Int, height: Int): String =
-    this.getImageUrl(ImageType.PRIMARY, width, height)
-
-fun LibraryItem.getThumbUrl(width: Int, height: Int): String =
-    this.getImageUrl(ImageType.THUMB, width, height)
-
-fun LibraryItem.getBackDropUrl(width: Int, height: Int): String =
-    this.getImageUrl(ImageType.BACKDROP, width, height)
-
-private fun LibraryItem.getImageUrl(imageType: ImageType, width: Int, height: Int) =
-    this.baseUrl.toUri()
-        .buildUpon()
-        .appendPath("items")
-        .appendPath(id.toString())
-        .appendPath("images")
-        .appendPath(imageType.name)
-        .appendPath("0")
-        .appendQueryParameter("fillWidth", width.toString())
-        .appendQueryParameter("fillHeight", height.toString())
-        .build()
-        .toString()
-
 interface LibraryClient {
     suspend fun getContinueWatching(): List<LibraryItem>
 
@@ -69,4 +43,6 @@ interface LibraryClient {
     suspend fun getFavorites(): List<LibraryItem>
 
     suspend fun getRecommended(): List<LibraryItem>
+
+    suspend fun getSimilar(id: UUID): List<LibraryItem>
 }

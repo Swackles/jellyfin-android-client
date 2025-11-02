@@ -24,7 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import com.swackles.jellyfin.presentation.common.components.P
+import com.swackles.jellyfin.presentation.components.MediumText
 
 @Composable
 fun PasswordOutlinedTextField(
@@ -104,7 +104,7 @@ private fun PreviewPasswordOutlinedTextField() {
     PasswordOutlinedTextField(
         value = "",
         onValueChange = {},
-        label = { P(text = "Password") })
+        label = { MediumText(text = "Password") })
 }
 
 @Preview(showBackground = true)
@@ -113,7 +113,7 @@ private fun PreviewPasswordOutlinedTextFieldWithValue() {
     PasswordOutlinedTextField(
         value = "password",
         onValueChange = {},
-        label = { P(text = "Password") })
+        label = { MediumText(text = "Password") })
 }
 
 @Preview(showBackground = true)
@@ -122,7 +122,7 @@ private fun PreviewPasswordOutlinedTextFieldIsErrored() {
     PasswordOutlinedTextField(
         value = "",
         onValueChange = {},
-        label = { P(text = "Password") },
+        label = { MediumText(text = "Password") },
         isError = true,
-        supportingText = { P(text = "Errored") })
+        supportingText = { MediumText(text = "Errored") })
 }

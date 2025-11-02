@@ -7,8 +7,6 @@ import com.swackles.jellyfin.data.jellyfin.models.PossibleFilters
 import java.util.UUID
 
 interface LibraryService {
-    suspend fun getItem(id: UUID): MediaItem
-
     suspend fun getItems(filters: MediaFilters): List<LibraryItem>
 
     suspend fun getContinueWatching(): List<LibraryItem>

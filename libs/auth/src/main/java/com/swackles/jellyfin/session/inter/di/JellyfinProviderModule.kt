@@ -4,6 +4,7 @@ import android.content.Context
 import com.swackles.libs.jellyfin.JellyfinClient
 import com.swackles.libs.jellyfin.JellyfinClientImpl
 import com.swackles.libs.jellyfin.LibraryClient
+import com.swackles.libs.jellyfin.MediaClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.EntryPoint
@@ -56,4 +57,9 @@ internal object JellyfinProviderModule {
     @Provides
     fun provideJellyfinLibraryClient(jellyfinClient: JellyfinClient): LibraryClient =
         jellyfinClient.libraryClient
+
+    @Singleton
+    @Provides
+    fun provideJellyfinMediaClient(jellyfinClient: JellyfinClient): MediaClient =
+        jellyfinClient.mediaClient
 }

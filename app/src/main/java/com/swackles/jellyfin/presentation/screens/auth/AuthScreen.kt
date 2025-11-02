@@ -19,7 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
-import com.swackles.jellyfin.presentation.common.components.P
+import com.swackles.jellyfin.presentation.components.MediumText
 import com.swackles.jellyfin.presentation.screens.destinations.AuthScreenDestination
 import com.swackles.jellyfin.presentation.screens.destinations.DashboardScreenDestination
 
@@ -95,25 +95,25 @@ private fun EnterCredentialsContent(
         ) {
             OutlinedTextField(
                 value = state.credentials.hostname,
-                label = { P(text = "Host") },
-                placeholder = { P(text = "https://localhost:8096") },
+                label = { MediumText(text = "Host") },
+                placeholder = { MediumText(text = "https://localhost:8096") },
                 onValueChange = { onChangeCredentials(state.credentials.copy(hostname = it)) },
                 isError = state.errors.contains(ErrorKey.HOST),
-                supportingText = { P(text = state.errors[ErrorKey.HOST] ?: "") }
+                supportingText = { MediumText(text = state.errors[ErrorKey.HOST] ?: "") }
             )
             OutlinedTextField(
                 value = state.credentials.username,
-                label = { P(text = "Username") },
+                label = { MediumText(text = "Username") },
                 onValueChange = { onChangeCredentials(state.credentials.copy(username = it)) },
                 isError = state.errors.containsKey(ErrorKey.USERNAME),
-                supportingText = { P(text = state.errors[ErrorKey.USERNAME] ?: "") }
+                supportingText = { MediumText(text = state.errors[ErrorKey.USERNAME] ?: "") }
             )
             PasswordOutlinedTextField(
                 value = state.credentials.password,
-                label = { P(text = "Password") },
+                label = { MediumText(text = "Password") },
                 onValueChange = { onChangeCredentials(state.credentials.copy(password = it)) },
                 isError = state.errors.containsKey(ErrorKey.PASSWORD),
-                supportingText = { P(text = state.errors[ErrorKey.PASSWORD] ?: "") }
+                supportingText = { MediumText(text = state.errors[ErrorKey.PASSWORD] ?: "") }
             )
         }
         Button(
@@ -125,7 +125,7 @@ private fun EnterCredentialsContent(
             enabled = true,
             onClick = onLogin
         ) {
-            P(text = "connect")
+            MediumText(text = "connect")
         }
     }
 }

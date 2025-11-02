@@ -2,6 +2,7 @@ package com.swackles.libs.jellyfin
 
 import android.content.Context
 import com.swackles.libs.jellyfin.inter.LibraryClientImpl
+import com.swackles.libs.jellyfin.inter.MediaClientImpl
 import kotlinx.coroutines.runBlocking
 import org.jellyfin.sdk.Jellyfin
 import org.jellyfin.sdk.JellyfinOptions
@@ -32,6 +33,7 @@ class JellyfinClientImpl(
     private val apiClient: ApiClient
 ): JellyfinClient {
     override val libraryClient: LibraryClient = LibraryClientImpl(apiClient)
+    override val mediaClient: MediaClient = MediaClientImpl(apiClient)
 
     override val jellyfinUser: JellyfinUser
         get() = runBlocking {
@@ -45,7 +47,7 @@ class JellyfinClientImpl(
         private const val SUPPORTED_VERSION = "10"
 
         @Throws(JellyfinClientErrors::class)
-        suspend fun login(context: Context, hostname: String, accessToken: String): com.swackles.libs.jellyfin.JellyfinClient {
+        suspend fun login(context: Context, hostname: String, accessToken: String): JellyfinClient {
             val client = createApiClient(context, hostname, accessToken)
 
             try {
@@ -61,7 +63,7 @@ class JellyfinClientImpl(
         }
 
         @Throws(JellyfinClientErrors::class)
-        suspend fun login(context: Context, hostname: String, username: String, password: String): com.swackles.libs.jellyfin.JellyfinClient {
+        suspend fun login(context: Context, hostname: String, username: String, password: String): JellyfinClient {
             val client = createApiClient(context, hostname)
 
             try {

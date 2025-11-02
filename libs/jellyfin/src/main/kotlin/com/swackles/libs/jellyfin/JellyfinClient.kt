@@ -9,4 +9,6 @@ interface JellyfinClient {
     val jellyfinUser: JellyfinUser
 
     val libraryClient: LibraryClient
+
+    val mediaClient: MediaClient
 }

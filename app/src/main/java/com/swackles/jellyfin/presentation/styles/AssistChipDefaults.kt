@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.presentation.common.colors
+package com.swackles.jellyfin.presentation.styles
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AssistChip
@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.swackles.jellyfin.presentation.common.components.P
+import com.swackles.jellyfin.presentation.components.MediumText
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 
 @Composable
@@ -43,7 +43,7 @@ private fun PrimaryAssistChip(isDarkTheme: Boolean) {
                 colors = AssistChipDefaults.primaryAssistChipColors(),
                 border = AssistChipDefaults.primaryAssistChipBorder(),
                 onClick = { },
-                label = { P(text = "Lorem Ipsum") },
+                label = { MediumText(text = "Lorem Ipsum") },
                 modifier = Modifier.padding(horizontal = 5.dp)
             )
         }
@@ -70,7 +70,7 @@ private fun VariantAssistChip(isDarkTheme: Boolean) {
                 colors = AssistChipDefaults.variantAssistChipColors(),
                 border = AssistChipDefaults.variantAssistChipBorder(),
                 onClick = { },
-                label = { P(text = "Lorem Ipsum") },
+                label = { MediumText(text = "Lorem Ipsum") },
                 modifier = Modifier.padding(horizontal = 5.dp)
             )
         }
@@ -98,7 +98,7 @@ private fun VariantAssistChipDisabled(isDarkTheme: Boolean) {
                 colors = AssistChipDefaults.variantAssistChipColors(),
                 border = AssistChipDefaults.variantAssistChipBorder(),
                 onClick = { },
-                label = { P(text = "Lorem Ipsum") },
+                label = { MediumText(text = "Lorem Ipsum") },
                 modifier = Modifier.padding(horizontal = 5.dp)
             )
         }
