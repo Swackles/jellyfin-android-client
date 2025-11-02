@@ -24,19 +24,6 @@ import java.util.UUID
 class LibraryServiceImpl(
     private val jellyfinClient: ApiClient
 ): LibraryService {
-
-    override suspend fun getItems(filters: MediaFilters): List<LibraryItem> =
-        jellyfinClient.itemsApi.getItems(
-            GetItemsRequest(
-                searchTerm = filters.query,
-                genres = filters.genres,
-                years = filters.years,
-                officialRatings = filters.officialRatings,
-                includeItemTypes = filters.mediaTypes,
-                recursive = true
-        )
-        ).mapToLibraryItems(jellyfinClient)
-
     override suspend fun getContinueWatching(): List<LibraryItem> =
         jellyfinClient.itemsApi.getResumeItems().mapToLibraryItems(jellyfinClient) +
                 jellyfinClient.tvShowsApi.getNextUp().mapToLibraryItems(jellyfinClient)
@@ -71,11 +58,6 @@ class LibraryServiceImpl(
         jellyfinClient.tvShowsApi.getEpisodes(
             seriesId = id
         ).mapToLibraryItems(jellyfinClient).filter { it is LibraryItem.Episode } as List<LibraryItem.Episode>
-
-    override suspend fun getFilters(): PossibleFilters =
-        jellyfinClient.filterApi.getQueryFiltersLegacy(
-            includeItemTypes = listOf(MediaItemType.MOVIE, MediaItemType.SERIES)
-        ).toPossibleFilters()
 
     companion object {
         private const val LIMIT = 10;

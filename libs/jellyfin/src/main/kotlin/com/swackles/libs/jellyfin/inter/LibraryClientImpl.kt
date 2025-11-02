@@ -1,10 +1,13 @@
 package com.swackles.libs.jellyfin.inter
 
 import com.swackles.libs.jellyfin.JellyfinClientErrors.BadDataFormatError
+import com.swackles.libs.jellyfin.JellyfinFilters
 import com.swackles.libs.jellyfin.LibraryClient
 import com.swackles.libs.jellyfin.LibraryItem
+import com.swackles.libs.jellyfin.LibraryFilters
 import org.jellyfin.sdk.api.client.ApiClient
 import org.jellyfin.sdk.api.client.Response
+import org.jellyfin.sdk.api.client.extensions.filterApi
 import org.jellyfin.sdk.api.client.extensions.itemsApi
 import org.jellyfin.sdk.api.client.extensions.libraryApi
 import org.jellyfin.sdk.api.client.extensions.tvShowsApi
@@ -14,16 +17,35 @@ import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.ItemFields
 import org.jellyfin.sdk.model.api.ItemFilter
 import org.jellyfin.sdk.model.api.ItemSortBy
+import org.jellyfin.sdk.model.api.QueryFiltersLegacy
 import org.jellyfin.sdk.model.api.SortOrder
 import org.jellyfin.sdk.model.api.request.GetItemsRequest
 import org.jellyfin.sdk.model.api.request.GetNextUpRequest
 import org.jellyfin.sdk.model.api.request.GetResumeItemsRequest
 import java.time.LocalDateTime
 import java.util.UUID
+import kotlin.collections.orEmpty
 
 internal class LibraryClientImpl(
     private val jellyfinClient: ApiClient
 ): LibraryClient {
+    override suspend fun getFilters(): JellyfinFilters =
+        jellyfinClient.filterApi.getQueryFiltersLegacy(
+            includeItemTypes = listOf(BaseItemKind.MOVIE, BaseItemKind.SERIES)
+        ).toPossibleFilters()
+
+    override suspend fun search(filters: LibraryFilters): List<LibraryItem> =
+        jellyfinClient.itemsApi.getItems(
+            GetItemsRequest(
+                searchTerm = filters.query,
+                genres = filters.genres,
+                years = filters.years,
+                officialRatings = filters.officialRatings,
+                includeItemTypes = filters.mediaTypes,
+                recursive = true
+            )
+        ).mapToLibraryItems(jellyfinClient)
+
     override suspend fun getContinueWatching(): List<LibraryItem> =
         jellyfinClient.itemsApi.getResumeItems(GetResumeItemsRequest(limit = LIMIT)).content.items
             .plus(jellyfinClient.tvShowsApi.getNextUp(GetNextUpRequest(limit = LIMIT)).content.items)
@@ -67,6 +89,14 @@ internal class LibraryClientImpl(
             itemId = id,
             limit = RECOMMENDED_LIMIT
         ).mapToLibraryItems(jellyfinClient)
+
+    private fun Response<QueryFiltersLegacy>.toPossibleFilters(): JellyfinFilters =
+        JellyfinFilters(
+            genres = content.genres.orEmpty(),
+            tags = content.tags.orEmpty(),
+            ratings = content.officialRatings.orEmpty(),
+            years = content.years.orEmpty()
+        )
 
     private fun BaseItemDto.toLibraryItem(baseUrl: String): LibraryItem =
         when (type) {
