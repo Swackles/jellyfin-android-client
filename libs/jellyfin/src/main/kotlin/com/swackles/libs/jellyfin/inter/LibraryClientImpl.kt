@@ -6,6 +6,7 @@ import com.swackles.libs.jellyfin.LibraryItem
 import org.jellyfin.sdk.api.client.ApiClient
 import org.jellyfin.sdk.api.client.Response
 import org.jellyfin.sdk.api.client.extensions.itemsApi
+import org.jellyfin.sdk.api.client.extensions.libraryApi
 import org.jellyfin.sdk.api.client.extensions.tvShowsApi
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemDtoQueryResult
@@ -18,7 +19,7 @@ import org.jellyfin.sdk.model.api.request.GetItemsRequest
 import org.jellyfin.sdk.model.api.request.GetNextUpRequest
 import org.jellyfin.sdk.model.api.request.GetResumeItemsRequest
 import java.time.LocalDateTime
-import kotlin.collections.listOf
+import java.util.UUID
 
 internal class LibraryClientImpl(
     private val jellyfinClient: ApiClient
@@ -60,6 +61,13 @@ internal class LibraryClientImpl(
             limit = LIMIT
         ).mapToLibraryItems(jellyfinClient)
 
+
+    override suspend fun getSimilar(id: UUID): List<LibraryItem> =
+        jellyfinClient.libraryApi.getSimilarItems(
+            itemId = id,
+            limit = RECOMMENDED_LIMIT
+        ).mapToLibraryItems(jellyfinClient)
+
     private fun BaseItemDto.toLibraryItem(baseUrl: String): LibraryItem =
         when (type) {
             BaseItemKind.MOVIE -> LibraryItem.Movie(
@@ -92,11 +100,11 @@ internal class LibraryClientImpl(
     private fun Double?.convertToPlayedPercentage(): Float =
         (this ?: 0).toFloat() / 100
 
-    internal fun Response<BaseItemDtoQueryResult>.mapToLibraryItems(jellyfinClient: ApiClient): List<LibraryItem> =
+    fun Response<BaseItemDtoQueryResult>.mapToLibraryItems(jellyfinClient: ApiClient): List<LibraryItem> =
         this.content.items.map { it.toLibraryItem(jellyfinClient.baseUrl!!) }
 
     companion object {
-        private const val LIMIT = 10;
-        private const val RECOMMENDED_LIMIT = 10;
+        private const val LIMIT = 10
+        private const val RECOMMENDED_LIMIT = 10
     }
 }

@@ -1,6 +1,5 @@
 package com.swackles.jellyfin.presentation.components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,9 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -39,6 +35,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.swackles.jellyfin.R
+import com.swackles.jellyfin.presentation.modifiers.progressStatus
 import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.libs.jellyfin.LibraryItem
 import com.swackles.libs.jellyfin.getPosterUrl
@@ -206,36 +203,6 @@ private fun SeriesCardContent(media: LibraryItem.Series, aspectRatio: Float) =
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()
     )
-
-@Composable
-@SuppressLint("ModifierFactoryUnreferencedReceiver")
-private fun Modifier.progressStatus(progress: Float, colorOne: Color = colorScheme.primary, colorTwo: Color = colorScheme.onSurfaceVariant) = composed(
-    factory = {
-        val density = LocalDensity.current
-        val strokeWidthPx = density.run { 5.dp.toPx() }
-
-        Modifier.drawWithContent {
-            drawContent()
-
-            val width = size.width * progress
-            val height = size.height - strokeWidthPx/2
-
-            drawLine(
-                color = colorOne,
-                start = Offset(x = 0f, y = height),
-                end = Offset(x = width , y = height),
-                strokeWidth = strokeWidthPx
-            )
-
-            drawLine(
-                color = colorTwo.copy(.5f),
-                start = Offset(x = width, y = height),
-                end = Offset(x = size.width, y = height),
-                strokeWidth = strokeWidthPx
-            )
-        }
-    }
-)
 
 private object CardProps {
     const val posterAspectRatio = .7f

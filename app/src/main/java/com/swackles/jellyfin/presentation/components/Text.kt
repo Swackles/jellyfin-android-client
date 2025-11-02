@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.presentation.common.components
+package com.swackles.jellyfin.presentation.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -11,47 +11,56 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun H2(text: String, color: Color? = null) {
-    BaseText(
-        text = text,
-        style = MaterialTheme.typography.titleMedium,
-        color = color
+fun SmallTitle(modifier: Modifier = Modifier, text: String) =
+    Text(
+        modifier = modifier,
+        style = MaterialTheme.typography.titleSmall,
+        text = text
     )
-}
-@Composable
-fun H5(text: String) {
-    BaseText(
-        text = text,
-        color = MaterialTheme.colorScheme.outline,
-        style = MaterialTheme.typography.bodyMedium
-    )
-}
 
 @Composable
-fun P(modifier: Modifier = Modifier, text: String, isError: Boolean = false, align: TextAlign? = null) {
+fun MediumTitle(modifier: Modifier = Modifier, text: String) =
+    Text(
+        modifier = modifier,
+        style = MaterialTheme.typography.titleMedium,
+        text = text
+    )
+
+@Composable
+fun LargeTitle(modifier: Modifier = Modifier, text: String) =
+    Text(
+        modifier = modifier,
+        style = MaterialTheme.typography.titleLarge,
+        text = text
+    )
+
+
+@Composable
+fun MediumText(
+    modifier: Modifier = Modifier,
+    text: String,
+    isError: Boolean = false,
+    align: TextAlign? = null,
+    maxLines: Int = Int.MAX_VALUE
+) {
     BaseText(
         text = text,
         style = MaterialTheme.typography.bodyMedium,
         isError = isError,
         align = align,
-        modifier = modifier)
+        modifier = modifier,
+        maxLines = maxLines
+    )
 }
 
 @Composable
-fun Label(modifier: Modifier = Modifier,
-          text: String,
-          isError: Boolean = false,
-          align: TextAlign? = null,
-          color: Color? = null) {
+fun MediumTextMuted(text: String) =
     BaseText(
         text = text,
-        style = MaterialTheme.typography.labelSmall,
-        isError = isError,
-        align = align,
-        modifier = modifier,
-        color = color ?: Color.White
+        color = MaterialTheme.colorScheme.outline,
+        style = MaterialTheme.typography.bodyMedium,
+        maxLines = Int.MAX_VALUE
     )
-}
 
 @Composable
 private fun BaseText(
@@ -60,7 +69,8 @@ private fun BaseText(
     style: TextStyle,
     isError: Boolean = false,
     align: TextAlign? = null,
-    color: Color? = null
+    color: Color? = null,
+    maxLines: Int
 ) {
     Text(
         modifier = modifier
@@ -68,7 +78,8 @@ private fun BaseText(
         style = style,
         color = color ?: if (isError) MaterialTheme.colorScheme.error else Color.Unspecified,
         text = text,
-        textAlign = align
+        textAlign = align,
+        maxLines = maxLines
     )
 }
 

@@ -24,16 +24,6 @@ import java.util.UUID
 class LibraryServiceImpl(
     private val jellyfinClient: ApiClient
 ): LibraryService {
-    override suspend fun getItem(id: UUID): MediaItem  {
-        val item = jellyfinClient
-            .userLibraryApi
-            .getItem(itemId = id)
-            .toMediaItem(jellyfinClient, getSimilar(id))
-
-        if (item !is MediaItem.Series) return item
-
-        return item.copy(episodes = this.getEpisodes(id))
-    }
 
     override suspend fun getItems(filters: MediaFilters): List<LibraryItem> =
         jellyfinClient.itemsApi.getItems(
@@ -76,11 +66,6 @@ class LibraryServiceImpl(
             recursive = true
         ).mapToLibraryItems(jellyfinClient)
 
-    override suspend fun getSimilar(id: UUID): List<LibraryItem> =
-        jellyfinClient.libraryApi.getSimilarItems(
-            itemId = id,
-            limit = RECOMMENDED_LIMIT
-        ).mapToLibraryItems(jellyfinClient)
 
     override suspend fun getEpisodes(id: UUID): List<LibraryItem.Episode> =
         jellyfinClient.tvShowsApi.getEpisodes(
