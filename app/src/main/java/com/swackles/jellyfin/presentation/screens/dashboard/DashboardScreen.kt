@@ -45,7 +45,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.R
 import com.swackles.jellyfin.presentation.components.MediaSection
 import com.swackles.jellyfin.presentation.screens.destinations.DetailScreenDestination
+import com.swackles.jellyfin.presentation.screens.destinations.SearchScreenDestination
 import com.swackles.jellyfin.presentation.styles.Spacings
+import com.swackles.libs.jellyfin.LibraryFilters
 import com.swackles.libs.jellyfin.LibraryItem
 import com.swackles.libs.jellyfin.getBackDropUrl
 import java.util.UUID
@@ -61,7 +63,7 @@ fun DashboardScreen(
     DashboardScreenContent(
         state = state,
         onClickDetailView = { navigator.navigate(DetailScreenDestination(it)) },
-        onClickGenre = {  }
+        onClickGenre = { navigator.navigate(SearchScreenDestination(LibraryFilters(genres = listOf(it))))  }
     )
 }
 

@@ -1,5 +1,7 @@
 package com.swackles.libs.jellyfin
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
 
@@ -35,7 +37,29 @@ sealed interface LibraryItem: JellyfinItem {
     ) : LibraryItem
 }
 
+data class JellyfinFilters(
+    val genres: List<String>,
+    val tags: List<String>,
+    val ratings: List<String>,
+    val years: List<Int>
+)
+
+typealias MediaItemType = org.jellyfin.sdk.model.api.BaseItemKind
+
+@Parcelize
+data class LibraryFilters(
+    val genres: List<String> = emptyList(),
+    val officialRatings: List<String> = emptyList(),
+    val years: List<Int> = emptyList(),
+    val mediaTypes: List<MediaItemType> = emptyList(),
+    val query: String? = null
+): Parcelable
+
 interface LibraryClient {
+    suspend fun getFilters(): JellyfinFilters
+
+    suspend fun search(filters: LibraryFilters): List<LibraryItem>
+
     suspend fun getContinueWatching(): List<LibraryItem>
 
     suspend fun getNewlyAdded(): List<LibraryItem>
