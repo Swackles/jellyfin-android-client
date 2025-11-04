@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.presentation.common.colors.primaryButtonColors
 import com.swackles.jellyfin.presentation.common.colors.primaryButtonContentPadding
@@ -57,6 +58,7 @@ import java.time.LocalDateTime
 
 typealias PlayVideo = (id: UUID, startPosition: Long) -> Unit
 
+@RootNavGraph
 @Destination
 @Composable
 fun DetailScreen(

@@ -17,25 +17,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.popUpTo
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.swackles.jellyfin.presentation.components.MediumText
-import com.swackles.jellyfin.presentation.screens.destinations.AuthScreenDestination
-import com.swackles.jellyfin.presentation.screens.destinations.DashboardScreenDestination
 
-@Destination(start = true)
+@RootNavGraph
+@Destination
 @Composable
-fun AuthScreen(
-    navigator: DestinationsNavigator,
-    viewModal: AuthViewModal = hiltViewModel()
-) {
+fun AuthScreen(viewModal: AuthViewModal = hiltViewModel()) {
     AuthScreenContent(
         state = viewModal.state.value,
         onChangeCredentials = viewModal::updateCredentials,
-        onLogin = viewModal::login,
-        onSuccess = { navigator.navigate(DashboardScreenDestination) {
-            popUpTo(AuthScreenDestination) { inclusive = true }
-        } }
+        onLogin = viewModal::login
     )
 }
 
@@ -43,8 +35,7 @@ fun AuthScreen(
 private fun AuthScreenContent(
     state: UiState,
     onChangeCredentials: (AuthCredentials) -> Unit,
-    onLogin: () -> Unit,
-    onSuccess: () -> Unit
+    onLogin: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -58,7 +49,6 @@ private fun AuthScreenContent(
                     onChangeCredentials = onChangeCredentials,
                     onLogin = onLogin
                 )
-            is Step.Success -> onSuccess()
         }
     }
 }
@@ -134,13 +124,13 @@ private fun EnterCredentialsContent(
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 private fun PreviewLoading() {
-    AuthScreenContent(state = UiState(Step.Loading), onChangeCredentials = {}, onLogin = {}, onSuccess = {})
+    AuthScreenContent(state = UiState(Step.Loading), onChangeCredentials = {}, onLogin = {})
 }
 
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 private fun PreviewEnterCredentials() {
-    AuthScreenContent(state = UiState(Step.EnterCredentials()), onChangeCredentials = {}, onLogin = {}, onSuccess = {})
+    AuthScreenContent(state = UiState(Step.EnterCredentials()), onChangeCredentials = {}, onLogin = {})
 }
 
 @Composable
@@ -152,6 +142,6 @@ private fun PreviewEnterCredentialsError() {
             ErrorKey.USERNAME to "Incorrect username",
             ErrorKey.PASSWORD to "Incorrect password"
         )
-    )), onChangeCredentials = {}, onLogin = {}, onSuccess = {})
+    )), onChangeCredentials = {}, onLogin = {})
 }
 
