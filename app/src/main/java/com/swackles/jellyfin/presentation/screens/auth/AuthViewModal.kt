@@ -9,7 +9,6 @@ import com.swackles.jellyfin.util.ViewState
 import com.swackles.libs.jellyfin.JellyfinClientErrors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 data class UiState(
@@ -34,7 +33,6 @@ sealed interface Step {
         val credentials: AuthCredentials = AuthCredentials(),
         val errors: Map<ErrorKey, String> = emptyMap()
     ): Step
-    data object Success: Step
 }
 
 
@@ -42,14 +40,9 @@ sealed interface Step {
 class AuthViewModal @Inject constructor(
     private val sessionManager: SessionManager
 ) : BaseViewModel<UiState>() {
-    override fun initialState(): UiState = UiState(Step.Loading)
-
-    init {
-        tryLoggingInLastUser()
-    }
-
+    override fun initialState(): UiState = UiState(Step.EnterCredentials())
     fun login() = viewModelScope.launch {
-        Log.d("AuthViewModel", "Starting log in")
+        Log.d("AuthViewModal", "Starting log in")
 
         if (state.value.step !is Step.EnterCredentials) throw RuntimeException("Auth view model has incorrect state ($state.value.step) for logging in")
         val credentials = (state.value.step as Step.EnterCredentials).credentials.toLoginCredentials()
@@ -58,10 +51,9 @@ class AuthViewModal @Inject constructor(
         try {
             sessionManager.login(credentials)
 
-            setStepSuccess()
-            Log.d("AuthViewModel", "Login success")
+            Log.d("AuthViewModal", "Login success")
         } catch (err: JellyfinClientErrors) {
-            Log.e("AuthViewModel", "Login Failed", err)
+            Log.e("AuthViewModal", "Login Failed", err)
             when(err) {
                 is JellyfinClientErrors.InvalidHostnameError -> setStepError(mapOf(ErrorKey.HOST to "Incorrect hostname"))
                 is JellyfinClientErrors.UnauthorizedError -> setStepError(mapOf(
@@ -79,16 +71,8 @@ class AuthViewModal @Inject constructor(
         setState { copy(step = Step.EnterCredentials(credentials = newCredentials)) }
     }
 
-    private fun tryLoggingInLastUser() = runBlocking {
-        sessionManager.loginLastSession()
-
-        if (sessionManager.activeSession == null) setStepEnterCredentials()
-        else setStepSuccess()
-    }
 
     private fun setStepLoading() = setState { copy(step = Step.Loading) }
-    private fun setStepSuccess() = setState { copy(step = Step.Success) }
-    private fun setStepEnterCredentials() = setState { copy(step = Step.EnterCredentials()) }
     private fun setStepError(errors: Map<ErrorKey, String>) = setState { copy(step = Step.EnterCredentials(errors = errors)) }
 
     private fun AuthCredentials.toLoginCredentials() =

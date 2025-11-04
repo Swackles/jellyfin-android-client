@@ -41,6 +41,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.R
 import com.swackles.jellyfin.presentation.components.MediaSection
@@ -52,6 +53,7 @@ import com.swackles.libs.jellyfin.LibraryItem
 import com.swackles.libs.jellyfin.getBackDropUrl
 import java.util.UUID
 
+@RootNavGraph(start = true)
 @Destination
 @Composable
 fun DashboardScreen(
@@ -66,7 +68,6 @@ fun DashboardScreen(
         onClickGenre = { navigator.navigate(SearchScreenDestination(LibraryFilters(genres = listOf(it))))  }
     )
 }
-
 
 @Composable
 fun DashboardScreenContent(
