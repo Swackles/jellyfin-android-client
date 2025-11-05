@@ -38,6 +38,12 @@ fun JellyfinApp(
                         popUpTo(navController.graph.startDestinationId) { inclusive = true }
                         launchSingleTop = true
                     }
+                is SessionEvent.LoggedOut ->
+                    navController.navigate(AuthScreenDestination.route) {
+                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                        launchSingleTop = true
+                    }
+
             }
         }
     }

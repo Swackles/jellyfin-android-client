@@ -76,7 +76,7 @@ class AuthViewModal @Inject constructor(
     private fun setStepError(errors: Map<ErrorKey, String>) = setState { copy(step = Step.EnterCredentials(errors = errors)) }
 
     private fun AuthCredentials.toLoginCredentials() =
-        LoginCredentials(
+        LoginCredentials.NewServer(
             hostname = this.hostname,
             username = this.username,
             password = this.password

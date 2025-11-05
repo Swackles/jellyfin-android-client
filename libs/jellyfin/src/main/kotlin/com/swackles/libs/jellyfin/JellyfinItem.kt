@@ -21,7 +21,6 @@ fun JellyfinItem.getBackDropUrl(width: Int, height: Int): String =
 fun JellyfinItem.getLogoUrl(width: Int, height: Int): String =
     this.getImageUrl(ImageType.LOGO, width, height)
 
-
 private fun JellyfinItem.getImageUrl(imageType: ImageType, width: Int, height: Int) =
     this.baseUrl.toUri()
         .buildUpon()

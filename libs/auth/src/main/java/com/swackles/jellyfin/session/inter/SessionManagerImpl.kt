@@ -4,72 +4,188 @@ import android.content.Context
 import android.util.Log
 import com.swackles.jellyfin.session.AuthState
 import com.swackles.jellyfin.session.LoginCredentials
+import com.swackles.jellyfin.session.Server
 import com.swackles.jellyfin.session.Session
 import com.swackles.jellyfin.session.SessionEvent
 import com.swackles.jellyfin.session.SessionManager
 import com.swackles.jellyfin.session.SessionStorage
 import com.swackles.jellyfin.session.inter.di.JellyfinProviderFactory
+import com.swackles.libs.jellyfin.JellyfinCredentials
+import com.swackles.libs.jellyfin.JellyfinUser
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.time.LocalDateTime
 import java.util.UUID
 
 internal class SessionManagerImpl(
     val context: Context,
-    val storage: SessionStorage
+    val sessionStorage: SessionStorage
 ): SessionManager {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
     override val authState: StateFlow<AuthState> = _authState.asStateFlow()
+
+    private val _servers = MutableStateFlow<List<Server>>(emptyList())
+    override val serversState: StateFlow<List<Server>> = _servers.asStateFlow()
 
     private val _events = MutableSharedFlow<SessionEvent>(replay = 0)
     override val events: SharedFlow<SessionEvent> = _events.asSharedFlow()
 
     override suspend fun initialize() {
-        val session = runCatching { getSessions().last() }
-            .getOrElse { err ->
-                if (err !is NoSuchElementException) throw err
+        Log.d("SessionManagerImpl", "Initializing session manager")
 
-                Log.d("SessionManagerImpl", "No session found, exiting initalization")
+        val session = sessionStorage.getSessionLastUsed()
 
-                _authState.value = AuthState.Unauthenticated
+        if (session == null) {
+            Log.d("SessionManagerImpl", "No session found, exiting initalization")
 
-                return
-            }
+            _authState.value = AuthState.Unauthenticated
+        } else {
+            Log.d("SessionManagerImpl", "Found session $session and trying to log in")
 
-        Log.d("SessionManagerImpl", "Found session $session and trying to log in")
-
-        JellyfinProviderFactory
-            .login(context, session.hostname, session.token)
-
-        Log.d("SessionManagerImpl", "Session logged in successfully")
-        _authState.value = AuthState.Authenticated(session)
+            login(LoginCredentials.ExistingSession(session) as LoginCredentials)
+        }
     }
 
 
-    override suspend fun getSessions(): List<Session> =
-        storage.getAllSessions()
+    override suspend fun getSessions(): List<Session> {
+        val state = authState.value
+
+        return when(state) {
+            is AuthState.Authenticated -> sessionStorage.getSessionsWithServerId(state.session.server.id)
+            else -> emptyList()
+        }
+    }
 
     override suspend fun login(credentials: LoginCredentials) {
-        Log.d("SessionManagerImpl", "Trying to log in credentials $credentials")
+        Log.d("SessionManagerImpl", "Logging in using $credentials")
 
-        val client = JellyfinProviderFactory
-            .login(context, credentials.hostname, credentials.username, credentials.password)
+        val session = when(credentials) {
+            is LoginCredentials.ExistingSession ->
+                login(credentials)
+            is LoginCredentials.ExistingServer ->
+                login(credentials)
+            is LoginCredentials.NewServer ->
+                login(credentials)
+        }
 
-        Log.d("SessionManagerImpl", "Login success")
+        Log.d("SessionManagerImpl", "Logging in success")
+
+        _authState.value = AuthState.Authenticated(session)
+        _events.emit(SessionEvent.Authenticated)
+    }
+
+    private suspend fun login(credentials: LoginCredentials.ExistingSession): Session {
+        login(credentials.toJellyfinCredentials())
+
+        sessionStorage.updateLastActive(credentials.session)
+
+        return credentials.session
+    }
+
+    private suspend fun login(credentials: LoginCredentials.NewServer): Session {
+        val user = login(credentials.toJellyfinCredentials())
 
         val session = Session(
             id = UUID.randomUUID(),
-            hostname = credentials.hostname,
+            server = Server(
+                id = UUID.randomUUID(),
+                hostname = credentials.hostname,
+                name = user.serverName
+            ),
+            lastActive = LocalDateTime.now(),
             username = credentials.username,
-            token = client.jellyfinUser.token
+            profileImageUrl = user.getProfileImage(),
+            token = user.token
         )
 
-        storage.saveSession(session)
-        _authState.value = AuthState.Authenticated(session)
+        sessionStorage.save(session)
 
-        _events.emit(SessionEvent.Authenticated)
+        return session
+    }
+
+    private suspend fun login(credentials: LoginCredentials.ExistingServer): Session {
+        val user = login(credentials.toJellyfinCredentials())
+
+        val session = Session(
+            id = UUID.randomUUID(),
+            server = credentials.server,
+            lastActive = LocalDateTime.now(),
+            username = user.username,
+            profileImageUrl = user.getProfileImage(),
+            token = user.token
+        )
+
+        sessionStorage.save(session)
+
+        return session
+    }
+
+    private fun LoginCredentials.toJellyfinCredentials(): JellyfinCredentials =
+        when(this) {
+            is LoginCredentials.ExistingSession ->
+                JellyfinCredentials.Existing(
+                    hostname = this.session.server.hostname,
+                    token = this.session.token
+                )
+            is LoginCredentials.ExistingServer ->
+                JellyfinCredentials.New(
+                    hostname = this.server.hostname,
+                    username = this.username,
+                    password = this.password
+                )
+            is LoginCredentials.NewServer ->
+                JellyfinCredentials.New(
+                    hostname = this.hostname,
+                    username = this.username,
+                    password = this.password
+                )
+        }
+
+    private suspend fun login(credentials: JellyfinCredentials): JellyfinUser =
+        JellyfinProviderFactory.login(context, credentials)
+            .userClient.currentUser()
+
+    override suspend fun logoutActiveServer() {
+        ensureLoggedIn { session ->
+            val server = session.server
+
+            val sessions = sessionStorage.getSessionsWithServerId(server.id)
+
+            sessions.forEach {
+                sessionStorage.delete(it)
+            }
+
+            sessionStorage.delete(server)
+
+            JellyfinProviderFactory.logOut(context)
+            _authState.value = AuthState.Unauthenticated
+            _events.emit(SessionEvent.LoggedOut)
+        }
+    }
+
+    override suspend fun logoutActiveSession() {
+        ensureLoggedIn { session ->
+            sessionStorage.delete(session)
+
+            val sessions = sessionStorage.getSessionsWithServerId(session.server.id)
+
+            if (sessions.isEmpty()) sessionStorage.delete(session.server)
+
+            JellyfinProviderFactory.logOut(context)
+            _authState.value = AuthState.Unauthenticated
+            _events.emit(SessionEvent.LoggedOut)
+        }
+    }
+
+    private suspend fun ensureLoggedIn(block: suspend (Session) -> Unit) {
+        val state = authState.value
+        when(state) {
+            is AuthState.Authenticated -> block(state.session)
+            else -> Log.e("SessionManagerImpl", "Auth state $state cannot be signed out of")
+        }
     }
 }

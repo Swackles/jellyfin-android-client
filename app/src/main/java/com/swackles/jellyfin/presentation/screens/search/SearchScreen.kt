@@ -56,7 +56,7 @@ import org.jellyfin.sdk.model.UUID
 @Destination
 @Composable
 fun SearchScreen(
-    filters: LibraryFilters,
+    filters: LibraryFilters = LibraryFilters(),
     navigator: DestinationsNavigator,
     viewModal: SearchViewModal = hiltViewModel(),
 ) {
