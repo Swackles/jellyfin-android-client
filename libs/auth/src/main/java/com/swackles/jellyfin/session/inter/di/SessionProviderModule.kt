@@ -18,7 +18,7 @@ internal object SessionProviderModule {
     @Singleton
     fun provideSessionManager(
         @ApplicationContext context: Context,
-        storage: SessionStorage
+        sessionStorage: SessionStorage
     ): SessionManager =
-        SessionManagerImpl(context, storage)
+        SessionManagerImpl(context, sessionStorage)
 }

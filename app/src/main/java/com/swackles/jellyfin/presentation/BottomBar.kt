@@ -11,37 +11,35 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
-import com.ramcosta.composedestinations.navigation.navigate
-import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
-import com.swackles.jellyfin.presentation.destinations.DashboardScreenDestination
-import com.swackles.jellyfin.presentation.destinations.Destination
-import com.swackles.jellyfin.presentation.destinations.PlayerScreenDestination
-import com.swackles.jellyfin.presentation.destinations.SearchScreenDestination
-import com.swackles.jellyfin.presentation.destinations.SettingsScreenDestination
+import com.swackles.jellyfin.presentation.screens.appCurrentDestinationAsState
+import com.swackles.jellyfin.presentation.screens.destinations.AuthScreenDestination
+import com.swackles.jellyfin.presentation.screens.destinations.DashboardScreenDestination
+import com.swackles.jellyfin.presentation.screens.destinations.SearchScreenDestination
+import com.swackles.jellyfin.presentation.screens.destinations.SettingsHomeScreenDestination
+import com.swackles.jellyfin.presentation.screens.destinations.TypedDestination
 
 private enum class BottomBarDestinations(
-    val direction: DirectionDestinationSpec,
+    val direction: TypedDestination<*>,
     val icon: ImageVector,
     val label: String
 ) {
     Greeting(DashboardScreenDestination, Icons.Default.Home, "Home"),
     Search(SearchScreenDestination, Icons.Default.Search, "Search"),
-    Settings(SettingsScreenDestination, Icons.Default.Settings, "Settings")
+    Settings(SettingsHomeScreenDestination, Icons.Default.Settings, "Settings")
 }
 
 
 @Composable
 fun BottomBar(navController: NavController) {
-    val currentDestination: Destination = navController.appCurrentDestinationAsState().value
-        ?: NavGraphs.root.startAppDestination
+    val currentDestination = navController.appCurrentDestinationAsState().value
 
-    if (BottomBarConstants.ignoredPaths.contains(currentDestination)) return
+    if (BottomBarConstants.IGNORED_PATHS.contains(currentDestination)) return
 
     NavigationBar {
-        BottomBarDestinations.values().forEach { destination ->
+        BottomBarDestinations.entries.forEach { destination ->
             NavigationBarItem(
                 selected = currentDestination == destination.direction,
-                onClick = { navController.navigate(destination.direction) { launchSingleTop = true } },
+                onClick = { navController.navigate(destination.direction.route) { launchSingleTop = true } },
                 icon = { Icon(destination.icon, contentDescription = destination.label)},
                 label = { Text(destination.label) },
             )
@@ -50,5 +48,7 @@ fun BottomBar(navController: NavController) {
 }
 
 private object BottomBarConstants {
-    val ignoredPaths = listOf(PlayerScreenDestination)
+    val IGNORED_PATHS = listOf<TypedDestination<*>>(
+        AuthScreenDestination
+    )
 }

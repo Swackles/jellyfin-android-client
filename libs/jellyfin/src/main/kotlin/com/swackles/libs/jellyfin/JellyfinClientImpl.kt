@@ -3,7 +3,7 @@ package com.swackles.libs.jellyfin
 import android.content.Context
 import com.swackles.libs.jellyfin.inter.LibraryClientImpl
 import com.swackles.libs.jellyfin.inter.MediaClientImpl
-import kotlinx.coroutines.runBlocking
+import com.swackles.libs.jellyfin.inter.UserClientImpl
 import org.jellyfin.sdk.Jellyfin
 import org.jellyfin.sdk.JellyfinOptions
 import org.jellyfin.sdk.api.client.ApiClient
@@ -29,56 +29,61 @@ internal object Factory {
     }
 }
 
+sealed interface JellyfinCredentials {
+    data class New(
+        val hostname: String,
+        val username: String,
+        val password: String
+    ): JellyfinCredentials
+
+    data class Existing(
+        val hostname: String,
+        val token: String
+    ): JellyfinCredentials
+}
+
 class JellyfinClientImpl(
     private val apiClient: ApiClient
 ): JellyfinClient {
+    override val userClient: UserClient = UserClientImpl(apiClient)
     override val libraryClient: LibraryClient = LibraryClientImpl(apiClient)
     override val mediaClient: MediaClient = MediaClientImpl(apiClient)
-
-    override val jellyfinUser: JellyfinUser
-        get() = runBlocking {
-            JellyfinUser(
-                username = apiClient.userApi.getCurrentUser().content.name!!,
-                token = apiClient.accessToken!!
-            )
-        }
 
     companion object {
         private const val SUPPORTED_VERSION = "10"
 
-        @Throws(JellyfinClientErrors::class)
-        suspend fun login(context: Context, hostname: String, accessToken: String): JellyfinClient {
-            val client = createApiClient(context, hostname, accessToken)
-
+        suspend fun login(context: Context, credentials: JellyfinCredentials): JellyfinClient =
             try {
-                client.userApi.getCurrentUser()
-
-                return JellyfinClientImpl(apiClient = client)
+                when(credentials) {
+                    is JellyfinCredentials.New ->
+                        login(context, hostname = credentials.hostname, username = credentials.username, password = credentials.password)
+                    is JellyfinCredentials.Existing ->
+                        login(context, hostname = credentials.hostname, accessToken = credentials.token)
+                }
             } catch (ex: InvalidStatusException) {
                 when (ex.status) {
                     401 -> throw JellyfinClientErrors.UnauthorizedError()
                     else -> throw ex
                 }
             }
+
+        @Throws(JellyfinClientErrors::class)
+        private suspend fun login(context: Context, hostname: String, accessToken: String): JellyfinClient {
+            val client = createApiClient(context, hostname, accessToken)
+
+            client.userApi.getCurrentUser()
+
+            return JellyfinClientImpl(apiClient = client)
         }
 
         @Throws(JellyfinClientErrors::class)
-        suspend fun login(context: Context, hostname: String, username: String, password: String): JellyfinClient {
+        private suspend fun login(context: Context, hostname: String, username: String, password: String): JellyfinClient {
             val client = createApiClient(context, hostname)
 
-            try {
-                val result by client.userApi.authenticateUserByName(username = username, password = password)
-                client.update(accessToken = result.accessToken)
+            val result by client.userApi.authenticateUserByName(username = username, password = password)
+            client.update(accessToken = result.accessToken)
 
-                return JellyfinClientImpl(apiClient = client)
-            } catch (err: InvalidStatusException) {
-                when (err.status) {
-                    400, 401 -> throw JellyfinClientErrors.UnauthorizedError(err)
-                    else -> {
-                        throw err
-                    }
-                }
-            }
+            return JellyfinClientImpl(apiClient = client)
         }
 
         private suspend fun createApiClient(context: Context, hostname: String, accessToken: String? = null): ApiClient {

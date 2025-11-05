@@ -1,8 +1,8 @@
 package com.swackles.jellyfin.di
 
+import com.swackles.jellyfin.data.SessionStorageImpl
+import com.swackles.jellyfin.data.dao.ServerDao
 import com.swackles.jellyfin.data.dao.SessionDao
-import com.swackles.jellyfin.data.dao.SessionEntity
-import com.swackles.jellyfin.session.Session
 import com.swackles.jellyfin.session.SessionStorage
 import dagger.Module
 import dagger.Provides
@@ -15,25 +15,9 @@ import javax.inject.Singleton
 object SessionProviderModule {
     @Provides
     @Singleton
-    fun provideSessionStorage(sessionDao: SessionDao): SessionStorage = object : SessionStorage {
-        override suspend fun getAllSessions(): List<Session> = sessionDao.getAll().map { it.toSession() }
-
-        override suspend fun saveSession(session: Session) = sessionDao.insert(session.toEntity())
-    }
-
-    private fun Session.toEntity() =
-        SessionEntity(
-            id = this.id,
-            hostname = this.hostname,
-            username = this.username,
-            token = this.token
-        )
-
-    private fun SessionEntity.toSession() =
-        Session(
-            id = this.id,
-            hostname = this.hostname,
-            username = this.username,
-            token = this.token
+    fun provideSessionStorage(sessionDao: SessionDao, serverDao: ServerDao): SessionStorage =
+        SessionStorageImpl(
+            sessionDao = sessionDao,
+            serverDao = serverDao
         )
 }

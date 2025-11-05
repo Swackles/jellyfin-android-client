@@ -3,6 +3,7 @@ package com.swackles.jellyfin.session.inter.di
 import android.content.Context
 import com.swackles.libs.jellyfin.JellyfinClient
 import com.swackles.libs.jellyfin.JellyfinClientImpl
+import com.swackles.libs.jellyfin.JellyfinCredentials
 import com.swackles.libs.jellyfin.LibraryClient
 import com.swackles.libs.jellyfin.MediaClient
 import dagger.Module
@@ -26,22 +27,20 @@ internal interface JellyfinProviderEntryPoint {
 }
 
 internal object JellyfinProviderFactory {
-    suspend fun login(context: Context, hostname: String, username: String, password: String): JellyfinClient {
+    suspend fun login(context: Context, credentials: JellyfinCredentials): JellyfinClient {
         val holder = EntryPoints.get(context, JellyfinProviderEntryPoint::class.java)
             .jellyfinProviderHolder()
 
-        holder.jellyfinClient = JellyfinClientImpl.login(context, hostname, username, password)
+        holder.jellyfinClient = JellyfinClientImpl.login(context, credentials)
 
         return holder.jellyfinClient!!
     }
 
-    suspend fun login(context: Context, hostname: String, token: String): JellyfinClient {
+    fun logOut(context: Context) {
         val holder = EntryPoints.get(context, JellyfinProviderEntryPoint::class.java)
             .jellyfinProviderHolder()
 
-        holder.jellyfinClient = JellyfinClientImpl.login(context, hostname, token)
-
-        return holder.jellyfinClient!!
+        holder.jellyfinClient = null
     }
 }
 

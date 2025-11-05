@@ -42,4 +42,11 @@ dependencies {
     kapt(libs.androidx.hilt.compiler)
 
     implementation(project(":libs:jellyfin"))
+
+    testImplementation(libs.junit)
+    testImplementation(libs.bundles.testing)
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }

@@ -3,6 +3,8 @@ package com.swackles.jellyfin.di
 import android.content.Context
 import androidx.room.Room
 import com.swackles.jellyfin.data.JellyfinDatabase
+import com.swackles.jellyfin.data.dao.ServerDao
+import com.swackles.jellyfin.data.dao.SessionDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,5 +26,11 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesSessionDao(database: JellyfinDatabase) = database.sessionDao()
+    fun providesSessionDao(database: JellyfinDatabase): SessionDao =
+        database.sessionDao()
+
+    @Provides
+    @Singleton
+    fun provideServerDao(database: JellyfinDatabase): ServerDao =
+        database.serverDao()
 }
