@@ -44,7 +44,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.swackles.jellyfin.R
-import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.presentation.components.LargeTitle
 import com.swackles.jellyfin.presentation.components.MediumText
 import com.swackles.jellyfin.presentation.components.MediumTitle

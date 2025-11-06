@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
-import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.session.SessionManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

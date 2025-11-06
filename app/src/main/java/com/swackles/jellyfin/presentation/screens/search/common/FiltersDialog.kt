@@ -28,7 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
-import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.presentation.components.LargeTitle
 import com.swackles.jellyfin.presentation.components.MediumText
 import com.swackles.jellyfin.presentation.components.MediumTitle

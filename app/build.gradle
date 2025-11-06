@@ -80,8 +80,6 @@ dependencies {
     debugImplementation libs.compose.ui.tooling
     debugImplementation libs.compose.ui.manifest
 
-    implementation(project(":presentation:common"))
-
     implementation(project(":libs:auth"))
     implementation(project(":libs:jellyfin"))
 

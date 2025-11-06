@@ -2,7 +2,6 @@
 
 package com.swackles.jellyfin.presentation.screens.search
 
-import android.os.Parcelable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,7 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.presentation.components.MediaCard
 import com.swackles.jellyfin.presentation.screens.destinations.DetailScreenDestination
 import com.swackles.jellyfin.presentation.screens.search.common.FiltersDialog

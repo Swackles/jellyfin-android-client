@@ -37,9 +37,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.swackles.jellyfin.presentation.common.colors.primaryButtonColors
-import com.swackles.jellyfin.presentation.common.colors.primaryButtonContentPadding
-import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.styles.primaryButtonColors
+import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.presentation.components.MediaSection
 import com.swackles.jellyfin.presentation.components.MediumText
 import com.swackles.jellyfin.presentation.screens.destinations.PlayerScreenDestination
@@ -50,6 +49,7 @@ import com.swackles.jellyfin.presentation.screens.player.PlayerMediaItem
 import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.jellyfin.presentation.styles.primaryAssistChipBorder
 import com.swackles.jellyfin.presentation.styles.primaryAssistChipColors
+import com.swackles.jellyfin.presentation.styles.primaryButtonContentPadding
 import com.swackles.jellyfin.util.durationString
 import com.swackles.libs.jellyfin.Episode
 import com.swackles.libs.jellyfin.LibraryItem
