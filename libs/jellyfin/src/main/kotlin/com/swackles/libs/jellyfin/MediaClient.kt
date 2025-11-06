@@ -2,6 +2,7 @@ package com.swackles.libs.jellyfin
 
 import org.jellyfin.sdk.model.api.BaseItemPerson
 import org.jellyfin.sdk.model.api.PersonKind
+import org.jellyfin.sdk.model.api.PlaybackInfoResponse
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -100,8 +101,28 @@ sealed class MediaItem(
         people.filter { it.type == type && it.name != null }.map { it.name!! }
 }
 
+sealed interface PlaybackMetadata {
+    val id: UUID
+    val metadata: PlaybackInfoResponse
+    val baseUrl: String
+
+    data class Movie(
+        override val id: UUID,
+        override val metadata: PlaybackInfoResponse,
+        override val baseUrl: String
+    ): PlaybackMetadata
+
+    data class Series(
+        override val id: UUID,
+        override val metadata: PlaybackInfoResponse,
+        override val baseUrl: String
+    ): PlaybackMetadata
+}
+
 interface MediaClient {
     suspend fun getItem(id: UUID): MediaItem
 
     suspend fun getEpisodes(id: UUID): Map<Int, List<Episode>>
+
+    suspend fun getPlaybackMetadata(id: UUID): PlaybackMetadata
 }

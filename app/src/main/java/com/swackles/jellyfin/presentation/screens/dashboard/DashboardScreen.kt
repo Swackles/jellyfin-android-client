@@ -46,7 +46,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.R
 import com.swackles.jellyfin.presentation.components.MediaSection
 import com.swackles.jellyfin.presentation.screens.destinations.DetailScreenDestination
+import com.swackles.jellyfin.presentation.screens.destinations.PlayerScreenDestination
 import com.swackles.jellyfin.presentation.screens.destinations.SearchScreenDestination
+import com.swackles.jellyfin.presentation.screens.player.PlayerMediaItem
 import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.libs.jellyfin.LibraryFilters
 import com.swackles.libs.jellyfin.LibraryItem
@@ -65,7 +67,8 @@ fun DashboardScreen(
     DashboardScreenContent(
         state = state,
         onClickDetailView = { navigator.navigate(DetailScreenDestination(it)) },
-        onClickGenre = { navigator.navigate(SearchScreenDestination(LibraryFilters(genres = listOf(it))))  }
+        onClickPlayerView = { navigator.navigate(PlayerScreenDestination(PlayerMediaItem(id = it))) },
+        onClickGenre = { navigator.navigate(SearchScreenDestination(LibraryFilters(genres = listOf(it)))) }
     )
 }
 
@@ -73,6 +76,7 @@ fun DashboardScreen(
 fun DashboardScreenContent(
     state: UiState,
     onClickDetailView: (id: UUID) -> Unit,
+    onClickPlayerView: (id: UUID) -> Unit,
     onClickGenre: (genre: String) -> Unit
 ) {
     Surface(
@@ -84,6 +88,7 @@ fun DashboardScreenContent(
             is Step.Success -> DataContent(
                 sections = state.step.sections,
                 onClickDetailView = onClickDetailView,
+                onClickPlayerView = onClickPlayerView,
                 onClickGenre = onClickGenre
             )
         }
@@ -103,6 +108,7 @@ private fun LoadingContent() {
 private fun DataContent(
     sections: List<UiSection>,
     onClickDetailView: (id: UUID) -> Unit,
+    onClickPlayerView: (id: UUID) -> Unit,
     onClickGenre: (genre: String) -> Unit
 ) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(Spacings.Large)) {
@@ -111,7 +117,12 @@ private fun DataContent(
                 is UiSection.Carousel -> MediaSection(
                     title = section.title,
                     items = section.items,
-                    onClick = onClickDetailView
+                    onClick = {
+                        when(section.action) {
+                            DashboardCarouselAction.DETAIL -> onClickDetailView(it)
+                            DashboardCarouselAction.PLAYER -> onClickPlayerView(it)
+                        }
+                    }
                 )
                 is UiSection.ButtonCards -> {
                     FlowRow(
@@ -147,11 +158,13 @@ private fun CategoryCard(
     var boxSize by remember { mutableStateOf(IntSize.Zero) }
 
     Card(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .aspectRatio(2f)
             .clickable { onClick(title) }
     ) {
-        Box(modifier = Modifier.fillMaxSize()
+        Box(modifier = Modifier
+            .fillMaxSize()
             .onGloballyPositioned { boxSize = it.size }
         ) {
             if (boxSize != IntSize.Zero) {
@@ -173,10 +186,13 @@ private fun CategoryCard(
                 )
             }
             FlowRow(
-                modifier = Modifier.fillMaxSize()
-                    .background(Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, color.copy(alpha = .6f))
-                    )),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, color.copy(alpha = .6f))
+                        )
+                    ),
                 verticalArrangement = Arrangement.Center,
                 horizontalArrangement = Arrangement.Center
             ) { Text(color = Color.White, text = title) }
@@ -201,10 +217,12 @@ private fun PreviewWithData() {
         state = UiState(Step.Success(sections = listOf(
             UiSection.Carousel(
                 title = "Continue watching",
+                action = DashboardCarouselAction.PLAYER,
                 items = previewList
             ),
             UiSection.Carousel(
                 title = "Newly added",
+                action = DashboardCarouselAction.DETAIL,
                 items = previewList
             ),
             UiSection.ButtonCards(cards = listOf(
@@ -217,10 +235,12 @@ private fun PreviewWithData() {
             )),
             UiSection.Carousel(
                 title = "My favorites",
+                action = DashboardCarouselAction.DETAIL,
                 items = previewList
             )
         ))),
         onClickDetailView = {},
+        onClickPlayerView = {},
         onClickGenre = {}
     )
 }
@@ -231,6 +251,7 @@ private fun PreviewWithLoading() {
     DashboardScreenContent(
         state = UiState(Step.Loading),
         onClickDetailView = {},
+        onClickPlayerView = {},
         onClickGenre = {}
     )
 }

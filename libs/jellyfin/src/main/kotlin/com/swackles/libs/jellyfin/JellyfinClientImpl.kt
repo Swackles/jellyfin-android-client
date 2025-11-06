@@ -49,6 +49,18 @@ class JellyfinClientImpl(
     override val libraryClient: LibraryClient = LibraryClientImpl(apiClient)
     override val mediaClient: MediaClient = MediaClientImpl(apiClient)
 
+    override fun getHeaders(): HashMap<String, String> {
+        val values = listOf(
+            "Token=\"${apiClient.accessToken}\"",
+            "Client=\"${apiClient.clientInfo.name}\"",
+            "Version=\"${apiClient.clientInfo.version}\"",
+            "DeviceId=\"${apiClient.deviceInfo.id}\"",
+            "Device=\"${apiClient.deviceInfo.name}\""
+        )
+
+        return hashMapOf(Pair("Authorization", "MediaBrowser ${values.joinToString(", ")}"))
+    }
+
     companion object {
         private const val SUPPORTED_VERSION = "10"
 

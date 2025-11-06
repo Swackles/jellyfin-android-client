@@ -42,9 +42,11 @@ import com.swackles.jellyfin.presentation.common.colors.primaryButtonContentPadd
 import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
 import com.swackles.jellyfin.presentation.components.MediaSection
 import com.swackles.jellyfin.presentation.components.MediumText
+import com.swackles.jellyfin.presentation.screens.destinations.PlayerScreenDestination
 import com.swackles.jellyfin.presentation.screens.detail.components.BannerImage
 import com.swackles.jellyfin.presentation.screens.detail.components.LogoImage
 import com.swackles.jellyfin.presentation.screens.detail.tabs.DetailScreenTabs
+import com.swackles.jellyfin.presentation.screens.player.PlayerMediaItem
 import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.jellyfin.presentation.styles.primaryAssistChipBorder
 import com.swackles.jellyfin.presentation.styles.primaryAssistChipColors
@@ -70,13 +72,23 @@ fun DetailScreen(
         viewModal.loadData(id)
     }
 
-    DetailScreenContent(state = viewModal.state.value)
+    DetailScreenContent(
+        state = viewModal.state.value,
+        onPlayVideo = { id, startPositon ->
+            navigator.navigate(PlayerScreenDestination(
+                PlayerMediaItem(id)
+            ))
+        }
+    )
 
 }
 
 
 @Composable
-private fun DetailScreenContent(state: UiState) =
+private fun DetailScreenContent(
+    state: UiState,
+    onPlayVideo: PlayVideo
+) =
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -85,7 +97,7 @@ private fun DetailScreenContent(state: UiState) =
             is Step.Loading -> LoadingContent()
             is Step.Success -> SuccessContent(
                 state = state.step,
-                playVideo = { id, startPositon -> },
+                playVideo = onPlayVideo,
                 showMediaItem = { }
             )
         }
@@ -260,7 +272,10 @@ private object DetailScreenLoadedProps {
 @Composable
 private fun PreviewWithLoading() {
     JellyfinTheme {
-        DetailScreenContent(state = UiState(Step.Loading))
+        DetailScreenContent(
+            state = UiState(Step.Loading),
+            onPlayVideo = { id, startPosition -> }
+        )
     }
 }
 
@@ -305,22 +320,25 @@ private fun PreviewWithMovieData() {
     )
 
     JellyfinTheme {
-        DetailScreenContent(state = UiState(step = Step.Success(
-            mediaItem = MediaItem.Movie(
-                id = java.util.UUID.randomUUID(),
-                overview = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus congue id lectus vitae efficitur. In nec sem quis mauris sodales interdum id ut nisl.",
-                genres = listOf("Action", "Adventure", "Science Fiction", "Thriller"),
-                rating = "PG-13",
-                people = emptyList(),
-                baseUrl = "test-url",
-                premiereDate = LocalDate.now(),
-                runTimeTicks = 24 * 600000000,
-                playbackPositionTicks = (200 * .5f).toLong(),
-                playedPercentage = .5f,
-            ),
-            similar = similar,
-            episodes = mapOf()
-        )))
+        DetailScreenContent(
+            state = UiState(step = Step.Success(
+                mediaItem = MediaItem.Movie(
+                    id = java.util.UUID.randomUUID(),
+                    overview = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus congue id lectus vitae efficitur. In nec sem quis mauris sodales interdum id ut nisl.",
+                    genres = listOf("Action", "Adventure", "Science Fiction", "Thriller"),
+                    rating = "PG-13",
+                    people = emptyList(),
+                    baseUrl = "test-url",
+                    premiereDate = LocalDate.now(),
+                    runTimeTicks = 24 * 600000000,
+                    playbackPositionTicks = (200 * .5f).toLong(),
+                    playedPercentage = .5f,
+                    ),
+                similar = similar,
+                episodes = mapOf()
+            )),
+            onPlayVideo = { id, startPosition -> }
+        )
     }
 }
 
@@ -353,33 +371,36 @@ private fun PreviewWithSeriesData() {
     )
 
     JellyfinTheme {
-        DetailScreenContent(state = UiState(step = Step.Success(
-            mediaItem = MediaItem.Series(
-                id = java.util.UUID.randomUUID(),
-                overview = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus congue id lectus vitae efficitur. In nec sem quis mauris sodales interdum id ut nisl.",
-                genres = listOf("Action", "Adventure", "Science Fiction", "Thriller"),
-                rating = "PG-13",
-                people = emptyList(),
-                baseUrl = "test-url",
-                premiereDate = LocalDate.now(),
-                runTimeTicks = 24 * 600000000
-            ),
-            similar = similar,
-            episodes = mapOf(
-                Pair(1, listOf(
-                    createEpisode(1f, 1, 1),
-                    createEpisode(.5f, 2, 1),
-                    createEpisode(.44f, 3, 1),
-                    createEpisode(0f, 4, 1),
-                    createEpisode(0f, 5, 1)
-                )),
-                Pair(2, listOf(
-                    createEpisode(1f, 1, 2),
-                    createEpisode(1f, 2, 2),
-                    createEpisode(.44f, 3, 2)
-                ))
-            )
-        )))
+        DetailScreenContent(
+            state = UiState(step = Step.Success(
+                mediaItem = MediaItem.Series(
+                    id = java.util.UUID.randomUUID(),
+                    overview = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus congue id lectus vitae efficitur. In nec sem quis mauris sodales interdum id ut nisl.",
+                    genres = listOf("Action", "Adventure", "Science Fiction", "Thriller"),
+                    rating = "PG-13",
+                    people = emptyList(),
+                    baseUrl = "test-url",
+                    premiereDate = LocalDate.now(),
+                    runTimeTicks = 24 * 600000000
+                ),
+                similar = similar,
+                episodes = mapOf(
+                    Pair(1, listOf(
+                        createEpisode(1f, 1, 1),
+                        createEpisode(.5f, 2, 1),
+                        createEpisode(.44f, 3, 1),
+                        createEpisode(0f, 4, 1),
+                        createEpisode(0f, 5, 1)
+                    )),
+                    Pair(2, listOf(
+                        createEpisode(1f, 1, 2),
+                        createEpisode(1f, 2, 2),
+                        createEpisode(.44f, 3, 2)
+                    ))
+                )
+            )),
+            onPlayVideo = { id, startPosition -> }
+        )
     }
 }
 

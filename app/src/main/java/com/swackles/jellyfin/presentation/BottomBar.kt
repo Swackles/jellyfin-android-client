@@ -14,6 +14,8 @@ import androidx.navigation.NavController
 import com.swackles.jellyfin.presentation.screens.appCurrentDestinationAsState
 import com.swackles.jellyfin.presentation.screens.destinations.AuthScreenDestination
 import com.swackles.jellyfin.presentation.screens.destinations.DashboardScreenDestination
+import com.swackles.jellyfin.presentation.screens.destinations.DetailScreenDestination
+import com.swackles.jellyfin.presentation.screens.destinations.PlayerScreenDestination
 import com.swackles.jellyfin.presentation.screens.destinations.SearchScreenDestination
 import com.swackles.jellyfin.presentation.screens.destinations.SettingsHomeScreenDestination
 import com.swackles.jellyfin.presentation.screens.destinations.TypedDestination
@@ -49,6 +51,8 @@ fun BottomBar(navController: NavController) {
 
 private object BottomBarConstants {
     val IGNORED_PATHS = listOf<TypedDestination<*>>(
-        AuthScreenDestination
+        AuthScreenDestination,
+        DetailScreenDestination,
+        PlayerScreenDestination
     )
 }
