@@ -2,6 +2,7 @@
 
 package com.swackles.jellyfin.presentation.screens.search
 
+import android.os.Parcelable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

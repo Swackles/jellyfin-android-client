@@ -6,4 +6,6 @@ interface JellyfinClient {
     val libraryClient: LibraryClient
 
     val mediaClient: MediaClient
+
+    fun getHeaders(): HashMap<String, String>
 }

@@ -3,9 +3,11 @@ package com.swackles.libs.jellyfin.inter
 import com.swackles.libs.jellyfin.Episode
 import com.swackles.libs.jellyfin.MediaClient
 import com.swackles.libs.jellyfin.MediaItem
+import com.swackles.libs.jellyfin.PlaybackMetadata
 import org.jellyfin.sdk.api.client.ApiClient
 import org.jellyfin.sdk.api.client.Response
 import org.jellyfin.sdk.api.client.exception.InvalidStatusException
+import org.jellyfin.sdk.api.client.extensions.mediaInfoApi
 import org.jellyfin.sdk.api.client.extensions.tvShowsApi
 import org.jellyfin.sdk.api.client.extensions.userLibraryApi
 import org.jellyfin.sdk.model.api.BaseItemDto
@@ -79,6 +81,16 @@ class MediaClientImpl(
             )
             else -> throw RuntimeException("Unknown media type \"${content.type}\"")
         }
+
+    override suspend fun getPlaybackMetadata(id: UUID): PlaybackMetadata {
+        // TODO: Figure out how to determine if it's series or movie
+
+        return PlaybackMetadata.Movie(
+            id = id,
+            metadata = jellyfinClient.mediaInfoApi.getPlaybackInfo(id).content,
+            baseUrl = jellyfinClient.baseUrl!!
+        )
+    }
 
     private fun BaseItemDto.playedPercentage(): Float {
         return if (this.userData?.played == true) 1f

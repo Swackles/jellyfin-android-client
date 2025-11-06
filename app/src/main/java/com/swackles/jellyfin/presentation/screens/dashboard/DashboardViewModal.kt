@@ -12,12 +12,16 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.absoluteValue
-import kotlin.text.iterator
 
 data class ButtonCard(val title: String, val color: Color, val libraryItem: LibraryItem)
 
+enum class DashboardCarouselAction {
+    DETAIL,
+    PLAYER
+}
+
 interface UiSection {
-    data class Carousel(val title: String, val items: List<LibraryItem>): UiSection
+    data class Carousel(val title: String, val action: DashboardCarouselAction, val items: List<LibraryItem>): UiSection
     data class ButtonCards(val cards: List<ButtonCard>): UiSection
 }
 
@@ -56,10 +60,12 @@ class DashboardViewModal @Inject constructor(
         setStepSuccess(listOf(
             UiSection.Carousel(
                 title = "Continue Watching",
+                action = DashboardCarouselAction.PLAYER,
                 items = continueWatchingDeferred.await()
             ),
             UiSection.Carousel(
                 title = "New",
+                action = DashboardCarouselAction.DETAIL,
                 items = newlyAddedDeferred.await()
             ),
             UiSection.ButtonCards(cards = getMostPopularGenres(favorites).take(6).map {
@@ -67,10 +73,12 @@ class DashboardViewModal @Inject constructor(
             }),
             UiSection.Carousel(
                 title = "Recommended",
+                action = DashboardCarouselAction.DETAIL,
                 items = recommendedDeferred.await()
             ),
             UiSection.Carousel(
                 title = "Favorites",
+                action = DashboardCarouselAction.DETAIL,
                 items = favorites.take(10)
             )
         ))
