@@ -48,7 +48,7 @@ import coil.size.Size
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.R
-import com.swackles.jellyfin.presentation.common.theme.JellyfinTheme
+import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.presentation.components.ListItem
 import com.swackles.jellyfin.presentation.screens.settings.SettingsNavGraph
 import com.swackles.jellyfin.session.Server

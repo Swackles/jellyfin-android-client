@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.presentation.common.colors
+package com.swackles.jellyfin.presentation.styles
 
 
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,15 +14,6 @@ fun ButtonDefaults.primaryButtonColors() = buttonColors(
     contentColor = MaterialTheme.colorScheme.onPrimary
 )
 
-@Composable
-fun ButtonDefaults.primaryTextButtonColors() = textButtonColors(
-    contentColor = MaterialTheme.colorScheme.primary
-)
-
-@Composable
-fun ButtonDefaults.errorTextButtonColors() = textButtonColors(
-    contentColor = MaterialTheme.colorScheme.error
-)
 
 @Composable
 fun ButtonDefaults.primaryButtonContentPadding() = PaddingValues(
