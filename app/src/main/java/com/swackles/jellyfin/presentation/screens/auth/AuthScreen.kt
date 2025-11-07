@@ -15,13 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.annotation.RootGraph
 import com.swackles.jellyfin.presentation.components.MediumText
 
-@RootNavGraph
-@Destination
+@Destination<RootGraph>
 @Composable
 fun AuthScreen(viewModal: AuthViewModal = hiltViewModel()) {
     AuthScreenContent(

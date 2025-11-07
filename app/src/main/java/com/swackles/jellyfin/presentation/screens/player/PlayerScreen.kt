@@ -4,6 +4,7 @@ package com.swackles.jellyfin.presentation.screens.player
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
@@ -20,29 +21,27 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.media3.ui.PlayerView
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.presentation.screens.player.controls.BottomControls
 import com.swackles.jellyfin.presentation.screens.player.controls.CenterPlayerControls
 import com.swackles.jellyfin.presentation.screens.player.controls.TopControls
+import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 
-@RootNavGraph
-@Destination
+@Destination<RootGraph>
 @Composable
 fun PlayerScreen(
     mediaItem: PlayerMediaItem,
     viewModal: PlayerViewModal = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
-    val activity = LocalContext.current as Activity
+    val activity = LocalActivity.current as Activity
     val systemUiController = rememberSystemUiController()
 
     LaunchedEffect(Unit){

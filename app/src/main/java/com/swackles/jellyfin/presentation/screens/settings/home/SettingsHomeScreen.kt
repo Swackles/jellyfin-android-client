@@ -41,22 +41,21 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.R
-import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.presentation.components.ListItem
-import com.swackles.jellyfin.presentation.screens.settings.SettingsNavGraph
+import com.swackles.jellyfin.presentation.screens.settings.SettingsGraph
+import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.session.Server
 import com.swackles.jellyfin.session.Session
 import java.util.UUID
 
-@SettingsNavGraph(start = true)
-@Destination
+@Destination<SettingsGraph>(start = true)
 @Composable
 fun SettingsHomeScreen(
     navigator: DestinationsNavigator,

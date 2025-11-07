@@ -38,22 +38,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.DetailScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.presentation.components.MediaCard
-import com.swackles.jellyfin.presentation.screens.destinations.DetailScreenDestination
 import com.swackles.jellyfin.presentation.screens.search.common.FiltersDialog
+import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.libs.jellyfin.JellyfinFilters
 import com.swackles.libs.jellyfin.LibraryFilters
 import com.swackles.libs.jellyfin.LibraryItem
 import org.jellyfin.sdk.model.UUID
 
-@RootNavGraph
-@Destination
+@Destination<RootGraph>
 @Composable
 fun SearchScreen(
     filters: LibraryFilters = LibraryFilters(),

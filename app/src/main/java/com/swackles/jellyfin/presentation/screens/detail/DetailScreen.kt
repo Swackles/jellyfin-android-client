@@ -33,22 +33,22 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.PlayerScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.swackles.jellyfin.presentation.styles.primaryButtonColors
-import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.presentation.components.MediaSection
 import com.swackles.jellyfin.presentation.components.MediumText
-import com.swackles.jellyfin.presentation.screens.destinations.PlayerScreenDestination
 import com.swackles.jellyfin.presentation.screens.detail.components.BannerImage
 import com.swackles.jellyfin.presentation.screens.detail.components.LogoImage
 import com.swackles.jellyfin.presentation.screens.detail.tabs.DetailScreenTabs
 import com.swackles.jellyfin.presentation.screens.player.PlayerMediaItem
+import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.jellyfin.presentation.styles.primaryAssistChipBorder
 import com.swackles.jellyfin.presentation.styles.primaryAssistChipColors
+import com.swackles.jellyfin.presentation.styles.primaryButtonColors
 import com.swackles.jellyfin.presentation.styles.primaryButtonContentPadding
 import com.swackles.jellyfin.util.durationString
 import com.swackles.libs.jellyfin.Episode
@@ -60,8 +60,7 @@ import java.time.LocalDateTime
 
 typealias PlayVideo = (id: UUID, startPosition: Long) -> Unit
 
-@RootNavGraph
-@Destination
+@Destination<RootGraph>
 @Composable
 fun DetailScreen(
     id: UUID,
@@ -75,9 +74,7 @@ fun DetailScreen(
     DetailScreenContent(
         state = viewModal.state.value,
         onPlayVideo = { id, startPositon ->
-            navigator.navigate(PlayerScreenDestination(
-                PlayerMediaItem(id)
-            ))
+            navigator.navigate(PlayerScreenDestination(PlayerMediaItem(id)))
         }
     )
 

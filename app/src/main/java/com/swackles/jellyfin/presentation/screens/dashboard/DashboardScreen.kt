@@ -36,18 +36,18 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.DetailScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.PlayerScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SearchScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.R
 import com.swackles.jellyfin.presentation.components.MediaSection
-import com.swackles.jellyfin.presentation.screens.destinations.DetailScreenDestination
-import com.swackles.jellyfin.presentation.screens.destinations.PlayerScreenDestination
-import com.swackles.jellyfin.presentation.screens.destinations.SearchScreenDestination
 import com.swackles.jellyfin.presentation.screens.player.PlayerMediaItem
 import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.libs.jellyfin.LibraryFilters
@@ -55,8 +55,7 @@ import com.swackles.libs.jellyfin.LibraryItem
 import com.swackles.libs.jellyfin.getBackDropUrl
 import java.util.UUID
 
-@RootNavGraph(start = true)
-@Destination
+@Destination<RootGraph>(start = true)
 @Composable
 fun DashboardScreen(
     viewModal: DashboardViewModal = hiltViewModel(),

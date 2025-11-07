@@ -11,17 +11,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
-import com.swackles.jellyfin.presentation.screens.appCurrentDestinationAsState
-import com.swackles.jellyfin.presentation.screens.destinations.AuthScreenDestination
-import com.swackles.jellyfin.presentation.screens.destinations.DashboardScreenDestination
-import com.swackles.jellyfin.presentation.screens.destinations.DetailScreenDestination
-import com.swackles.jellyfin.presentation.screens.destinations.PlayerScreenDestination
-import com.swackles.jellyfin.presentation.screens.destinations.SearchScreenDestination
-import com.swackles.jellyfin.presentation.screens.destinations.SettingsHomeScreenDestination
-import com.swackles.jellyfin.presentation.screens.destinations.TypedDestination
+import com.ramcosta.composedestinations.generated.destinations.AuthScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.DashboardScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.DetailScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.PlayerScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SearchScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SettingsHomeScreenDestination
+import com.ramcosta.composedestinations.spec.TypedDestinationSpec
+import com.ramcosta.composedestinations.utils.currentDestinationAsState
 
 private enum class BottomBarDestinations(
-    val direction: TypedDestination<*>,
+    val direction: TypedDestinationSpec<*>,
     val icon: ImageVector,
     val label: String
 ) {
@@ -33,7 +33,7 @@ private enum class BottomBarDestinations(
 
 @Composable
 fun BottomBar(navController: NavController) {
-    val currentDestination = navController.appCurrentDestinationAsState().value
+    val currentDestination = navController.currentDestinationAsState().value
 
     if (BottomBarConstants.IGNORED_PATHS.contains(currentDestination)) return
 
@@ -50,7 +50,7 @@ fun BottomBar(navController: NavController) {
 }
 
 private object BottomBarConstants {
-    val IGNORED_PATHS = listOf<TypedDestination<*>>(
+    val IGNORED_PATHS = listOf<TypedDestinationSpec<*>>(
         AuthScreenDestination,
         DetailScreenDestination,
         PlayerScreenDestination
