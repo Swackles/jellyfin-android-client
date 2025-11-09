@@ -1,5 +1,7 @@
 package com.swackles.jellyfin.session
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -12,11 +14,12 @@ data class Session(
     val token: String
 )
 
+@Parcelize
 data class Server(
     val id: UUID,
     val hostname: String,
     val name: String
-)
+): Parcelable
 
 interface SessionStorage {
     suspend fun updateLastActive(session: Session)

@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,10 +20,19 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.swackles.jellyfin.presentation.components.MediumText
+import com.swackles.jellyfin.session.Server
+import java.util.UUID
 
 @Destination<RootGraph>
 @Composable
-fun AuthScreen(viewModal: AuthViewModal = hiltViewModel()) {
+fun AuthScreen(
+    server: Server? = null,
+    viewModal: AuthViewModal = hiltViewModel()
+) {
+    LaunchedEffect(Unit){
+        viewModal.initialize(server)
+    }
+
     AuthScreenContent(
         state = viewModal.state.value,
         onChangeCredentials = viewModal::updateCredentials,
@@ -82,25 +92,33 @@ private fun EnterCredentialsContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            OutlinedTextField(
-                value = state.credentials.hostname,
-                label = { MediumText(text = "Host") },
-                placeholder = { MediumText(text = "https://localhost:8096") },
-                onValueChange = { onChangeCredentials(state.credentials.copy(hostname = it)) },
-                isError = state.errors.contains(ErrorKey.HOST),
-                supportingText = { MediumText(text = state.errors[ErrorKey.HOST] ?: "") }
-            )
+            if (state.credentials is AuthCredentials.WithHostname) {
+                OutlinedTextField(
+                    value = state.credentials.hostname,
+                    label = { MediumText(text = "Host") },
+                    placeholder = { MediumText(text = "https://localhost:8096") },
+                    onValueChange = { onChangeCredentials(state.credentials.copy(hostname = it)) },
+                    isError = state.errors.contains(ErrorKey.HOST),
+                    supportingText = { MediumText(text = state.errors[ErrorKey.HOST] ?: "") }
+                )
+            }
             OutlinedTextField(
                 value = state.credentials.username,
                 label = { MediumText(text = "Username") },
-                onValueChange = { onChangeCredentials(state.credentials.copy(username = it)) },
+                onValueChange = { onChangeCredentials(when(state.credentials) {
+                    is AuthCredentials.WithHostname -> state.credentials.copy(username = it)
+                    is AuthCredentials.WithServer -> state.credentials.copy(username = it)
+                }) },
                 isError = state.errors.containsKey(ErrorKey.USERNAME),
                 supportingText = { MediumText(text = state.errors[ErrorKey.USERNAME] ?: "") }
             )
             PasswordOutlinedTextField(
                 value = state.credentials.password,
                 label = { MediumText(text = "Password") },
-                onValueChange = { onChangeCredentials(state.credentials.copy(password = it)) },
+                onValueChange = { onChangeCredentials(when(state.credentials) {
+                    is AuthCredentials.WithHostname -> state.credentials.copy(password = it)
+                    is AuthCredentials.WithServer -> state.credentials.copy(password = it)
+                }) },
                 isError = state.errors.containsKey(ErrorKey.PASSWORD),
                 supportingText = { MediumText(text = state.errors[ErrorKey.PASSWORD] ?: "") }
             )
@@ -129,13 +147,26 @@ private fun PreviewLoading() {
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 private fun PreviewEnterCredentials() {
-    AuthScreenContent(state = UiState(Step.EnterCredentials()), onChangeCredentials = {}, onLogin = {})
+    AuthScreenContent(state = UiState(Step.EnterCredentials(
+        credentials = AuthCredentials.WithHostname()
+    )), onChangeCredentials = {}, onLogin = {})
+}
+
+@Composable
+@Preview(showBackground = true, showSystemUi = true)
+private fun PreviewEnterCredentialsWithoutHostname() {
+    AuthScreenContent(state = UiState(Step.EnterCredentials(
+        credentials = AuthCredentials.WithServer(
+            server = Server(id = UUID.randomUUID(), hostname = "", name = "string")
+        )
+    )), onChangeCredentials = {}, onLogin = {})
 }
 
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 private fun PreviewEnterCredentialsError() {
     AuthScreenContent(state = UiState(Step.EnterCredentials(
+        credentials = AuthCredentials.WithHostname(),
         errors = mapOf(
             ErrorKey.HOST to "Incorrect host",
             ErrorKey.USERNAME to "Incorrect username",

@@ -47,17 +47,14 @@ internal object JellyfinProviderFactory {
 @Module
 @InstallIn(SingletonComponent::class)
 internal object JellyfinProviderModule {
-    @Singleton
     @Provides
     fun providerJellyfinClient(holder: MutableJellyfinProviderHolder): JellyfinClient =
         holder.jellyfinClient ?: throw RuntimeException("Cannot use jellyfin client before setting it")
 
-    @Singleton
     @Provides
     fun provideJellyfinLibraryClient(jellyfinClient: JellyfinClient): LibraryClient =
         jellyfinClient.libraryClient
 
-    @Singleton
     @Provides
     fun provideJellyfinMediaClient(jellyfinClient: JellyfinClient): MediaClient =
         jellyfinClient.mediaClient
