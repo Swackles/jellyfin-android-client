@@ -32,11 +32,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,9 +49,11 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.spec.Direction
 import com.swackles.jellyfin.R
 import com.swackles.jellyfin.presentation.components.ListItem
 import com.swackles.jellyfin.presentation.screens.settings.SettingsGraph
+import com.swackles.jellyfin.presentation.screens.settings.home.SettingsHomeScreenProperties.PROFILE_CARD_SIZE
 import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.session.Server
 import com.swackles.jellyfin.session.Session
@@ -63,11 +67,11 @@ fun SettingsHomeScreen(
 ) {
     SettingsHomeScreenContent(
         state = viewModal.state.value,
-        onAddUser = { TODO("Implement adding user") },
+        onAddUser = viewModal::addUser,
         onLogoutSession = viewModal::logoutSession,
         onLogoutServer = viewModal::logoutServer,
         onSwitchSession = viewModal::switchSession,
-        onNavigateToServerList = { TODO("Implement switch server") }
+        onNavigate = { navigator.navigate(it) }
     )
 }
 
@@ -78,7 +82,7 @@ private fun SettingsHomeScreenContent(
     onLogoutSession: () -> Unit,
     onLogoutServer: () -> Unit,
     onSwitchSession: (UUID) -> Unit,
-    onNavigateToServerList: () -> Unit,
+    onNavigate: (Direction) -> Unit
 ) =
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -86,13 +90,14 @@ private fun SettingsHomeScreenContent(
     ) {
         when(state.step) {
             is Step.Loading -> LoadingContent()
+            is Step.NavigateTo -> onNavigate(state.step.route)
             is Step.Success -> Content(
                 step = state.step,
                 onAddUser = onAddUser,
                 onLogoutSession = onLogoutSession,
                 onLogoutServer = onLogoutServer,
                 onSwitchSession = onSwitchSession,
-                onNavigateToServerList = onNavigateToServerList
+                onNavigate = onNavigate
             )
         }
     }
@@ -113,16 +118,31 @@ private fun Content(
     onLogoutSession: () -> Unit,
     onLogoutServer: () -> Unit,
     onSwitchSession: (UUID) -> Unit,
-    onNavigateToServerList: () -> Unit,
+    onNavigate: (Direction) -> Unit,
 ) {
+    val rowState = rememberLazyListState()
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val density = LocalDensity.current
+
+    LaunchedEffect(Unit) {
+        val index = step.sessions.indexOfFirst { it.id == step.activeSession.id } + 1
+
+        val halfScreen = screenWidth / 2
+        val halfItem = PROFILE_CARD_SIZE / 2
+
+        val offsetPx = with(density) {
+            (halfScreen - halfItem).toPx()
+        }
+
+        rowState.scrollToItem(index, -offsetPx.toInt())
+    }
 
     Column {
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 64.dp),
-            state = rememberLazyListState()
+            state = rowState
         ) {
             item { Spacer(modifier = Modifier.width((screenWidth / 2) - 60.dp)) }
             itemsIndexed(step.sessions) { _, session ->
@@ -157,7 +177,7 @@ private fun Content(
             item { Spacer(modifier = Modifier.width((screenWidth / 2) - 60.dp)) }
         }
         ListItem(
-            onClick = onNavigateToServerList,
+            onClick = { { TODO("Implement switch server") } },
             heading = "Servers",
             leadingIcon = Icons.Filled.Dns
         )
@@ -206,7 +226,7 @@ private fun ProfileCard(session: Session, active: Boolean, onClick: (UUID) -> Un
         border = if (active) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else CardDefaults.outlinedCardBorder(),
         modifier = Modifier
             .padding(8.dp)
-            .size(120.dp)
+            .size(PROFILE_CARD_SIZE)
             .clickable { onClick(session.id) }
     ) {
         if (session.profileImageUrl == null) {
@@ -237,6 +257,10 @@ private fun ProfileCard(session: Session, active: Boolean, onClick: (UUID) -> Un
         }
     }
     Spacer(Modifier.width(64.dp))
+}
+
+private object SettingsHomeScreenProperties  {
+    val PROFILE_CARD_SIZE = 120.dp
 }
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -277,7 +301,7 @@ private fun Preview() {
             onLogoutSession = {  },
             onLogoutServer = {  },
             onSwitchSession = {  },
-            onNavigateToServerList = {  },
+            onNavigate = {  },
         )
     }
 }

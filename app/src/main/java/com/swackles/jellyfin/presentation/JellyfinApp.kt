@@ -56,7 +56,7 @@ fun JellyfinApp(
             modifier = Modifier.padding(it).fillMaxSize(),
             start =  when(authState) {
                 is AuthState.Authenticated -> DashboardScreenDestination
-                else -> AuthScreenDestination
+                else -> AuthScreenDestination()
             }
         )
     }

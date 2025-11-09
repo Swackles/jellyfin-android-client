@@ -2,6 +2,8 @@ package com.swackles.jellyfin.presentation.screens.settings.home
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.ramcosta.composedestinations.generated.destinations.AuthScreenDestination
+import com.ramcosta.composedestinations.spec.Direction
 import com.swackles.jellyfin.session.AuthState
 import com.swackles.jellyfin.session.LoginCredentials
 import com.swackles.jellyfin.session.Session
@@ -19,6 +21,9 @@ data class UiState(
 
 sealed interface Step {
     data object Loading: Step
+
+    data class NavigateTo(val route: Direction): Step
+
     data class Success(
         val sessions: List<Session>,
         val activeSession: Session
@@ -35,6 +40,7 @@ class SettingsHomeViewModal @Inject constructor(
         viewModelScope.launch {
             val state = sessionManager.authState.value as AuthState.Authenticated
             val sessions = sessionManager.getSessions()
+                .sortedBy { it.username }
 
             setState { copy(step = Step.Success(sessions = sessions, activeSession = state.session)) }
         }
@@ -47,6 +53,12 @@ class SettingsHomeViewModal @Inject constructor(
             sessionManager.login(LoginCredentials.ExistingSession(session))
 
         } else Log.e("SettingsHomeViewModal", "Session with id \"$id\" not found")
+    }
+
+    fun addUser() {
+        val state = (sessionManager.authState.value as AuthState.Authenticated)
+
+        setState { copy(step = Step.NavigateTo(route = AuthScreenDestination(server = state.session.server))) }
     }
 
     fun logoutServer() = viewModelScope.launch {

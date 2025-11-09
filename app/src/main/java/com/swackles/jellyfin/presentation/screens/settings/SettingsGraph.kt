@@ -1,8 +1,9 @@
 package com.swackles.jellyfin.presentation.screens.settings
 
-import com.ramcosta.composedestinations.annotation.NavHostGraph
+import com.ramcosta.composedestinations.annotation.NavGraph
+import com.ramcosta.composedestinations.annotation.RootGraph
 
-@NavHostGraph
+@NavGraph<RootGraph>
 annotation class SettingsGraph(
     val start: Boolean = false
 )
