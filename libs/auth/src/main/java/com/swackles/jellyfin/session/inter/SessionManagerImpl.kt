@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.swackles.jellyfin.session.AuthState
 import com.swackles.jellyfin.session.LoginCredentials
+import com.swackles.jellyfin.session.LogoutScope
 import com.swackles.jellyfin.session.Server
 import com.swackles.jellyfin.session.Session
 import com.swackles.jellyfin.session.SessionEvent
@@ -50,6 +51,9 @@ internal class SessionManagerImpl(
         }
     }
 
+    override suspend fun findServer(serverId: UUID): Server? =
+        sessionStorage.getServers().first { it.id == serverId }
+
 
     override suspend fun getSessions(): List<Session> {
         val state = authState.value
@@ -59,6 +63,9 @@ internal class SessionManagerImpl(
             else -> emptyList()
         }
     }
+
+    override suspend fun getSessions(server: Server): List<Session> =
+        sessionStorage.getSessionsWithServerId(server.id)
 
     override suspend fun login(credentials: LoginCredentials) {
         Log.d("SessionManagerImpl", "Logging in using $credentials")
@@ -163,7 +170,7 @@ internal class SessionManagerImpl(
 
             JellyfinProviderFactory.logOut(context)
             _authState.value = AuthState.Unauthenticated
-            _events.emit(SessionEvent.LoggedOut)
+            _events.emit(SessionEvent.LoggedOut(LogoutScope.Server))
         }
     }
 
@@ -173,11 +180,15 @@ internal class SessionManagerImpl(
 
             val sessions = sessionStorage.getSessionsWithServerId(session.server.id)
 
-            if (sessions.isEmpty()) sessionStorage.delete(session.server)
+            var scope: LogoutScope = LogoutScope.User(serverId = session.server.id)
+            if (sessions.isEmpty()) {
+                sessionStorage.delete(session.server)
+                scope = LogoutScope.Server
+            }
 
             JellyfinProviderFactory.logOut(context)
             _authState.value = AuthState.Unauthenticated
-            _events.emit(SessionEvent.LoggedOut)
+            _events.emit(SessionEvent.LoggedOut(scope))
         }
     }
 

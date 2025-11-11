@@ -18,12 +18,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
 import com.swackles.jellyfin.presentation.components.MediumText
+import com.swackles.jellyfin.presentation.screens.auth.AuthGraph
 import com.swackles.jellyfin.session.Server
 import java.util.UUID
 
-@Destination<RootGraph>
+@Destination<AuthGraph>(start = true)
 @Composable
 fun LoginScreen(
     server: Server? = null,

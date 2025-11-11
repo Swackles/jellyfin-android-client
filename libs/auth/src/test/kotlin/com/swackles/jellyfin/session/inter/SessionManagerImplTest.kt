@@ -62,7 +62,16 @@ class SessionManagerImplTest {
         )) }
 
         sessionManager.authState.value shouldBe AuthState.Authenticated(session = session)
+    }
 
+    @Test
+    fun `find server should return server`(): Unit = runBlocking {
+        val server = createServer()
+
+        coEvery { sessionStorageMock.getServers() } returns
+                listOf(createServer(), createServer(), server, createServer())
+
+        sessionManager.findServer(server.id) shouldBe server
     }
 
     @Test

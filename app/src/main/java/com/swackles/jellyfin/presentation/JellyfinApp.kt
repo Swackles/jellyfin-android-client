@@ -15,7 +15,9 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.destinations.DashboardScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.LoginScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.UserSelectScreenDestination
 import com.swackles.jellyfin.session.AuthState
+import com.swackles.jellyfin.session.LogoutScope
 import com.swackles.jellyfin.session.SessionEvent
 import com.swackles.jellyfin.session.SessionManager
 
@@ -32,17 +34,22 @@ fun JellyfinApp(
         sessionManager.events.collect { event ->
             Log.d("JellyfinApp", "caught session event $event")
 
-            when(event) {
-                is SessionEvent.Authenticated ->
-                    navController.navigate(DashboardScreenDestination.route) {
-                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                        launchSingleTop = true
-                    }
+            val destination: String = when(event) {
+                is SessionEvent.Authenticated -> DashboardScreenDestination.route
                 is SessionEvent.LoggedOut ->
-                    navController.navigate(LoginScreenDestination.route) {
-                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                        launchSingleTop = true
+                    when(event.scope) {
+                        is LogoutScope.Server -> LoginScreenDestination.route
+                        is LogoutScope.User ->
+                            UserSelectScreenDestination(serverId = (event.scope as LogoutScope.User).serverId)
+                                .route
                     }
+            }
+
+            Log.d("JellyfinApp", "navigating to $destination")
+
+            navController.navigate(destination) {
+                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                launchSingleTop = true
             }
         }
     }
@@ -53,11 +60,7 @@ fun JellyfinApp(
         DestinationsNavHost(
             navController = navController,
             navGraph = NavGraphs.root,
-            modifier = Modifier.padding(it).fillMaxSize(),
-            start =  when(authState) {
-                is AuthState.Authenticated -> DashboardScreenDestination
-                else -> LoginScreenDestination()
-            }
+            modifier = Modifier.padding(it).fillMaxSize()
         )
     }
 }
