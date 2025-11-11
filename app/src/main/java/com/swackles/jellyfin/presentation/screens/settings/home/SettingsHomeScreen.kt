@@ -1,7 +1,5 @@
 package com.swackles.jellyfin.presentation.screens.settings.home
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,8 +21,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,26 +31,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.size.Size
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.Direction
-import com.swackles.jellyfin.R
 import com.swackles.jellyfin.presentation.components.ListItem
+import com.swackles.jellyfin.presentation.components.ProfileCard
+import com.swackles.jellyfin.presentation.components.ProfileCardProps
 import com.swackles.jellyfin.presentation.screens.settings.SettingsGraph
-import com.swackles.jellyfin.presentation.screens.settings.home.SettingsHomeScreenProperties.PROFILE_CARD_SIZE
 import com.swackles.jellyfin.presentation.styles.JellyfinTheme
+import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.jellyfin.session.Server
 import com.swackles.jellyfin.session.Session
 import java.util.UUID
@@ -128,7 +118,7 @@ private fun Content(
         val index = step.sessions.indexOfFirst { it.id == step.activeSession.id } + 1
 
         val halfScreen = screenWidth / 2
-        val halfItem = PROFILE_CARD_SIZE / 2
+        val halfItem = ProfileCardProps.SIZE / 2
 
         val offsetPx = with(density) {
             (halfScreen - halfItem).toPx()
@@ -141,7 +131,8 @@ private fun Content(
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 64.dp),
+                .padding(vertical = Spacings.xxl),
+            horizontalArrangement = Arrangement.spacedBy(Spacings.xxl),
             state = rowState
         ) {
             item { Spacer(modifier = Modifier.width((screenWidth / 2) - 60.dp)) }
@@ -155,7 +146,6 @@ private fun Content(
             item {
                 OutlinedCard(
                     modifier = Modifier
-                        .padding(8.dp)
                         .size(120.dp)
                         .clickable(onClick = onAddUser)
                 ) {
@@ -218,49 +208,6 @@ private fun Content(
             leadingIcon = Icons.AutoMirrored.Filled.Logout
         )
     }
-}
-
-@Composable
-private fun ProfileCard(session: Session, active: Boolean, onClick: (UUID) -> Unit) {
-    OutlinedCard(
-        border = if (active) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else CardDefaults.outlinedCardBorder(),
-        modifier = Modifier
-            .padding(8.dp)
-            .size(PROFILE_CARD_SIZE)
-            .clickable { onClick(session.id) }
-    ) {
-        if (session.profileImageUrl == null) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    Icons.Outlined.AccountCircle,
-                    contentDescription = session.username,
-                    modifier = Modifier
-                        .width(48.dp)
-                        .height(48.dp)
-                )
-            }
-        } else {
-            Image(
-                painter =
-                    if (LocalInspectionMode.current) painterResource(R.drawable.preview_logo)
-                    else rememberAsyncImagePainter(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(session.profileImageUrl).size(Size.ORIGINAL).build()
-                    ),
-                contentDescription = "${session.username}'s profile image",
-                contentScale = ContentScale.Crop
-            )
-        }
-    }
-    Spacer(Modifier.width(64.dp))
-}
-
-private object SettingsHomeScreenProperties  {
-    val PROFILE_CARD_SIZE = 120.dp
 }
 
 @Preview(showBackground = true, showSystemUi = true)

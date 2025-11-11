@@ -17,6 +17,7 @@ import com.ramcosta.composedestinations.generated.destinations.LoginScreenDestin
 import com.ramcosta.composedestinations.generated.destinations.PlayerScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SearchScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SettingsHomeScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.UserSelectScreenDestination
 import com.ramcosta.composedestinations.spec.TypedDestinationSpec
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 
@@ -52,6 +53,7 @@ fun BottomBar(navController: NavController) {
 private object BottomBarConstants {
     val IGNORED_PATHS = listOf<TypedDestinationSpec<*>>(
         LoginScreenDestination,
+        UserSelectScreenDestination,
         DetailScreenDestination,
         PlayerScreenDestination
     )
