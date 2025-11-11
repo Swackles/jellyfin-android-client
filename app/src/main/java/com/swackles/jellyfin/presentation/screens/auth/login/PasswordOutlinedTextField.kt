@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.presentation.screens.auth
+package com.swackles.jellyfin.presentation.screens.auth.login
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.KeyboardActions

@@ -11,9 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
-import com.ramcosta.composedestinations.generated.destinations.AuthScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DashboardScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DetailScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.LoginScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.PlayerScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SearchScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SettingsHomeScreenDestination
@@ -51,7 +51,7 @@ fun BottomBar(navController: NavController) {
 
 private object BottomBarConstants {
     val IGNORED_PATHS = listOf<TypedDestinationSpec<*>>(
-        AuthScreenDestination,
+        LoginScreenDestination,
         DetailScreenDestination,
         PlayerScreenDestination
     )

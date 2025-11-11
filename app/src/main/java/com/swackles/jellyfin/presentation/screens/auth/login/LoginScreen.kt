@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.presentation.screens.auth
+package com.swackles.jellyfin.presentation.screens.auth.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,15 +25,15 @@ import java.util.UUID
 
 @Destination<RootGraph>
 @Composable
-fun AuthScreen(
+fun LoginScreen(
     server: Server? = null,
-    viewModal: AuthViewModal = hiltViewModel()
+    viewModal: LoginViewModal = hiltViewModel()
 ) {
     LaunchedEffect(Unit){
         viewModal.initialize(server)
     }
 
-    AuthScreenContent(
+    LoginScreenContent(
         state = viewModal.state.value,
         onChangeCredentials = viewModal::updateCredentials,
         onLogin = viewModal::login
@@ -41,7 +41,7 @@ fun AuthScreen(
 }
 
 @Composable
-private fun AuthScreenContent(
+private fun LoginScreenContent(
     state: UiState,
     onChangeCredentials: (AuthCredentials) -> Unit,
     onLogin: () -> Unit
@@ -141,13 +141,13 @@ private fun EnterCredentialsContent(
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 private fun PreviewLoading() {
-    AuthScreenContent(state = UiState(Step.Loading), onChangeCredentials = {}, onLogin = {})
+    LoginScreenContent(state = UiState(Step.Loading), onChangeCredentials = {}, onLogin = {})
 }
 
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 private fun PreviewEnterCredentials() {
-    AuthScreenContent(state = UiState(Step.EnterCredentials(
+    LoginScreenContent(state = UiState(Step.EnterCredentials(
         credentials = AuthCredentials.WithHostname()
     )), onChangeCredentials = {}, onLogin = {})
 }
@@ -155,7 +155,7 @@ private fun PreviewEnterCredentials() {
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 private fun PreviewEnterCredentialsWithoutHostname() {
-    AuthScreenContent(state = UiState(Step.EnterCredentials(
+    LoginScreenContent(state = UiState(Step.EnterCredentials(
         credentials = AuthCredentials.WithServer(
             server = Server(id = UUID.randomUUID(), hostname = "", name = "string")
         )
@@ -165,7 +165,7 @@ private fun PreviewEnterCredentialsWithoutHostname() {
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 private fun PreviewEnterCredentialsError() {
-    AuthScreenContent(state = UiState(Step.EnterCredentials(
+    LoginScreenContent(state = UiState(Step.EnterCredentials(
         credentials = AuthCredentials.WithHostname(),
         errors = mapOf(
             ErrorKey.HOST to "Incorrect host",

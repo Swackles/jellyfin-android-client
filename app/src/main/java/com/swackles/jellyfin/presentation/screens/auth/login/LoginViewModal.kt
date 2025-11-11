@@ -1,4 +1,4 @@
-package com.swackles.jellyfin.presentation.screens.auth
+package com.swackles.jellyfin.presentation.screens.auth.login
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
@@ -51,7 +51,7 @@ sealed interface Step {
 
 
 @HiltViewModel
-class AuthViewModal @Inject constructor(
+class LoginViewModal @Inject constructor(
     private val sessionManager: SessionManager
 ) : BaseViewModel<UiState>() {
     override fun initialState(): UiState = UiState(Step.Loading)
