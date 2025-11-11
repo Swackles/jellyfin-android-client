@@ -13,8 +13,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
-import com.ramcosta.composedestinations.generated.destinations.AuthScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.DashboardScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.LoginScreenDestination
 import com.swackles.jellyfin.session.AuthState
 import com.swackles.jellyfin.session.SessionEvent
 import com.swackles.jellyfin.session.SessionManager
@@ -39,7 +39,7 @@ fun JellyfinApp(
                         launchSingleTop = true
                     }
                 is SessionEvent.LoggedOut ->
-                    navController.navigate(AuthScreenDestination.route) {
+                    navController.navigate(LoginScreenDestination.route) {
                         popUpTo(navController.graph.startDestinationId) { inclusive = true }
                         launchSingleTop = true
                     }
@@ -56,7 +56,7 @@ fun JellyfinApp(
             modifier = Modifier.padding(it).fillMaxSize(),
             start =  when(authState) {
                 is AuthState.Authenticated -> DashboardScreenDestination
-                else -> AuthScreenDestination()
+                else -> LoginScreenDestination()
             }
         )
     }

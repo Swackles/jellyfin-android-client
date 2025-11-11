@@ -2,7 +2,7 @@ package com.swackles.jellyfin.presentation.screens.settings.home
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.ramcosta.composedestinations.generated.destinations.AuthScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.LoginScreenDestination
 import com.ramcosta.composedestinations.spec.Direction
 import com.swackles.jellyfin.session.AuthState
 import com.swackles.jellyfin.session.LoginCredentials
@@ -58,7 +58,7 @@ class SettingsHomeViewModal @Inject constructor(
     fun addUser() {
         val state = (sessionManager.authState.value as AuthState.Authenticated)
 
-        setState { copy(step = Step.NavigateTo(route = AuthScreenDestination(server = state.session.server))) }
+        setState { copy(step = Step.NavigateTo(route = LoginScreenDestination(server = state.session.server))) }
     }
 
     fun logoutServer() = viewModelScope.launch {
