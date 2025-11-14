@@ -23,7 +23,7 @@ import com.swackles.jellyfin.presentation.screens.auth.AuthGraph
 import com.swackles.jellyfin.session.Server
 import java.util.UUID
 
-@Destination<AuthGraph>(start = true)
+@Destination<AuthGraph>
 @Composable
 fun LoginScreen(
     server: Server? = null,

@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.generated.destinations.ServerSelectScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.Direction
 import com.swackles.jellyfin.presentation.components.ListItem
@@ -167,7 +168,7 @@ private fun Content(
             item { Spacer(modifier = Modifier.width((screenWidth / 2) - 60.dp)) }
         }
         ListItem(
-            onClick = { { TODO("Implement switch server") } },
+            onClick = { onNavigate(ServerSelectScreenDestination) },
             heading = "Servers",
             leadingIcon = Icons.Filled.Dns
         )

@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.destinations.DashboardScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.LoginScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ServerSelectScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.UserSelectScreenDestination
 import com.swackles.jellyfin.session.AuthState
 import com.swackles.jellyfin.session.LogoutScope
@@ -38,7 +38,7 @@ fun JellyfinApp(
                 is SessionEvent.Authenticated -> DashboardScreenDestination.route
                 is SessionEvent.LoggedOut ->
                     when(event.scope) {
-                        is LogoutScope.Server -> LoginScreenDestination.route
+                        is LogoutScope.Server -> ServerSelectScreenDestination.route
                         is LogoutScope.User ->
                             UserSelectScreenDestination(serverId = (event.scope as LogoutScope.User).serverId)
                                 .route

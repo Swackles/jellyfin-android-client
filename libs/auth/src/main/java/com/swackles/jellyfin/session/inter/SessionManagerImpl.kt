@@ -54,6 +54,8 @@ internal class SessionManagerImpl(
     override suspend fun findServer(serverId: UUID): Server? =
         sessionStorage.getServers().first { it.id == serverId }
 
+    override suspend fun getServers(): List<Server> =
+        sessionStorage.getServers()
 
     override suspend fun getSessions(): List<Session> {
         val state = authState.value
