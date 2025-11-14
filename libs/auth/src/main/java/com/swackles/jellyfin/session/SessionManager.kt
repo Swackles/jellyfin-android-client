@@ -50,6 +50,8 @@ interface SessionManager {
 
     suspend fun findServer(serverId: UUID): Server?
 
+    suspend fun getServers(): List<Server>
+
     suspend fun getSessions(): List<Session>
 
     suspend fun getSessions(server: Server): List<Session>
