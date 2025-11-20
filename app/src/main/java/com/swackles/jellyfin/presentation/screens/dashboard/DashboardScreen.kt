@@ -48,6 +48,7 @@ import com.ramcosta.composedestinations.generated.destinations.SearchScreenDesti
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.R
 import com.swackles.jellyfin.presentation.components.MediaSection
+import com.swackles.jellyfin.presentation.components.WatchableMediaSection
 import com.swackles.jellyfin.presentation.screens.player.PlayerMediaItem
 import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.libs.jellyfin.LibraryFilters
@@ -113,6 +114,16 @@ private fun DataContent(
     LazyColumn(verticalArrangement = Arrangement.spacedBy(Spacings.Large)) {
         itemsIndexed(sections) { _, section ->
             when (section) {
+                is UiSection.WatchableCarousel -> WatchableMediaSection(
+                    title = section.title,
+                    items = section.items,
+                    onClick = {
+                        when(section.action) {
+                            DashboardCarouselAction.DETAIL -> onClickDetailView(it)
+                            DashboardCarouselAction.PLAYER -> onClickPlayerView(it)
+                        }
+                    }
+                )
                 is UiSection.Carousel -> MediaSection(
                     title = section.title,
                     items = section.items,
@@ -204,8 +215,9 @@ private fun CategoryCard(
 private fun PreviewWithData() {
     val previewLibraryItem = LibraryItem.Movie(
         id = UUID.randomUUID(),
+        title = "Title",
         baseUrl = "",
-        playedPercentage = 0f,
+        playedPercentage = .4f,
         playbackPositionTicks = 0L,
         genres = emptyList()
     )
@@ -214,7 +226,7 @@ private fun PreviewWithData() {
 
     DashboardScreenContent(
         state = UiState(Step.Success(sections = listOf(
-            UiSection.Carousel(
+            UiSection.WatchableCarousel(
                 title = "Continue watching",
                 action = DashboardCarouselAction.PLAYER,
                 items = previewList

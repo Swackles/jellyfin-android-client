@@ -14,6 +14,7 @@ sealed interface LibraryItem: JellyfinItem {
         override val playedPercentage: Float,
         override val baseUrl: String,
         override val playbackPositionTicks: Long,
+        val title: String,
         val genres: List<String>
     ) : LibraryItem
 

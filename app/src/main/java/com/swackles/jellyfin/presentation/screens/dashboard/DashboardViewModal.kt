@@ -22,6 +22,7 @@ enum class DashboardCarouselAction {
 
 interface UiSection {
     data class Carousel(val title: String, val action: DashboardCarouselAction, val items: List<LibraryItem>): UiSection
+    data class WatchableCarousel(val title: String, val action: DashboardCarouselAction, val items: List<LibraryItem>): UiSection
     data class ButtonCards(val cards: List<ButtonCard>): UiSection
 }
 
@@ -58,7 +59,7 @@ class DashboardViewModal @Inject constructor(
             }.groupBy({ it.first }, { it.second })
 
         setStepSuccess(listOf(
-            UiSection.Carousel(
+            UiSection.WatchableCarousel(
                 title = "Continue Watching",
                 action = DashboardCarouselAction.PLAYER,
                 items = continueWatchingDeferred.await()

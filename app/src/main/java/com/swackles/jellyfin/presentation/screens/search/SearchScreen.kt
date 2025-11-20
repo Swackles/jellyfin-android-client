@@ -246,6 +246,7 @@ private fun PreviewContentLoading() {
 private fun PreviewData() {
     val previewLibraryItem = LibraryItem.Movie(
         id = java.util.UUID.randomUUID(),
+        title = "Title",
         baseUrl = "",
         playedPercentage = 0f,
         playbackPositionTicks = 0L,

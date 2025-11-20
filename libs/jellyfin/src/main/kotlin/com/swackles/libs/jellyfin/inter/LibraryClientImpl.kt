@@ -102,6 +102,7 @@ internal class LibraryClientImpl(
         when (type) {
             BaseItemKind.MOVIE -> LibraryItem.Movie(
                 id = id,
+                title = name ?: "",
                 playedPercentage = userData?.playedPercentage.convertToPlayedPercentage(),
                 baseUrl = baseUrl,
                 playbackPositionTicks = userData?.playbackPositionTicks ?: 0L,

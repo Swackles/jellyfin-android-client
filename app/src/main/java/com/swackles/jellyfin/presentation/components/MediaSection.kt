@@ -22,6 +22,48 @@ fun MediaSection(
     title: String,
     items: List<LibraryItem>,
     onClick: (mediaId: UUID) -> Unit
+) =
+    InternalMediaSection(
+        title = title,
+        items = items,
+        card = { media, pos ->
+            MediaCard(
+                modifier =
+                    if (pos == 0) Modifier.padding(start = Spacings.Medium)
+                    else if (pos == items.size - 1) Modifier.padding(end = Spacings.Medium)
+                    else Modifier,
+                media = media,
+                onClick = onClick
+            )
+        }
+    )
+
+@Composable
+fun WatchableMediaSection(
+    title: String,
+    items: List<LibraryItem>,
+    onClick: (mediaId: UUID) -> Unit
+) =
+    InternalMediaSection(
+        title = title,
+        items = items,
+        card = { media, pos ->
+            WatchableMediaCard(
+                modifier =
+                    if (pos == 0) Modifier.padding(start = Spacings.Medium)
+                    else if (pos == items.size - 1) Modifier.padding(end = Spacings.Medium)
+                    else Modifier,
+                media = media,
+                onClick = onClick
+            )
+        }
+    )
+
+        @Composable
+private fun InternalMediaSection(
+    title: String,
+    items: List<LibraryItem>,
+    card: @Composable (media: LibraryItem, pos: Int) -> Unit
 ) {
     if (items.isEmpty()) return
 
@@ -38,13 +80,7 @@ fun MediaSection(
                 state = rememberLazyListState()
             ) {
                 itemsIndexed(items) { pos, media ->
-                    MediaCard(
-                        modifier = if (pos == 0) Modifier.padding(start = Spacings.Medium)
-                        else if (pos == items.size - 1) Modifier.padding(end = Spacings.Medium)
-                        else Modifier,
-                        media = media,
-                        onClick = onClick
-                    )
+                    card(media, pos)
                 }
             }
         }
@@ -56,6 +92,7 @@ fun MediaSection(
 private fun PreviewMediaSection() {
     val previewLibraryItem = LibraryItem.Movie(
         id = UUID.randomUUID(),
+        title = "Title",
         baseUrl = "",
         playedPercentage = 0f,
         playbackPositionTicks = 0L,
@@ -63,6 +100,24 @@ private fun PreviewMediaSection() {
     )
 
     MediaSection(
+        title = "Media section preview",
+        items = listOf(previewLibraryItem, previewLibraryItem, previewLibraryItem, previewLibraryItem, previewLibraryItem)
+    ) { }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewWatchableMediaSection() {
+    val previewLibraryItem = LibraryItem.Movie(
+        id = UUID.randomUUID(),
+        title = "Title",
+        baseUrl = "",
+        playedPercentage = 0f,
+        playbackPositionTicks = 0L,
+        genres = emptyList()
+    )
+
+    WatchableMediaSection(
         title = "Media section preview",
         items = listOf(previewLibraryItem, previewLibraryItem, previewLibraryItem, previewLibraryItem, previewLibraryItem)
     ) { }
