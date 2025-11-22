@@ -16,6 +16,7 @@ import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.destinations.DashboardScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ServerSelectScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.UserSelectScreenDestination
+import com.swackles.jellyfin.presentation.styles.JellyfinTheme
 import com.swackles.jellyfin.session.AuthState
 import com.swackles.jellyfin.session.LogoutScope
 import com.swackles.jellyfin.session.SessionEvent
@@ -54,13 +55,15 @@ fun JellyfinApp(
         }
     }
 
-    Scaffold(
-        bottomBar = { BottomBar(navController = navController) }
-    ) {
-        DestinationsNavHost(
-            navController = navController,
-            navGraph = NavGraphs.root,
-            modifier = Modifier.padding(it).fillMaxSize()
-        )
+    JellyfinTheme {
+        Scaffold(
+            bottomBar = { BottomBar(navController = navController) }
+        ) {
+            DestinationsNavHost(
+                navController = navController,
+                navGraph = NavGraphs.root,
+                modifier = Modifier.padding(it).fillMaxSize()
+            )
+        }
     }
 }

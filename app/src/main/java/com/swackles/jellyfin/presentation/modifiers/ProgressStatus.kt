@@ -1,6 +1,5 @@
 package com.swackles.jellyfin.presentation.modifiers
 
-import android.annotation.SuppressLint
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,7 +11,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 
 @Composable
-@SuppressLint("ModifierFactoryUnreferencedReceiver")
 fun Modifier.progressStatus(progress: Float, colorOne: Color = colorScheme.primary, colorTwo: Color = colorScheme.onSurfaceVariant) = composed(
     factory = {
         val density = LocalDensity.current
