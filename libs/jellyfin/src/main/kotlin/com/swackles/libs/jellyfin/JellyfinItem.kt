@@ -9,19 +9,19 @@ interface JellyfinItem {
     val baseUrl: String
 }
 
-fun JellyfinItem.getPosterUrl(width: Int, height: Int): String =
-    this.getImageUrl(ImageType.PRIMARY, width, height)
+fun JellyfinItem.getPosterUrl(width: Int, height: Int, quality: Float = .9f): String =
+    this.getImageUrl(ImageType.PRIMARY, width, height, quality)
 
-fun JellyfinItem.getThumbUrl(width: Int, height: Int): String =
-    this.getImageUrl(ImageType.THUMB, width, height)
+fun JellyfinItem.getThumbUrl(width: Int, height: Int, quality: Float = .9f): String =
+    this.getImageUrl(ImageType.THUMB, width, height, quality)
 
-fun JellyfinItem.getBackDropUrl(width: Int, height: Int): String =
-    this.getImageUrl(ImageType.BACKDROP, width, height)
+fun JellyfinItem.getBackDropUrl(width: Int, height: Int, quality: Float = .9f): String =
+    this.getImageUrl(ImageType.BACKDROP, width, height, quality)
 
-fun JellyfinItem.getLogoUrl(width: Int, height: Int): String =
-    this.getImageUrl(ImageType.LOGO, width, height)
+fun JellyfinItem.getLogoUrl(width: Int, height: Int, quality: Float = .9f): String =
+    this.getImageUrl(ImageType.LOGO, width, height, quality)
 
-private fun JellyfinItem.getImageUrl(imageType: ImageType, width: Int, height: Int) =
+private fun JellyfinItem.getImageUrl(imageType: ImageType, width: Int, height: Int, quality: Float) =
     this.baseUrl.toUri()
         .buildUpon()
         .appendPath("items")
@@ -31,5 +31,6 @@ private fun JellyfinItem.getImageUrl(imageType: ImageType, width: Int, height: I
         .appendPath("0")
         .appendQueryParameter("fillWidth", width.toString())
         .appendQueryParameter("fillHeight", height.toString())
+        .appendQueryParameter("quality", (quality * 100).toInt().toString())
         .build()
         .toString()

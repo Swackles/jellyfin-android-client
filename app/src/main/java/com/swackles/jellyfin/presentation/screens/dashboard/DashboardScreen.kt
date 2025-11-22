@@ -184,7 +184,8 @@ private fun CategoryCard(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(libraryItem.getBackDropUrl(
                                 height = boxSize.height,
-                                width = boxSize.width
+                                width = boxSize.width,
+                                quality = .5f
                             )).size(Size.ORIGINAL).build()
                     )
 

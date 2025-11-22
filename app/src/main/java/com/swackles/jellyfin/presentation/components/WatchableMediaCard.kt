@@ -36,6 +36,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.swackles.jellyfin.R
+import com.swackles.jellyfin.presentation.components.WatchableCardProps.QUALITY
 import com.swackles.jellyfin.presentation.modifiers.progressStatus
 import com.swackles.jellyfin.presentation.styles.Spacings
 import com.swackles.libs.jellyfin.LibraryItem
@@ -70,12 +71,14 @@ fun WatchableMediaCard(
                             is LibraryItem.Movie ->
                                 media.getBackDropUrl(
                                     height = with(LocalDensity.current) { WatchableCardProps.height.toPx().toInt() },
-                                    width = with(LocalDensity.current) { (WatchableCardProps.height.toPx() * WatchableCardProps.ASPECT_RATIO).toInt() }
+                                    width = with(LocalDensity.current) { (WatchableCardProps.height.toPx() * WatchableCardProps.ASPECT_RATIO).toInt() },
+                                    quality = QUALITY
                                 )
                             is LibraryItem.Episode ->
                                 media.getPosterUrl(
                                     height = with(LocalDensity.current) { WatchableCardProps.height.toPx().toInt() },
-                                    width = with(LocalDensity.current) { (WatchableCardProps.height.toPx() * WatchableCardProps.ASPECT_RATIO).toInt() }
+                                    width = with(LocalDensity.current) { (WatchableCardProps.height.toPx() * WatchableCardProps.ASPECT_RATIO).toInt() },
+                                    quality = QUALITY
                                 )
                             is LibraryItem.Series -> TODO()
                         }
@@ -181,6 +184,7 @@ private fun LibraryItem.subTitle(): String? =
 
 private object WatchableCardProps {
     const val ASPECT_RATIO = 1.7f
+    const val QUALITY = .7f
     val height = 150.dp
 }
 

@@ -20,6 +20,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.swackles.jellyfin.R
+import com.swackles.jellyfin.presentation.components.CardProps.QUALITY
 import com.swackles.libs.jellyfin.LibraryItem
 import com.swackles.libs.jellyfin.getPosterUrl
 import java.util.UUID
@@ -49,7 +50,8 @@ fun MediaCard(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(media.getPosterUrl(
                             height = with(LocalDensity.current) { CardProps.height.toPx().toInt() },
-                            width = with(LocalDensity.current) { (CardProps.height.toPx() * CardProps.ASPECT_RATIO).toInt() }
+                            width = with(LocalDensity.current) { (CardProps.height.toPx() * CardProps.ASPECT_RATIO).toInt() },
+                            quality = QUALITY
                         )).size(Size.ORIGINAL).build()
                 ),
             contentDescription = "Movie poster",
@@ -61,6 +63,7 @@ fun MediaCard(
 
 private object CardProps {
     const val ASPECT_RATIO = .7f
+    const val QUALITY = .7f
     val height = 150.dp
 }
 
