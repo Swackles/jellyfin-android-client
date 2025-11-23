@@ -68,6 +68,7 @@ fun SearchScreen(
         onNavigateDetailScreen = {
             navigator.navigate(DetailScreenDestination(id = it))
         },
+        onLoadPage = viewModal::loadPage,
         onUpdateQuery = { viewModal.updateQuery(newQuery = it) },
         onSearch = { viewModal.search(filters = it) }
     )
@@ -78,6 +79,7 @@ fun SearchScreen(
 private fun SearchScreenContent(
     state: UiState,
     onNavigateDetailScreen: (id: UUID) -> Unit,
+    onLoadPage: (page: Int) -> Unit,
     onUpdateQuery: (String) -> Unit,
     onSearch: (filters: LibraryFilters) -> Unit
 ) =
@@ -91,6 +93,7 @@ private fun SearchScreenContent(
                 step = state.step,
                 onSearch = onSearch,
                 onUpdateQuery = onUpdateQuery,
+                onLoadPage = onLoadPage,
                 onNavigateDetailScreen = onNavigateDetailScreen
             )
             is Step.LoadContent -> SearchScreenContent(
@@ -155,9 +158,18 @@ private fun ShowContent(
     step: Step.ShowContent,
     onUpdateQuery: (String) -> Unit,
     onSearch: (LibraryFilters) -> Unit,
+    onLoadPage: (page: Int) -> Unit,
     onNavigateDetailScreen: (id: UUID) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
+
+    LaunchedEffect(scrollState.value, scrollState.maxValue) {
+        if (scrollState.maxValue > 0) {
+            val nearEnd = scrollState.value >= scrollState.maxValue * .8
+            if (step.hasMoreContent && nearEnd) onLoadPage(step.items.keys.last() + 1)
+        }
+    }
 
     if (showDialog) FiltersDialog(
         possibleFilters = step.possibleFilters,
@@ -176,7 +188,7 @@ private fun ShowContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .padding(horizontal = Spacings.Medium)
         ) {
             FlowRow(
@@ -185,8 +197,16 @@ private fun ShowContent(
                 maxItemsInEachRow = 3,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                step.items.map { item ->
-                    MediaCard(media = item, onClick = onNavigateDetailScreen)
+                step.items.map { page ->
+                    if (page.value.isEmpty()) {
+                        for (i in 1..step.limit) {
+                            MediaCard(media = null, onClick = onNavigateDetailScreen)
+                        }
+                    } else {
+                        page.value.map {
+                            MediaCard(media = it, onClick = onNavigateDetailScreen)
+                        }
+                    }
                 }
             }
         }
@@ -204,6 +224,7 @@ private fun PreviewLoading() {
         SearchScreenContent(
             state = state,
             onNavigateDetailScreen = {},
+            onLoadPage = {},
             onUpdateQuery = {},
             onSearch = {}
         )
@@ -235,6 +256,7 @@ private fun PreviewContentLoading() {
         SearchScreenContent(
             state = state,
             onNavigateDetailScreen = {},
+            onLoadPage = {},
             onUpdateQuery = {},
             onSearch = {}
         )
@@ -268,13 +290,16 @@ private fun PreviewData() {
                 mediaTypes = emptyList(),
                 query = null
             ),
-            items = listOf(
-                previewLibraryItem, previewLibraryItem, previewLibraryItem,
-                previewLibraryItem, previewLibraryItem, previewLibraryItem,
-                previewLibraryItem, previewLibraryItem, previewLibraryItem,
-                previewLibraryItem, previewLibraryItem, previewLibraryItem,
-                previewLibraryItem, previewLibraryItem, previewLibraryItem,
-            )
+            items = mapOf(
+                0 to listOf(previewLibraryItem, previewLibraryItem, previewLibraryItem),
+                1 to emptyList(),
+                2 to listOf(previewLibraryItem, previewLibraryItem, previewLibraryItem),
+                3 to emptyList(),
+                4 to listOf(previewLibraryItem, previewLibraryItem, previewLibraryItem)
+            ),
+            totalRecordCount = 100,
+            hasMoreContent = false,
+            limit = 3
         )
     )
 
@@ -282,6 +307,7 @@ private fun PreviewData() {
         SearchScreenContent(
             state = state,
             onNavigateDetailScreen = {},
+            onLoadPage = {},
             onUpdateQuery = {},
             onSearch = {}
         )

@@ -3,8 +3,10 @@ package com.swackles.libs.jellyfin.inter
 import com.swackles.libs.jellyfin.JellyfinClientErrors.BadDataFormatError
 import com.swackles.libs.jellyfin.JellyfinFilters
 import com.swackles.libs.jellyfin.LibraryClient
-import com.swackles.libs.jellyfin.LibraryItem
 import com.swackles.libs.jellyfin.LibraryFilters
+import com.swackles.libs.jellyfin.LibraryItem
+import com.swackles.libs.jellyfin.Pagination
+import com.swackles.libs.jellyfin.PaginationResponse
 import org.jellyfin.sdk.api.client.ApiClient
 import org.jellyfin.sdk.api.client.Response
 import org.jellyfin.sdk.api.client.extensions.filterApi
@@ -24,7 +26,6 @@ import org.jellyfin.sdk.model.api.request.GetNextUpRequest
 import org.jellyfin.sdk.model.api.request.GetResumeItemsRequest
 import java.time.LocalDateTime
 import java.util.UUID
-import kotlin.collections.orEmpty
 
 internal class LibraryClientImpl(
     private val jellyfinClient: ApiClient
@@ -34,17 +35,27 @@ internal class LibraryClientImpl(
             includeItemTypes = listOf(BaseItemKind.MOVIE, BaseItemKind.SERIES)
         ).toPossibleFilters()
 
-    override suspend fun search(filters: LibraryFilters): List<LibraryItem> =
-        jellyfinClient.itemsApi.getItems(
-            GetItemsRequest(
+    override suspend fun search(filters: LibraryFilters, pagination: Pagination): PaginationResponse {
+        val res = jellyfinClient.itemsApi.getItems(
+            request = GetItemsRequest(
                 searchTerm = filters.query,
                 genres = filters.genres,
                 years = filters.years,
                 officialRatings = filters.officialRatings,
                 includeItemTypes = filters.mediaTypes,
-                recursive = true
+                recursive = true,
+                startIndex = pagination.limit * pagination.page,
+                limit = pagination.limit
             )
-        ).mapToLibraryItems(jellyfinClient)
+        )
+
+        return PaginationResponse(
+            items = res.mapToLibraryItems(jellyfinClient),
+            page = pagination.page,
+            limit = pagination.limit,
+            totalRecordCount = res.content.totalRecordCount
+        )
+    }
 
     override suspend fun getContinueWatching(): List<LibraryItem> =
         jellyfinClient.itemsApi.getResumeItems(GetResumeItemsRequest(limit = LIMIT)).content.items

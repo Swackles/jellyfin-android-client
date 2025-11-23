@@ -56,10 +56,22 @@ data class LibraryFilters(
     val query: String? = null
 ): Parcelable
 
+data class Pagination(
+    val page: Int,
+    val limit: Int,
+)
+
+data class PaginationResponse(
+    val items: List<LibraryItem>,
+    val page: Int,
+    val limit: Int,
+    val totalRecordCount: Int
+)
+
 interface LibraryClient {
     suspend fun getFilters(): JellyfinFilters
 
-    suspend fun search(filters: LibraryFilters): List<LibraryItem>
+    suspend fun search(filters: LibraryFilters, pagination: Pagination): PaginationResponse
 
     suspend fun getContinueWatching(): List<LibraryItem>
 
