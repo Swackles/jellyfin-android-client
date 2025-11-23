@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,10 +29,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -40,6 +41,7 @@ import com.ramcosta.composedestinations.generated.destinations.PlayerScreenDesti
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.swackles.jellyfin.presentation.components.MediaSection
 import com.swackles.jellyfin.presentation.components.MediumText
+import com.swackles.jellyfin.presentation.screens.detail.SuccessContentProps.OVERFLOW_OFFSET
 import com.swackles.jellyfin.presentation.screens.detail.components.BannerImage
 import com.swackles.jellyfin.presentation.screens.detail.components.LogoImage
 import com.swackles.jellyfin.presentation.screens.detail.tabs.DetailScreenTabs
@@ -73,7 +75,7 @@ fun DetailScreen(
 
     DetailScreenContent(
         state = viewModal.state.value,
-        onPlayVideo = { id, startPositon ->
+        onPlayVideo = { id, _ ->
             navigator.navigate(PlayerScreenDestination(PlayerMediaItem(id)))
         }
     )
@@ -121,14 +123,19 @@ private fun SuccessContent(
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(scrollState, /* !state.showOverlay TODO: Test */)
+            .layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints)
+                val reducedHeight = (placeable.height + OVERFLOW_OFFSET).coerceAtLeast(0)
+
+                layout(placeable.width, reducedHeight) {
+                    placeable.place(0, 0)
+                }
+            }
     ) {
         BannerImage(media = state.mediaItem, scrollState = scrollState)
         Column(
             modifier = Modifier
-                .graphicsLayer {
-                    compositingStrategy = CompositingStrategy.Offscreen
-                    translationY = -700f
-                }
+                .offset { IntOffset(x = 0, y = OVERFLOW_OFFSET) }
                 .fillMaxWidth()
         ) {
             Column(
@@ -157,6 +164,10 @@ private fun SuccessContent(
             }
         }
     }
+}
+
+private object SuccessContentProps {
+    const val OVERFLOW_OFFSET = -700
 }
 
 private data class PlayShortcutInfo(
@@ -271,7 +282,7 @@ private fun PreviewWithLoading() {
     JellyfinTheme {
         DetailScreenContent(
             state = UiState(Step.Loading),
-            onPlayVideo = { id, startPosition -> }
+            onPlayVideo = { _, _ -> }
         )
     }
 }
@@ -335,20 +346,10 @@ private fun PreviewWithMovieData() {
                 similar = similar,
                 episodes = mapOf()
             )),
-            onPlayVideo = { id, startPosition -> }
+            onPlayVideo = { _, _ -> }
         )
     }
 }
-
-/*
-@Preview
-@Composable
-private fun PreviewWithMovieDataInProgress() {
-    JellyfinTheme {
-        DetailScreenContent(UUID.randomUUID(), EmptyDestinationsNavigator, viewModal)
-    }
-}
-*/
 
 @Preview
 @Composable
@@ -398,25 +399,7 @@ private fun PreviewWithSeriesData() {
                     ))
                 )
             )),
-            onPlayVideo = { id, startPosition -> }
+            onPlayVideo = { _, _ -> }
         )
     }
 }
-
-/*
-@Preview
-@Composable
-private fun PreviewWithSeriesDataInProgress() {
-    JellyfinTheme {
-        DetailScreenContent(UUID.randomUUID(), EmptyDestinationsNavigator, viewModal)
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewWithSeriesDataWithOverlay() {
-    JellyfinTheme {
-        DetailScreenContent(UUID.randomUUID(), EmptyDestinationsNavigator, viewModal)
-    }
-}
- */
