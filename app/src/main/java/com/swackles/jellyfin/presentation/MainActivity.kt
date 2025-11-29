@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
                 .build()
         )
 
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             sessionManager.initialize()
         }
 
